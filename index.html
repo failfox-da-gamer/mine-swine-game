@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Mine Swine | RED vs BLU | Онлайн по ссылке</title>
+    <title>Mine Swine | RED vs BLU | Онлайн по ID</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         * { user-select: none; box-sizing: border-box; }
@@ -73,25 +73,17 @@
             text-align: center;
         }
         .big-code {
-            font-size: 2rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             color: #f7e05e;
             background: #1e1b16;
             padding: 10px;
             border-radius: 16px;
             font-family: monospace;
             margin: 10px 0;
+            word-break: break-all;
         }
-        .status-online {
-            background: #ff9800;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            display: inline-block;
-        }
-        
         .mode-selector {
             display: flex;
             gap: 10px;
@@ -140,8 +132,6 @@
         }
         .cell.selected-red { background: #ff6b4a; box-shadow: 0 0 0 3px #ffcc66; }
         .cell.selected-blue { background: #6bb5ff; box-shadow: 0 0 0 3px #ffcc66; }
-        .cell.mine-red { background: #ff6b4a; }
-        .cell.mine-blue { background: #6bb5ff; }
         .cell.explosion { background: #ff5e3a; animation: shake 0.2s ease-in-out 0s 2; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -211,16 +201,23 @@
             margin-right: auto;
         }
         .hidden { display: none; }
+        .status-online {
+            background: #ff9800;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 RED vs BLU: СВИНЬИ-САПЁРЫ 💣</h1>
-        <div class="sub">Онлайн по коду | Выбери ник и команду</div>
+        <div class="sub">Правильная механика | Онлайн по ID</div>
 
-        <!-- Онлайн панель -->
-        <div id="onlinePanel" class="online-panel">
+        <div class="online-panel">
             <div style="margin-bottom: 10px;">
                 <input type="text" id="nickInput" class="online-input" placeholder="Твой ник" maxlength="15" value="Свин">
                 <select id="teamSelect" class="online-input">
@@ -231,20 +228,18 @@
             <button id="createRoomBtn" class="online-btn">🌎 СОЗДАТЬ КОМНАТУ</button>
             <button id="showJoinBtn" class="online-btn">🔗 ПОДКЛЮЧИТЬСЯ</button>
             
-            <!-- Блок с кодом комнаты (при создании) -->
             <div id="roomInfoDiv" class="hidden">
                 <div class="code-box">
-                    🔑 КОД КОМНАТЫ:
+                    🔑 ТВОЙ ID ДЛЯ ПОДКЛЮЧЕНИЯ:
                     <div class="big-code" id="roomCode"></div>
-                    <button id="copyCodeBtn" class="online-btn">📋 КОПИРОВАТЬ КОД</button>
+                    <button id="copyCodeBtn" class="online-btn">📋 КОПИРОВАТЬ ID</button>
                     <div id="waitingStatus" class="status-online" style="margin-top:10px;">⏳ Ожидание подключения...</div>
                 </div>
             </div>
             
-            <!-- Блок для ввода кода (при подключении) -->
             <div id="joinDiv" class="hidden">
                 <div class="code-box">
-                    <input type="text" id="roomCodeInput" class="online-input" placeholder="Введите код комнаты" style="width:200px;">
+                    <input type="text" id="roomCodeInput" class="online-input" placeholder="Введите ID соперника" style="width:200px;">
                     <button id="doJoinBtn" class="online-btn">ПОДКЛЮЧИТЬСЯ</button>
                     <button id="cancelJoinBtn" class="online-btn">ОТМЕНА</button>
                 </div>
@@ -273,12 +268,12 @@
         
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>💣 Онлайн: создай комнату → получи код → отправь другу. Друг: "Подключиться" → введи код.</footer>
+        <footer>💣 Онлайн: создай комнату, скопируй ID и отправь другу. Друг вставляет ID и подключается.</footer>
     </div>
 </div>
 
 <script>
-    // ========== MINE SWINE — ОНЛАЙН ВЕРСИЯ ==========
+    // ========== MINE SWINE — ИСПРАВЛЕННАЯ ОНЛАЙН-ВЕРСИЯ ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -288,16 +283,17 @@
     let gameActive = true;
     let gameMode = '2p';
     let currentPhase = 'selection';
-    let currentPlayer = 'red';
+    let currentTurn = 'red';
     
     let redPositions = [];
     let bluePositions = [];
     let redPigs = START_PIGS;
     let bluePigs = START_PIGS;
     
-    let battleQueue = [];
+    let battleMoves = [];
     let battleIndex = 0;
     let battleActive = false;
+    let turnCounter = 0;
     
     // Онлайн переменные
     let peer = null;
@@ -307,7 +303,7 @@
     let opponentTeam = 'blue';
     let myNick = '';
     let opponentNick = '';
-    let roomId = '';
+    let myId = '';
     let waitingForOpponent = false;
     
     // DOM
@@ -354,10 +350,10 @@
                 cell.textContent = '⚡';
             } 
             else if (currentPhase === 'selection') {
-                if (currentPlayer === 'red' && redPositions.includes(i)) {
+                if (currentTurn === 'red' && redPositions.includes(i)) {
                     cell.classList.add('selected-red');
                     cell.textContent = '🔴';
-                } else if (currentPlayer === 'blue' && bluePositions.includes(i)) {
+                } else if (currentTurn === 'blue' && bluePositions.includes(i)) {
                     cell.classList.add('selected-blue');
                     cell.textContent = '🔵';
                 } else {
@@ -368,17 +364,9 @@
                 cell.textContent = '';
             }
             else if (currentPhase === 'battle' && battleActive) {
-                if (highlightCell === i) {
-                    if (highlightType === 'red') {
-                        cell.classList.add('mine-red');
-                        cell.textContent = '🔴';
-                    } else if (highlightType === 'blue') {
-                        cell.classList.add('mine-blue');
-                        cell.textContent = '🔵';
-                    } else if (highlightType === 'explosion') {
-                        cell.classList.add('explosion');
-                        cell.textContent = '💥';
-                    }
+                if (highlightCell === i && highlightType === 'explosion') {
+                    cell.classList.add('explosion');
+                    cell.textContent = '💥';
                 } else {
                     cell.textContent = '';
                 }
@@ -387,9 +375,9 @@
             let canClick = false;
             if (!isOnline && gameActive && currentPhase === 'selection' && !wireCells.includes(i)) {
                 if (gameMode === '2p') canClick = true;
-                else if (gameMode === 'ai' && currentPlayer === 'red') canClick = true;
+                else if (gameMode === 'ai' && currentTurn === 'red') canClick = true;
             }
-            else if (isOnline && gameActive && currentPhase === 'selection' && !wireCells.includes(i) && currentPlayer === myTeam && !waitingForOpponent && conn) {
+            else if (isOnline && gameActive && currentPhase === 'selection' && !wireCells.includes(i) && currentTurn === myTeam && !waitingForOpponent && conn) {
                 canClick = true;
             }
             
@@ -416,27 +404,24 @@
             positions = myTeam === 'red' ? redPositions : bluePositions;
             maxPigs = myTeam === 'red' ? redPigs : bluePigs;
         } else if (gameMode === '2p') {
-            positions = currentPlayer === 'red' ? redPositions : bluePositions;
-            maxPigs = currentPlayer === 'red' ? redPigs : bluePigs;
+            positions = currentTurn === 'red' ? redPositions : bluePositions;
+            maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
         } else {
             positions = redPositions;
             maxPigs = redPigs;
         }
         
-        const already = positions.includes(idx);
+        if (positions.includes(idx)) {
+            messageDiv.textContent = `❌ Эта клетка уже выбрана!`;
+            return;
+        }
         
-        if (already) {
-            const pos = positions.indexOf(idx);
-            positions.splice(pos, 1);
-            messageDiv.textContent = `${currentPlayer === 'red' ? '🔴' : '🔵'} убрал клетку (${positions.length}/${maxPigs})`;
+        if (positions.length < maxPigs) {
+            positions.push(idx);
+            messageDiv.textContent = `${currentTurn === 'red' ? '🔴' : '🔵'} выбрал клетку ${Math.floor(idx/5)+1},${idx%5+1} (${positions.length}/${maxPigs})`;
         } else {
-            if (positions.length < maxPigs) {
-                positions.push(idx);
-                messageDiv.textContent = `${currentPlayer === 'red' ? '🔴' : '🔵'} выбрал клетку (${positions.length}/${maxPigs})`;
-            } else {
-                messageDiv.textContent = `❌ Нельзя выбрать больше ${maxPigs} клеток!`;
-                return;
-            }
+            messageDiv.textContent = `❌ Нельзя выбрать больше ${maxPigs} клеток!`;
+            return;
         }
         
         renderBoard();
@@ -463,12 +448,12 @@
             conn.send({ type: 'positions', positions: positions, team: myTeam });
         } 
         else if (gameMode === '2p') {
-            const positions = currentPlayer === 'red' ? redPositions : bluePositions;
-            const maxPigs = currentPlayer === 'red' ? redPigs : bluePigs;
+            const positions = currentTurn === 'red' ? redPositions : bluePositions;
+            const maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
             if (positions.length !== maxPigs) return;
             
-            if (currentPlayer === 'red') {
-                currentPlayer = 'blue';
+            if (currentTurn === 'red') {
+                currentTurn = 'blue';
                 readyBtn.classList.add('hidden');
                 messageDiv.textContent = `🔵 BLU выбирает ${bluePigs} позиций`;
                 turnText.innerHTML = '🔵 ВЫБОР BLU';
@@ -508,19 +493,27 @@
         messageDiv.textContent = `⚔️ РАУНД ${round}! Битва начинается...`;
         turnText.innerHTML = '⚔️ БИТВА';
         
-        battleQueue = [];
-        for (let i = 0; i < Math.max(redPigs, bluePigs); i++) {
-            if (i < redPigs) battleQueue.push({ owner: 'red', position: redPositions[i] });
-            if (i < bluePigs) battleQueue.push({ owner: 'blue', position: bluePositions[i] });
+        battleMoves = [];
+        turnCounter = 0;
+        
+        const maxMoves = Math.max(redPigs, bluePigs);
+        for (let i = 0; i < maxMoves; i++) {
+            if (i < redPigs) {
+                battleMoves.push({ owner: 'red', cell: redPositions[i], turnNumber: ++turnCounter });
+            }
+            if (i < bluePigs) {
+                battleMoves.push({ owner: 'blue', cell: bluePositions[i], turnNumber: ++turnCounter });
+            }
         }
         
         battleIndex = 0;
         battleActive = true;
-        processNextBattleTurn();
+        processNextMove();
     }
     
-    function processNextBattleTurn() {
-        if (!gameActive || battleIndex >= battleQueue.length) {
+    function processNextMove() {
+        if (!gameActive || battleIndex >= battleMoves.length) {
+            battleActive = false;
             if (redPigs <= 0 || bluePigs <= 0) {
                 endGame();
             } else {
@@ -529,68 +522,73 @@
             return;
         }
         
-        const turn = battleQueue[battleIndex];
-        const cell = turn.position;
+        const currentMove = battleMoves[battleIndex];
         
-        renderBoard(cell, turn.owner);
+        let conflict = null;
+        for (let i = 0; i < battleIndex; i++) {
+            if (battleMoves[i].cell === currentMove.cell) {
+                conflict = battleMoves[i];
+                break;
+            }
+        }
         
-        setTimeout(() => {
-            const conflictIndex = battleQueue.findIndex((t, idx) => idx !== battleIndex && t.position === cell);
-            
-            if (conflictIndex !== -1) {
-                if (battleIndex > conflictIndex) {
-                    if (turn.owner === 'red') {
-                        redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED взорвался на клетке ${Math.floor(cell/5)+1},${cell%5+1}!`;
-                    } else {
-                        bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU взорвался на клетке ${Math.floor(cell/5)+1},${cell%5+1}!`;
-                    }
-                    updateStats();
-                    renderBoard(cell, 'explosion');
-                    setTimeout(() => {
-                        renderBoard();
-                        battleIndex++;
-                        processNextBattleTurn();
-                    }, 500);
+        if (conflict) {
+            if (currentMove.turnNumber > conflict.turnNumber) {
+                if (currentMove.owner === 'red') {
+                    redPigs--;
+                    messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED взорвался на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1} (его ход #${currentMove.turnNumber} > #${conflict.turnNumber})`;
                 } else {
+                    bluePigs--;
+                    messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU взорвался на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1} (его ход #${currentMove.turnNumber} > #${conflict.turnNumber})`;
+                }
+                updateStats();
+                renderBoard(currentMove.cell, 'explosion');
+                setTimeout(() => {
                     renderBoard();
                     battleIndex++;
-                    processNextBattleTurn();
-                }
+                    processNextMove();
+                }, 800);
             } else {
+                messageDiv.textContent = `⚠️ КОНФЛИКТ на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1} — уже учтено`;
                 renderBoard();
                 battleIndex++;
-                processNextBattleTurn();
+                processNextMove();
             }
-        }, 800);
+        } else {
+            renderBoard(currentMove.cell, currentMove.owner === 'red' ? 'red' : 'blue');
+            messageDiv.textContent = `${currentMove.owner === 'red' ? '🔴 RED' : '🔵 BLU'} поставил бомбу на ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1}`;
+            setTimeout(() => {
+                renderBoard();
+                battleIndex++;
+                processNextMove();
+            }, 600);
+        }
     }
     
     function nextRound() {
         round++;
         redPositions = [];
         bluePositions = [];
-        currentPlayer = isOnline ? myTeam : 'red';
+        currentTurn = 'red';
         currentPhase = 'selection';
         battleActive = false;
-        turnText.innerHTML = currentPlayer === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
-        messageDiv.textContent = `🎯 РАУНД ${round}! ${currentPlayer === 'red' ? 'RED' : 'BLU'} выбирает ${currentPlayer === 'red' ? redPigs : bluePigs} позиций`;
+        turnText.innerHTML = '🔴 ВЫБОР RED';
+        messageDiv.textContent = `🎯 РАУНД ${round}! RED выбирает ${redPigs} позиций`;
         renderBoard();
         
         if (isOnline && conn) {
             waitingForOpponent = false;
-            conn.send({ type: 'nextRound', redPigs: redPigs, bluePigs: bluePigs, round: round, currentPlayer: currentPlayer });
+            conn.send({ type: 'nextRound', redPigs: redPigs, bluePigs: bluePigs, round: round });
         }
     }
     
     function endGame() {
         gameActive = false;
         currentPhase = 'ended';
-        battleActive = false;
         
         let winner = '';
-        if (redPigs > bluePigs) winner = '🔴 RED ПОБЕДИЛ!';
-        else if (bluePigs > redPigs) winner = '🔵 BLU ПОБЕДИЛ!';
+        if (redPigs > 0 && bluePigs <= 0) winner = '🔴 RED ПОБЕДИЛ!';
+        else if (bluePigs > 0 && redPigs <= 0) winner = '🔵 BLU ПОБЕДИЛ!';
         else winner = '⚡ НИЧЬЯ!';
         
         resultBox.classList.remove('hidden');
@@ -622,7 +620,7 @@
         redPigs = START_PIGS;
         bluePigs = START_PIGS;
         round = 1;
-        currentPlayer = isOnline ? myTeam : 'red';
+        currentTurn = 'red';
         currentPhase = 'selection';
         gameActive = true;
         battleActive = false;
@@ -632,8 +630,8 @@
         
         redCountSpan.textContent = redPigs;
         blueCountSpan.textContent = bluePigs;
-        turnText.innerHTML = currentPlayer === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
-        messageDiv.innerHTML = `🎯 Выбери ${currentPlayer === 'red' ? redPigs : bluePigs} клеток`;
+        turnText.innerHTML = '🔴 ВЫБОР RED';
+        messageDiv.innerHTML = '🎯 Выбери 6 клеток для будущих мин';
         
         renderBoard();
         
@@ -642,30 +640,23 @@
         }
     }
     
-    // ========== ОНЛАЙН ФУНКЦИИ ==========
+    // ========== ОНЛАЙН ФУНКЦИИ (РАБОТАЮТ) ==========
     function createRoom() {
         myNick = nickInput.value.trim() || "Игрок";
         myTeam = teamSelect.value;
         opponentTeam = myTeam === 'red' ? 'blue' : 'red';
         
-        // Генерируем случайный 6-значный код
-        const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-        roomId = newRoomId;
-        
-        // Показываем код
-        roomCodeSpan.textContent = roomId;
-        roomInfoDiv.classList.remove('hidden');
-        joinDiv.classList.add('hidden');
-        waitingStatus.textContent = "⏳ Ожидание подключения...";
-        waitingStatus.style.background = "#ff9800";
-        
-        messageDiv.textContent = `🌐 Комната создана! Код: ${roomId}. Отправь его другу. Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
-        turnText.innerHTML = '🌐 ОЖИДАНИЕ';
-        
-        // Создаём Peer
         peer = new Peer();
         peer.on('open', (id) => {
-            // ID Peer не показываем, используем свой код
+            myId = id;
+            roomCodeSpan.textContent = myId;
+            roomInfoDiv.classList.remove('hidden');
+            joinDiv.classList.add('hidden');
+            waitingStatus.textContent = "⏳ Ожидание подключения...";
+            waitingStatus.style.background = "#ff9800";
+            
+            messageDiv.textContent = `🌐 Комната создана! Твой ID: ${myId}. Отправь его другу. Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
+            turnText.innerHTML = '🌐 ОЖИДАНИЕ';
         });
         
         peer.on('connection', (connection) => {
@@ -676,9 +667,6 @@
         peer.on('error', (err) => {
             messageDiv.textContent = `❌ Ошибка: ${err}`;
         });
-        
-        // Сохраняем код в localStorage для "обмена" (упрощённо)
-        localStorage.setItem('mineSwineRoom', roomId);
     }
     
     function showJoin() {
@@ -691,9 +679,9 @@
     }
     
     function joinRoom() {
-        const roomToJoin = roomCodeInput.value.trim().toUpperCase();
-        if (!roomToJoin) {
-            messageDiv.textContent = "❌ Введите код комнаты!";
+        const targetId = roomCodeInput.value.trim();
+        if (!targetId) {
+            messageDiv.textContent = "❌ Введите ID соперника!";
             return;
         }
         
@@ -701,24 +689,16 @@
         myTeam = teamSelect.value;
         opponentTeam = myTeam === 'red' ? 'blue' : 'red';
         
-        // Создаём Peer и подключаемся к хосту
         peer = new Peer();
         peer.on('open', () => {
-            // В реальности нужно знать Peer ID хоста, для демо используем localStorage
-            // Для рабочей версии нужен сигнальный сервер, но в рамках демо:
-            const hostPeerId = localStorage.getItem('mineSwineHostPeer');
-            if (hostPeerId) {
-                conn = peer.connect(hostPeerId);
-                setupConnection();
-            } else {
-                messageDiv.textContent = "❌ Не удалось найти хост. Убедитесь, что хост создал комнату.";
-            }
+            conn = peer.connect(targetId);
+            setupConnection();
             roomInfoDiv.classList.add('hidden');
             joinDiv.classList.add('hidden');
         });
         
         peer.on('error', (err) => {
-            messageDiv.textContent = `❌ Ошибка: ${err}`;
+            messageDiv.textContent = `❌ Ошибка подключения: ${err}`;
         });
     }
     
@@ -728,7 +708,7 @@
             conn.send({ type: 'init', nick: myNick, team: myTeam });
             messageDiv.textContent = `✅ Подключено! Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
             turnText.innerHTML = myTeam === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
-            currentPlayer = myTeam;
+            currentTurn = myTeam;
             generateWire();
             renderBoard();
         });
@@ -736,7 +716,7 @@
         conn.on('data', (data) => {
             if (data.type === 'init') {
                 opponentNick = data.nick;
-                messageDiv.textContent = `🤝 ${opponentNick} подключился! Игра начинается.`;
+                messageDiv.textContent = `🤝 ${opponentNick} подключился!`;
                 if (waitingStatus) {
                     waitingStatus.textContent = "✅ ПОДКЛЮЧЕНО!";
                     waitingStatus.style.background = "#4caf50";
@@ -763,15 +743,15 @@
                 redPigs = data.redPigs;
                 bluePigs = data.bluePigs;
                 round = data.round;
-                currentPlayer = data.currentPlayer;
+                currentTurn = 'red';
                 currentPhase = 'selection';
                 redPositions = [];
                 bluePositions = [];
                 waitingForOpponent = false;
                 renderBoard();
                 updateStats();
-                messageDiv.textContent = `🎯 РАУНД ${round}! ${currentPlayer === 'red' ? 'RED' : 'BLU'} выбирает позиции`;
-                turnText.innerHTML = currentPlayer === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
+                messageDiv.textContent = `🎯 РАУНД ${round}! RED выбирает ${redPigs} позиций`;
+                turnText.innerHTML = '🔴 ВЫБОР RED';
             }
             else if (data.type === 'reset') {
                 resetGame();
@@ -784,11 +764,10 @@
         });
     }
     
-    // Копирование кода
     copyCodeBtn.addEventListener('click', () => {
         if (roomCodeSpan.textContent) {
             navigator.clipboard.writeText(roomCodeSpan.textContent);
-            messageDiv.textContent = "✅ Код скопирован!";
+            messageDiv.textContent = "✅ ID скопирован!";
         }
     });
     
