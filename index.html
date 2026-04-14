@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Mine Swine | RED vs BLU | Онлайн по ID</title>
+    <title>Mine Swine | RED vs BLU | Онлайн по ссылке</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         * { user-select: none; box-sizing: border-box; }
@@ -65,24 +65,21 @@
             box-shadow: 0 4px 0 #6a3c1a;
         }
         .online-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
-        .code-box {
+        .link-box {
             background: #2d241c;
             padding: 12px;
             border-radius: 20px;
             margin-top: 12px;
             text-align: center;
         }
-        .big-code {
-            font-size: 1.2rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #f7e05e;
-            background: #1e1b16;
-            padding: 10px;
-            border-radius: 16px;
-            font-family: monospace;
-            margin: 10px 0;
+        .room-link {
+            font-size: 0.8rem;
             word-break: break-all;
+            background: #1e1b16;
+            padding: 8px;
+            border-radius: 12px;
+            margin: 10px 0;
+            color: #f7e05e;
         }
         .mode-selector {
             display: flex;
@@ -215,7 +212,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 RED vs BLU: СВИНЬИ-САПЁРЫ 💣</h1>
-        <div class="sub">Правильная механика | Онлайн по ID</div>
+        <div class="sub">Онлайн по ссылке | Выбери ник и команду</div>
 
         <div class="online-panel">
             <div style="margin-bottom: 10px;">
@@ -226,22 +223,13 @@
                 </select>
             </div>
             <button id="createRoomBtn" class="online-btn">🌎 СОЗДАТЬ КОМНАТУ</button>
-            <button id="showJoinBtn" class="online-btn">🔗 ПОДКЛЮЧИТЬСЯ</button>
             
             <div id="roomInfoDiv" class="hidden">
-                <div class="code-box">
-                    🔑 ТВОЙ ID ДЛЯ ПОДКЛЮЧЕНИЯ:
-                    <div class="big-code" id="roomCode"></div>
-                    <button id="copyCodeBtn" class="online-btn">📋 КОПИРОВАТЬ ID</button>
+                <div class="link-box">
+                    🔗 ТВОЯ ССЫЛКА ДЛЯ ПРИГЛАШЕНИЯ:
+                    <div class="room-link" id="roomLink"></div>
+                    <button id="copyLinkBtn" class="online-btn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
                     <div id="waitingStatus" class="status-online" style="margin-top:10px;">⏳ Ожидание подключения...</div>
-                </div>
-            </div>
-            
-            <div id="joinDiv" class="hidden">
-                <div class="code-box">
-                    <input type="text" id="roomCodeInput" class="online-input" placeholder="Введите ID соперника" style="width:200px;">
-                    <button id="doJoinBtn" class="online-btn">ПОДКЛЮЧИТЬСЯ</button>
-                    <button id="cancelJoinBtn" class="online-btn">ОТМЕНА</button>
                 </div>
             </div>
         </div>
@@ -268,12 +256,12 @@
         
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>💣 Онлайн: создай комнату, скопируй ID и отправь другу. Друг вставляет ID и подключается.</footer>
+        <footer>💣 Онлайн: создай комнату и отправь ссылку другу. Друг переходит по ссылке — и вы в игре!</footer>
     </div>
 </div>
 
 <script>
-    // ========== MINE SWINE — ИСПРАВЛЕННАЯ ОНЛАЙН-ВЕРСИЯ ==========
+    // ========== MINE SWINE — ОНЛАЙН ПО ССЫЛКЕ ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -318,15 +306,14 @@
     const nickInput = document.getElementById('nickInput');
     const teamSelect = document.getElementById('teamSelect');
     const createRoomBtn = document.getElementById('createRoomBtn');
-    const showJoinBtn = document.getElementById('showJoinBtn');
     const roomInfoDiv = document.getElementById('roomInfoDiv');
-    const roomCodeSpan = document.getElementById('roomCode');
-    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const roomLinkSpan = document.getElementById('roomLink');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
     const waitingStatus = document.getElementById('waitingStatus');
-    const joinDiv = document.getElementById('joinDiv');
-    const roomCodeInput = document.getElementById('roomCodeInput');
-    const doJoinBtn = document.getElementById('doJoinBtn');
-    const cancelJoinBtn = document.getElementById('cancelJoinBtn');
+    
+    // Проверяем, есть ли параметр комнаты в URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomParam = urlParams.get('room');
     
     function generateWire() {
         wireCells = [];
@@ -536,10 +523,10 @@
             if (currentMove.turnNumber > conflict.turnNumber) {
                 if (currentMove.owner === 'red') {
                     redPigs--;
-                    messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED взорвался на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1} (его ход #${currentMove.turnNumber} > #${conflict.turnNumber})`;
+                    messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED взорвался на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1}`;
                 } else {
                     bluePigs--;
-                    messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU взорвался на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1} (его ход #${currentMove.turnNumber} > #${conflict.turnNumber})`;
+                    messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU взорвался на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1}`;
                 }
                 updateStats();
                 renderBoard(currentMove.cell, 'explosion');
@@ -549,19 +536,15 @@
                     processNextMove();
                 }, 800);
             } else {
-                messageDiv.textContent = `⚠️ КОНФЛИКТ на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1} — уже учтено`;
+                messageDiv.textContent = `⚠️ КОНФЛИКТ на клетке ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1}`;
                 renderBoard();
                 battleIndex++;
                 processNextMove();
             }
         } else {
-            renderBoard(currentMove.cell, currentMove.owner === 'red' ? 'red' : 'blue');
-            messageDiv.textContent = `${currentMove.owner === 'red' ? '🔴 RED' : '🔵 BLU'} поставил бомбу на ${Math.floor(currentMove.cell/5)+1},${currentMove.cell%5+1}`;
-            setTimeout(() => {
-                renderBoard();
-                battleIndex++;
-                processNextMove();
-            }, 600);
+            renderBoard();
+            battleIndex++;
+            processNextMove();
         }
     }
     
@@ -640,7 +623,7 @@
         }
     }
     
-    // ========== ОНЛАЙН ФУНКЦИИ (РАБОТАЮТ) ==========
+    // ========== ОНЛАЙН ПО ССЫЛКЕ ==========
     function createRoom() {
         myNick = nickInput.value.trim() || "Игрок";
         myTeam = teamSelect.value;
@@ -649,13 +632,13 @@
         peer = new Peer();
         peer.on('open', (id) => {
             myId = id;
-            roomCodeSpan.textContent = myId;
+            const inviteLink = window.location.href.split('?')[0] + '?room=' + id;
+            roomLinkSpan.textContent = inviteLink;
             roomInfoDiv.classList.remove('hidden');
-            joinDiv.classList.add('hidden');
             waitingStatus.textContent = "⏳ Ожидание подключения...";
             waitingStatus.style.background = "#ff9800";
             
-            messageDiv.textContent = `🌐 Комната создана! Твой ID: ${myId}. Отправь его другу. Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
+            messageDiv.textContent = `🌐 Комната создана! Отправь ссылку другу. Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
             turnText.innerHTML = '🌐 ОЖИДАНИЕ';
         });
         
@@ -666,39 +649,6 @@
         
         peer.on('error', (err) => {
             messageDiv.textContent = `❌ Ошибка: ${err}`;
-        });
-    }
-    
-    function showJoin() {
-        joinDiv.classList.remove('hidden');
-        roomInfoDiv.classList.add('hidden');
-    }
-    
-    function cancelJoin() {
-        joinDiv.classList.add('hidden');
-    }
-    
-    function joinRoom() {
-        const targetId = roomCodeInput.value.trim();
-        if (!targetId) {
-            messageDiv.textContent = "❌ Введите ID соперника!";
-            return;
-        }
-        
-        myNick = nickInput.value.trim() || "Игрок";
-        myTeam = teamSelect.value;
-        opponentTeam = myTeam === 'red' ? 'blue' : 'red';
-        
-        peer = new Peer();
-        peer.on('open', () => {
-            conn = peer.connect(targetId);
-            setupConnection();
-            roomInfoDiv.classList.add('hidden');
-            joinDiv.classList.add('hidden');
-        });
-        
-        peer.on('error', (err) => {
-            messageDiv.textContent = `❌ Ошибка подключения: ${err}`;
         });
     }
     
@@ -764,17 +714,32 @@
         });
     }
     
-    copyCodeBtn.addEventListener('click', () => {
-        if (roomCodeSpan.textContent) {
-            navigator.clipboard.writeText(roomCodeSpan.textContent);
-            messageDiv.textContent = "✅ ID скопирован!";
+    // Если в URL есть параметр room — подключаемся автоматически
+    if (roomParam) {
+        setTimeout(() => {
+            myNick = nickInput.value.trim() || "Игрок";
+            myTeam = teamSelect.value;
+            opponentTeam = myTeam === 'red' ? 'blue' : 'red';
+            
+            peer = new Peer();
+            peer.on('open', () => {
+                conn = peer.connect(roomParam);
+                setupConnection();
+            });
+            peer.on('error', (err) => {
+                messageDiv.textContent = `❌ Ошибка подключения: ${err}`;
+            });
+        }, 500);
+    }
+    
+    copyLinkBtn.addEventListener('click', () => {
+        if (roomLinkSpan.textContent) {
+            navigator.clipboard.writeText(roomLinkSpan.textContent);
+            messageDiv.textContent = "✅ Ссылка скопирована!";
         }
     });
     
     createRoomBtn.addEventListener('click', createRoom);
-    showJoinBtn.addEventListener('click', showJoin);
-    cancelJoinBtn.addEventListener('click', cancelJoin);
-    doJoinBtn.addEventListener('click', joinRoom);
     readyBtn.addEventListener('click', finishSelection);
     resetBtn.addEventListener('click', resetGame);
     
