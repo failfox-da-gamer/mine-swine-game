@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU | Release 2.6.1</title>
+    <title>Свиньи-сапёры | RED vs BLU | Release 2.6.4</title>
     <style>
         * {
             user-select: none;
@@ -22,7 +22,6 @@
             position: relative;
         }
 
-        /* Credits в правом нижнем углу */
         .credits {
             position: fixed;
             bottom: 10px;
@@ -93,7 +92,7 @@
             font-size: 0.8rem;
         }
 
-        .settings-panel {
+        .top-panel {
             background: #1e1b16;
             border-radius: 20px;
             padding: 10px 15px;
@@ -104,11 +103,40 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+        .mode-dropdown-btn {
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            color: #f3d382;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .mode-dropdown {
+            position: absolute;
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 10;
+            display: none;
+        }
+        .mode-dropdown.show { display: block; }
+        .mode-option {
+            padding: 8px 20px;
+            color: #f3d382;
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .mode-option:hover { background: #c97e3a; color: #fff3bf; }
+        
         .settings-btn {
             background: #2d241c;
             border: 2px solid #e6b86e;
             color: #f3d382;
-            font-size: 1.2rem;
+            font-size: 1rem;
             padding: 5px 12px;
             border-radius: 40px;
             cursor: pointer;
@@ -118,7 +146,7 @@
             padding: 5px 15px;
             border-radius: 40px;
             color: #ff5e3a;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-family: monospace;
         }
         .settings-modal {
@@ -139,7 +167,7 @@
             padding: 25px;
             text-align: center;
             border: 3px solid #e6b86e;
-            min-width: 280px;
+            min-width: 300px;
         }
         .settings-modal-content input {
             background: #2d241c;
@@ -152,26 +180,9 @@
             width: 100px;
             text-align: center;
         }
-
-        .mode-selector {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        .settings-modal-content button {
+            margin: 5px;
         }
-        .mode-btn {
-            background: #2d241c;
-            border: 2px solid #e6b86e;
-            color: #f3d382;
-            font-family: inherit;
-            font-size: 0.9rem;
-            font-weight: bold;
-            padding: 5px 15px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-        .mode-btn.active { background: #c97e3a; color: #fff3bf; }
 
         .game-layout {
             display: flex;
@@ -303,7 +314,6 @@
             border-radius: 40px;
             cursor: pointer;
             box-shadow: 0 4px 0 #6a3c1a;
-            margin-top: 8px;
         }
         button:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
 
@@ -344,17 +354,20 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Release 2.6.1 — Таймер и настройки</div>
+        <div class="sub">Release 2.6.4 — Новая игра в настройках</div>
 
-        <div class="settings-panel">
-            <div class="settings-btn" id="settingsBtn">⚙️ НАСТРОЙКИ</div>
-            <div class="timer-display" id="timerDisplay">⏱️ ∞</div>
-        </div>
-
-        <div class="mode-selector">
-            <div class="mode-btn active" data-mode="2p">👥 2 ИГРОКА</div>
-            <div class="mode-btn" data-mode="ai">🤖 ПРОТИВ AI</div>
-            <button id="resetBtn">🔄 НОВАЯ ИГРА</button>
+        <div class="top-panel">
+            <div style="position: relative;">
+                <div class="mode-dropdown-btn" id="modeBtn">🎮 ВЫБРАТЬ РЕЖИМ</div>
+                <div class="mode-dropdown" id="modeDropdown">
+                    <div class="mode-option" data-mode="2p">👥 2 ИГРОКА</div>
+                    <div class="mode-option" data-mode="ai">🤖 ПРОТИВ AI</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="settings-btn" id="settingsBtn">⚙️ НАСТРОЙКИ</div>
+                <div class="timer-display" id="timerDisplay">⏱️ ∞</div>
+            </div>
         </div>
 
         <div class="game-layout">
@@ -379,17 +392,16 @@
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 2.6.1 — Таймер в настройках (⚙️) | При 1×1 таймер решает исход!</footer>
+        <footer>🐗🐷 Release 2.6.4 — Новая игра в настройках</footer>
     </div>
 </div>
 
-<!-- Credits в правом нижнем углу -->
 <div class="credits">
     🐷 СВИНЬИ-САПЁРЫ | Идея: Максим Гриневич | Код: DeepSeek | Тест: Роман Чуманов | Оригинал: Happy Beacon Games
 </div>
 
 <script>
-    // ========== RELEASE 2.6.1 — ТАЙМЕР И НАСТРОЙКИ (ИСПРАВЛЕН) ==========
+    // ========== RELEASE 2.6.4 — НОВАЯ ИГРА В НАСТРОЙКАХ ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -420,9 +432,10 @@
     const messageDiv = document.getElementById('message');
     const readyBtn = document.getElementById('readyBtn');
     const resultBox = document.getElementById('resultBox');
-    const resetBtn = document.getElementById('resetBtn');
     const settingsBtn = document.getElementById('settingsBtn');
     const timerDisplay = document.getElementById('timerDisplay');
+    const modeBtn = document.getElementById('modeBtn');
+    const modeDropdown = document.getElementById('modeDropdown');
     
     function showSettings() {
         let modal = document.createElement('div');
@@ -435,8 +448,10 @@
                     <input type="number" id="timerInput" min="0" max="300" value="${timerSeconds === 0 ? 0 : timerSeconds}" style="margin-top:8px;">
                     <div style="font-size:0.7rem; color:#aaa; margin-top:5px;">0 = бесконечно</div>
                 </div>
-                <button id="saveSettingsBtn" style="background:#4caf50;">💾 СОХРАНИТЬ</button>
-                <button id="closeSettingsBtn" style="margin-left:10px;">❌ ЗАКРЫТЬ</button>
+                <hr style="border-color:#846b4a; margin:15px 0;">
+                <button id="resetFromSettingsBtn" style="background:#ff5e3a;">🔄 НОВАЯ ИГРА</button>
+                <button id="saveSettingsBtn" style="background:#4caf50;">💾 СОХРАНИТЬ ТАЙМЕР</button>
+                <button id="closeSettingsBtn">❌ ЗАКРЫТЬ</button>
             </div>
         `;
         document.body.appendChild(modal);
@@ -458,6 +473,11 @@
             modal.remove();
         });
         
+        document.getElementById('resetFromSettingsBtn').addEventListener('click', () => {
+            resetGame();
+            modal.remove();
+        });
+        
         document.getElementById('closeSettingsBtn').addEventListener('click', () => {
             modal.remove();
         });
@@ -469,7 +489,6 @@
             timerInterval = null;
         }
         timerActive = false;
-        // Убираем сообщение о таймере из message, сохраняя остальное
         let msg = messageDiv.innerHTML;
         if (msg.includes('⏰')) {
             messageDiv.innerHTML = msg.replace(/ ⏰ \d+с/, '');
@@ -482,7 +501,6 @@
         
         let timeLeft = timerSeconds;
         timerActive = true;
-        // Очищаем старое сообщение о таймере
         let msg = messageDiv.innerHTML;
         if (msg.includes('⏰')) {
             msg = msg.replace(/ ⏰ \d+с/, '');
@@ -790,15 +808,30 @@
     function endGame() {
         gameActive = false;
         let winner = '';
-        if (redPigs > 0 && bluePigs <= 0) winner = '🔴 RED ПОБЕДИЛ! 🐷';
-        else if (bluePigs > 0 && redPigs <= 0) winner = '🔵 BLU ПОБЕДИЛ! 🐗';
-        else winner = '⚡ НИЧЬЯ!';
+        let title = '';
+        let subtitle = '';
+        
+        if (redPigs > bluePigs) {
+            winner = '🔴 RED ПОБЕДИЛ! 🐷';
+            title = 'ПОБЕДА RED';
+            subtitle = 'Свиньи оказались сильнее!';
+        } else if (bluePigs > redPigs) {
+            winner = '🔵 BLU ПОБЕДИЛ! 🐗';
+            title = 'ПОБЕДА BLU';
+            subtitle = 'Кабаны показали класс!';
+        } else {
+            winner = '⚡ НИЧЬЯ! ⚡';
+            title = 'НИЧЬЯ';
+            subtitle = 'ВЫ ВСЕ НЕУДАЧНИКИ';
+        }
         
         resetTimer();
         
         resultBox.classList.remove('hidden');
         resultBox.innerHTML = `
             <div style="font-size:1.2rem;">🏆 ${winner} 🏆</div>
+            <div style="font-size:1rem; margin-top:5px;">${title}</div>
+            <div style="font-size:0.9rem; color:#ffaa44; margin-bottom:10px;">${subtitle}</div>
             <div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div>
             <div>Раундов сыграно: ${round}</div>
             <button id="playAgainBtn" style="margin-top:12px;">🎮 СЫГРАТЬ ЕЩЁ</button>
@@ -828,18 +861,27 @@
         renderTroops();
     }
     
-    settingsBtn.addEventListener('click', showSettings);
-    readyBtn.addEventListener('click', finishSelection);
-    resetBtn.addEventListener('click', resetGame);
+    // Выпадающее меню выбора режима
+    modeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modeDropdown.classList.toggle('show');
+    });
     
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            gameMode = btn.getAttribute('data-mode');
+    document.querySelectorAll('.mode-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            const mode = opt.getAttribute('data-mode');
+            gameMode = mode;
+            modeDropdown.classList.remove('show');
             resetGame();
         });
     });
+    
+    document.addEventListener('click', () => {
+        modeDropdown.classList.remove('show');
+    });
+    
+    settingsBtn.addEventListener('click', showSettings);
+    readyBtn.addEventListener('click', finishSelection);
     
     generateWire();
     renderBoard();
