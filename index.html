@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU | Release 2.2</title>
+    <title>Свиньи-сапёры | RED vs BLU | Release 2.6.1</title>
     <style>
         * {
             user-select: none;
@@ -19,6 +19,23 @@
             align-items: center;
             font-family: 'Impact', 'Arial Black', sans-serif;
             padding: 20px;
+            position: relative;
+        }
+
+        /* Credits в правом нижнем углу */
+        .credits {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: #dbb87c;
+            font-size: 0.6rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-family: monospace;
+            z-index: 100;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
         }
 
         .cloud {
@@ -76,45 +93,85 @@
             font-size: 0.8rem;
         }
 
-        /* Выбор режима */
-        .mode-container {
+        .settings-panel {
+            background: #1e1b16;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
             display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            position: relative;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .mode-dropdown-btn {
-            background: #c97e3a;
-            border: 2px solid #e6b86e;
-            color: #f7e6b0;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
-        }
-        .mode-dropdown-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
-        .mode-dropdown {
-            position: absolute;
-            top: 50px;
+        .settings-btn {
             background: #2d241c;
             border: 2px solid #e6b86e;
-            border-radius: 20px;
-            overflow: hidden;
-            z-index: 10;
-            display: none;
-        }
-        .mode-dropdown.show { display: block; }
-        .mode-option {
-            padding: 10px 25px;
             color: #f3d382;
+            font-size: 1.2rem;
+            padding: 5px 12px;
+            border-radius: 40px;
             cursor: pointer;
-            font-size: 0.9rem;
-            white-space: nowrap;
         }
-        .mode-option:hover { background: #c97e3a; color: #fff3bf; }
+        .timer-display {
+            background: #1a1510;
+            padding: 5px 15px;
+            border-radius: 40px;
+            color: #ff5e3a;
+            font-size: 1.2rem;
+            font-family: monospace;
+        }
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        .settings-modal-content {
+            background: #3c2c1f;
+            border-radius: 40px;
+            padding: 25px;
+            text-align: center;
+            border: 3px solid #e6b86e;
+            min-width: 280px;
+        }
+        .settings-modal-content input {
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            color: #f3d382;
+            font-family: inherit;
+            font-size: 1.2rem;
+            padding: 8px 15px;
+            border-radius: 30px;
+            width: 100px;
+            text-align: center;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            color: #f3d382;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .mode-btn.active { background: #c97e3a; color: #fff3bf; }
 
         .game-layout {
             display: flex;
@@ -273,6 +330,13 @@
             margin-top: 12px;
             text-align: center;
         }
+        .ready-btn {
+            background: #4caf50;
+            box-shadow: 0 4px 0 #2e7d32;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .hidden { display: none; }
     </style>
 </head>
@@ -280,14 +344,17 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Правильные конфликты — взрывается только последний заложивший!</div>
+        <div class="sub">Release 2.6.1 — Таймер и настройки</div>
 
-        <div class="mode-container">
-            <button class="mode-dropdown-btn" id="modeBtn">🎮 ВЫБРАТЬ РЕЖИМ</button>
-            <div class="mode-dropdown" id="modeDropdown">
-                <div class="mode-option" data-mode="2p">👥 2 ИГРОКА</div>
-                <div class="mode-option" data-mode="ai">🤖 ПРОТИВ AI</div>
-            </div>
+        <div class="settings-panel">
+            <div class="settings-btn" id="settingsBtn">⚙️ НАСТРОЙКИ</div>
+            <div class="timer-display" id="timerDisplay">⏱️ ∞</div>
+        </div>
+
+        <div class="mode-selector">
+            <div class="mode-btn active" data-mode="2p">👥 2 ИГРОКА</div>
+            <div class="mode-btn" data-mode="ai">🤖 ПРОТИВ AI</div>
+            <button id="resetBtn">🔄 НОВАЯ ИГРА</button>
         </div>
 
         <div class="game-layout">
@@ -306,19 +373,23 @@
 
         <div class="game-info">
             <div class="turn-indicator" id="turnText">🔴 ВЫБОР RED</div>
-            <button id="resetBtn">🔄 НОВАЯ ИГРА</button>
         </div>
 
         <div class="message" id="message">🎯 RED выбирает 6 позиций (противник не видит)</div>
-        <button id="readyBtn" class="ready-btn hidden" style="background:#4caf50; display:none;">✅ ЗАКОНЧИЛ ВЫБОР</button>
+        <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 2.2 — При конфликте взрывается только тот, кто заложил бомбу ПОСЛЕДНИМ!</footer>
+        <footer>🐗🐷 Release 2.6.1 — Таймер в настройках (⚙️) | При 1×1 таймер решает исход!</footer>
     </div>
 </div>
 
+<!-- Credits в правом нижнем углу -->
+<div class="credits">
+    🐷 СВИНЬИ-САПЁРЫ | Идея: Максим Гриневич | Код: DeepSeek | Тест: Роман Чуманов | Оригинал: Happy Beacon Games
+</div>
+
 <script>
-    // ========== RELEASE 2.2 — ПРАВИЛЬНЫЕ КОНФЛИКТЫ (ВЗРЫВАЕТСЯ ТОЛЬКО ПОСЛЕДНИЙ) ==========
+    // ========== RELEASE 2.6.1 — ТАЙМЕР И НАСТРОЙКИ (ИСПРАВЛЕН) ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -328,17 +399,18 @@
     let gameActive = true;
     let gameMode = '2p';
     let phase = 'selection';
-    let currentSelector = 'red';
+    let currentTurn = 'red';
     
     let redPositions = [];
     let bluePositions = [];
-    
     let redPigs = START_PIGS;
     let bluePigs = START_PIGS;
+    let mines = new Map();
     
-    let placedMines = new Map();
-    let battleQueue = [];
-    let battleIndex = 0;
+    // Таймер
+    let timerSeconds = 0;
+    let timerInterval = null;
+    let timerActive = false;
     
     // DOM
     const boardEl = document.getElementById('board');
@@ -349,8 +421,110 @@
     const readyBtn = document.getElementById('readyBtn');
     const resultBox = document.getElementById('resultBox');
     const resetBtn = document.getElementById('resetBtn');
-    const modeBtn = document.getElementById('modeBtn');
-    const modeDropdown = document.getElementById('modeDropdown');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
+    
+    function showSettings() {
+        let modal = document.createElement('div');
+        modal.className = 'settings-modal';
+        modal.innerHTML = `
+            <div class="settings-modal-content">
+                <h2 style="color:#f7e05e;">⚙️ НАСТРОЙКИ</h2>
+                <div style="margin: 15px 0;">
+                    <label style="color:#ffd78c;">⏱️ ТАЙМЕР (секунд):</label><br>
+                    <input type="number" id="timerInput" min="0" max="300" value="${timerSeconds === 0 ? 0 : timerSeconds}" style="margin-top:8px;">
+                    <div style="font-size:0.7rem; color:#aaa; margin-top:5px;">0 = бесконечно</div>
+                </div>
+                <button id="saveSettingsBtn" style="background:#4caf50;">💾 СОХРАНИТЬ</button>
+                <button id="closeSettingsBtn" style="margin-left:10px;">❌ ЗАКРЫТЬ</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+            const val = parseInt(document.getElementById('timerInput').value);
+            if (!isNaN(val) && val >= 0) {
+                timerSeconds = val;
+                if (timerSeconds === 0) {
+                    timerDisplay.innerHTML = '⏱️ ∞';
+                } else {
+                    timerDisplay.innerHTML = `⏱️ ${timerSeconds}с`;
+                }
+                resetTimer();
+                if (timerSeconds > 0 && gameActive && redPigs === 1 && bluePigs === 1) {
+                    startTimer();
+                }
+            }
+            modal.remove();
+        });
+        
+        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+            modal.remove();
+        });
+    }
+    
+    function resetTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        timerActive = false;
+        // Убираем сообщение о таймере из message, сохраняя остальное
+        let msg = messageDiv.innerHTML;
+        if (msg.includes('⏰')) {
+            messageDiv.innerHTML = msg.replace(/ ⏰ \d+с/, '');
+        }
+    }
+    
+    function startTimer() {
+        if (timerSeconds <= 0) return;
+        if (timerInterval) clearInterval(timerInterval);
+        
+        let timeLeft = timerSeconds;
+        timerActive = true;
+        // Очищаем старое сообщение о таймере
+        let msg = messageDiv.innerHTML;
+        if (msg.includes('⏰')) {
+            msg = msg.replace(/ ⏰ \d+с/, '');
+        }
+        messageDiv.innerHTML = msg + ` ⏰ ${timeLeft}с`;
+        
+        timerInterval = setInterval(() => {
+            if (!gameActive || redPigs !== 1 || bluePigs !== 1) {
+                resetTimer();
+                return;
+            }
+            timeLeft--;
+            let currentMsg = messageDiv.innerHTML;
+            if (currentMsg.includes('⏰')) {
+                currentMsg = currentMsg.replace(/⏰ \d+с/, `⏰ ${timeLeft}с`);
+                messageDiv.innerHTML = currentMsg;
+            } else {
+                messageDiv.innerHTML = currentMsg + ` ⏰ ${timeLeft}с`;
+            }
+            
+            if (timeLeft <= 0) {
+                resetTimer();
+                messageDiv.innerHTML = "⏰ ТАЙМЕР ВЫШЕЛ! НИЧЬЯ! ⏰";
+                gameActive = false;
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div style="font-size:1.2rem;">🏆 НИЧЬЯ ПО ТАЙМЕРУ 🏆</div>
+                    <div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div>
+                    <button id="playAgainBtn" style="margin-top:12px;">🎮 СЫГРАТЬ ЕЩЁ</button>
+                `;
+                turnText.innerHTML = '⚡ НИЧЬЯ ПО ТАЙМЕРУ';
+                document.getElementById('playAgainBtn')?.addEventListener('click', () => resetGame());
+            }
+        }, 1000);
+    }
+    
+    function checkTimerCondition() {
+        resetTimer();
+        if (timerSeconds > 0 && gameActive && redPigs === 1 && bluePigs === 1) {
+            startTimer();
+        }
+    }
     
     function generateWire() {
         wireCells = [];
@@ -378,6 +552,7 @@
             pig.textContent = '🐗';
             blueTroopEl.appendChild(pig);
         }
+        checkTimerCondition();
     }
     
     function renderBoard() {
@@ -391,10 +566,10 @@
                 cell.textContent = '⚡';
             } 
             else if (phase === 'selection') {
-                if (currentSelector === 'red' && redPositions.includes(i)) {
+                if (currentTurn === 'red' && redPositions.includes(i)) {
                     cell.classList.add('selected-red');
                     cell.textContent = '🐷';
-                } else if (currentSelector === 'blue' && bluePositions.includes(i)) {
+                } else if (currentTurn === 'blue' && bluePositions.includes(i)) {
                     cell.classList.add('selected-blue');
                     cell.textContent = '🐗';
                 } else {
@@ -402,7 +577,7 @@
                 }
             }
             else if (phase === 'battle') {
-                const mine = placedMines.get(i);
+                const mine = mines.get(i);
                 if (mine) {
                     cell.classList.add(mine.owner === 'red' ? 'placed-mine-red' : 'placed-mine-blue');
                     cell.innerHTML = `${mine.owner === 'red' ? '🐷' : '🐗'}<div style="font-size:0.7rem;">${mine.number}</div>`;
@@ -412,8 +587,12 @@
             }
             
             let canClick = false;
-            if (phase === 'selection' && gameActive && !wireCells.includes(i)) {
-                canClick = true;
+            if (phase === 'selection' && !wireCells.includes(i) && gameActive) {
+                if (gameMode === '2p') {
+                    canClick = true;
+                } else if (gameMode === 'ai' && currentTurn === 'red') {
+                    canClick = true;
+                }
             }
             
             if (canClick) {
@@ -430,22 +609,28 @@
         if (!gameActive || phase !== 'selection') return;
         if (wireCells.includes(idx)) return;
         
-        const positions = currentSelector === 'red' ? redPositions : bluePositions;
-        const maxPigs = currentSelector === 'red' ? redPigs : bluePigs;
+        let positions, maxPigs;
+        if (gameMode === '2p') {
+            positions = currentTurn === 'red' ? redPositions : bluePositions;
+            maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
+        } else {
+            positions = redPositions;
+            maxPigs = redPigs;
+        }
         
         if (positions.includes(idx)) {
             const pos = positions.indexOf(idx);
             positions.splice(pos, 1);
-            messageDiv.textContent = `${currentSelector === 'red' ? '🔴 RED' : '🔵 BLU'} убрал позицию (${positions.length}/${maxPigs})`;
+            messageDiv.textContent = `${currentTurn === 'red' ? '🔴 RED' : '🔵 BLU'} убрал позицию (${positions.length}/${maxPigs})`;
         } else {
             if (positions.length < maxPigs) {
                 positions.push(idx);
-                messageDiv.textContent = `${currentSelector === 'red' ? '🔴 RED' : '🔵 BLU'} выбрал позицию (${positions.length}/${maxPigs})`;
+                messageDiv.textContent = `${currentTurn === 'red' ? '🔴 RED' : '🔵 BLU'} выбрал позицию (${positions.length}/${maxPigs})`;
                 const cellDiv = boardEl.children[idx];
                 if (cellDiv) {
-                    cellDiv.classList.add(currentSelector === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    cellDiv.classList.add(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
                     setTimeout(() => {
-                        if (cellDiv) cellDiv.classList.remove(currentSelector === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                        if (cellDiv) cellDiv.classList.remove(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
                     }, 400);
                 }
             } else {
@@ -457,70 +642,65 @@
         renderBoard();
         
         if (positions.length === maxPigs) {
-            readyBtn.style.display = 'block';
+            readyBtn.classList.remove('hidden');
             messageDiv.textContent = `✅ Выбрано ${maxPigs} позиций! Нажми "ЗАКОНЧИЛ ВЫБОР"`;
         } else {
-            readyBtn.style.display = 'none';
+            readyBtn.classList.add('hidden');
         }
     }
     
     function finishSelection() {
         if (phase !== 'selection') return;
         
-        const positions = currentSelector === 'red' ? redPositions : bluePositions;
-        const maxPigs = currentSelector === 'red' ? redPigs : bluePigs;
-        
-        if (positions.length !== maxPigs) {
-            messageDiv.textContent = `❌ Нужно выбрать ровно ${maxPigs} позиций! (выбрано ${positions.length})`;
-            return;
-        }
-        
-        if (currentSelector === 'red') {
-            currentSelector = 'blue';
-            readyBtn.style.display = 'none';
-            messageDiv.textContent = `🔵 BLU выбирает ${bluePigs} позиций (противник не видит)`;
-            turnText.innerHTML = '🔵 ВЫБОР BLU';
-            renderBoard();
+        if (gameMode === '2p') {
+            const positions = currentTurn === 'red' ? redPositions : bluePositions;
+            const maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
+            if (positions.length !== maxPigs) return;
             
-            if (gameMode === 'ai') {
-                setTimeout(() => aiSelectPositions(), 300);
+            if (currentTurn === 'red') {
+                currentTurn = 'blue';
+                readyBtn.classList.add('hidden');
+                messageDiv.textContent = `🔵 BLU выбирает ${bluePigs} позиций`;
+                turnText.innerHTML = '🔵 ВЫБОР BLU';
+                renderBoard();
+            } else {
+                startBattle();
             }
-        } else {
-            startBattle();
+        } 
+        else if (gameMode === 'ai') {
+            if (redPositions.length !== redPigs) return;
+            readyBtn.classList.add('hidden');
+            messageDiv.textContent = "🤖 AI выбирает позиции...";
+            
+            setTimeout(() => {
+                bluePositions = [];
+                let available = [];
+                for (let i = 0; i < TOTAL_CELLS; i++) {
+                    if (!wireCells.includes(i) && !redPositions.includes(i)) {
+                        available.push(i);
+                    }
+                }
+                for (let i = available.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [available[i], available[j]] = [available[j], available[i]];
+                }
+                for (let i = 0; i < bluePigs && i < available.length; i++) {
+                    bluePositions.push(available[i]);
+                }
+                startBattle();
+            }, 500);
         }
-    }
-    
-    function aiSelectPositions() {
-        if (phase !== 'selection' || currentSelector !== 'blue') return;
-        
-        bluePositions = [];
-        let available = [];
-        for (let i = 0; i < TOTAL_CELLS; i++) {
-            if (!wireCells.includes(i)) {
-                available.push(i);
-            }
-        }
-        for (let i = available.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [available[i], available[j]] = [available[j], available[i]];
-        }
-        for (let i = 0; i < bluePigs && i < available.length; i++) {
-            bluePositions.push(available[i]);
-        }
-        messageDiv.textContent = `🤖 AI выбрал ${bluePositions.length} позиций`;
-        renderBoard();
-        finishSelection();
     }
     
     function startBattle() {
         phase = 'battle';
-        readyBtn.style.display = 'none';
+        readyBtn.classList.add('hidden');
         messageDiv.textContent = `⚔️ РАУНД ${round}! Битва начинается...`;
         turnText.innerHTML = '⚔️ БИТВА';
         
-        placedMines.clear();
+        mines.clear();
         
-        battleQueue = [];
+        let battleQueue = [];
         for (let i = 1; i <= START_PIGS; i++) {
             if (i <= redPigs && i-1 < redPositions.length) {
                 battleQueue.push({ owner: 'red', cell: redPositions[i-1], number: i });
@@ -530,89 +710,41 @@
             }
         }
         
-        battleIndex = 0;
-        processNextBattleMove();
-    }
-    
-    function showTemporaryMine(cell, owner, number, onComplete) {
-        const cellDiv = boardEl.children[cell];
-        if (cellDiv) {
-            cellDiv.classList.add(owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
-            cellDiv.innerHTML = `${owner === 'red' ? '🐷' : '🐗'}<div style="font-size:0.7rem;">${number}</div>`;
+        let index = 0;
+        
+        function processNext() {
+            if (index >= battleQueue.length) {
+                if (redPigs <= 0 || bluePigs <= 0) {
+                    endGame();
+                } else {
+                    nextRound();
+                }
+                return;
+            }
             
-            setTimeout(() => {
-                if (cellDiv) {
-                    cellDiv.classList.remove(owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
-                }
-                if (onComplete) onComplete();
-            }, 600);
-        } else {
-            if (onComplete) onComplete();
-        }
-    }
-    
-    function processNextBattleMove() {
-        if (battleIndex >= battleQueue.length) {
-            if (redPigs <= 0 || bluePigs <= 0) {
-                endGame();
-            } else {
-                nextRound();
-            }
-            return;
-        }
-        
-        const move = battleQueue[battleIndex];
-        
-        // Проверяем конфликт
-        let conflict = null;
-        for (let [cell, mine] of placedMines) {
-            if (cell === move.cell) {
-                conflict = mine;
-                break;
-            }
-        }
-        
-        if (conflict) {
-            // Конфликт! Взрывается тот, у кого номер БОЛЬШЕ (кто заложил последним)
-            showTemporaryMine(move.cell, move.owner, move.number, () => {
+            const move = battleQueue[index];
+            const conflict = mines.get(move.cell);
+            
+            if (conflict) {
                 if (move.number > conflict.number) {
-                    // Текущий взрывается (он заложил позже)
-                    if (move.owner === 'red') {
-                        redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐷 RED (№${move.number}) заложил позже чем 🐗 BLU (№${conflict.number}) → RED взорвался!`;
-                    } else {
-                        bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐗 BLU (№${move.number}) заложил позже чем 🐷 RED (№${conflict.number}) → BLU взорвался!`;
-                    }
-                    renderTroops();
-                    // Бомба не ставится, конфликтная клетка остаётся с бомбой конфликта
-                } 
-                else if (conflict.number > move.number) {
-                    // Конфликтный взрывается (он заложил позже)
-                    if (conflict.owner === 'red') {
-                        redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐷 RED (№${conflict.number}) заложил позже чем 🐗 BLU (№${move.number}) → RED взорвался!`;
-                    } else {
-                        bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐗 BLU (№${conflict.number}) заложил позже чем 🐷 RED (№${move.number}) → BLU взорвался!`;
-                    }
-                    // Заменяем бомбу на новую (текущий ставит свою)
-                    placedMines.delete(move.cell);
-                    placedMines.set(move.cell, { owner: move.owner, number: move.number });
-                    renderTroops();
-                }
-                else {
-                    // Равные номера — такого не может быть, но на всякий случай
+                    if (move.owner === 'red') redPigs--;
+                    else bluePigs--;
+                    messageDiv.textContent = `💥 ${move.owner === 'red' ? '🔴 RED' : '🔵 BLU'} взорвался!`;
+                } else if (conflict.number > move.number) {
+                    if (conflict.owner === 'red') redPigs--;
+                    else bluePigs--;
+                    mines.set(move.cell, { owner: move.owner, number: move.number });
+                    messageDiv.textContent = `💥 ${conflict.owner === 'red' ? '🔴 RED' : '🔵 BLU'} взорвался!`;
+                } else {
                     if (move.owner === 'red') redPigs--;
                     else bluePigs--;
                     if (conflict.owner === 'red') redPigs--;
                     else bluePigs--;
-                    messageDiv.textContent = `💥 КОНФЛИКТ! Обе бомбы №${move.number} взорвались!`;
-                    placedMines.delete(move.cell);
-                    renderTroops();
+                    mines.delete(move.cell);
+                    messageDiv.textContent = `💥 Обе бомбы №${move.number} взорвались!`;
                 }
+                renderTroops();
                 
-                // Показываем взрыв
                 const cellDiv = boardEl.children[move.cell];
                 if (cellDiv) {
                     cellDiv.classList.add('explosion');
@@ -620,35 +752,37 @@
                     setTimeout(() => {
                         if (cellDiv) cellDiv.classList.remove('explosion');
                         renderBoard();
-                        battleIndex++;
-                        processNextBattleMove();
-                    }, 500);
-                } else {
-                    battleIndex++;
-                    processNextBattleMove();
+                    }, 300);
                 }
-            });
-        } else {
-            // Нет конфликта — ставим бомбу
-            showTemporaryMine(move.cell, move.owner, move.number, () => {
-                placedMines.set(move.cell, { owner: move.owner, number: move.number });
-                renderBoard();
-                battleIndex++;
-                processNextBattleMove();
-            });
+            } else {
+                mines.set(move.cell, { owner: move.owner, number: move.number });
+                const cellDiv = boardEl.children[move.cell];
+                if (cellDiv) {
+                    cellDiv.classList.add(move.owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    cellDiv.innerHTML = `${move.owner === 'red' ? '🐷' : '🐗'}<div style="font-size:0.7rem;">${move.number}</div>`;
+                    setTimeout(() => {
+                        if (cellDiv) cellDiv.classList.remove(move.owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                        renderBoard();
+                    }, 400);
+                }
+            }
+            
+            index++;
+            setTimeout(processNext, 600);
         }
+        
+        processNext();
     }
     
     function nextRound() {
         round++;
         redPositions = [];
         bluePositions = [];
-        placedMines.clear();
-        currentSelector = 'red';
+        mines.clear();
+        currentTurn = 'red';
         phase = 'selection';
-        
+        messageDiv.textContent = `🎯 РАУНД ${round}! RED выбирает ${redPigs} позиций`;
         turnText.innerHTML = '🔴 ВЫБОР RED';
-        messageDiv.innerHTML = `🎯 РАУНД ${round}! RED выбирает ${redPigs} позиций (противник не видит)`;
         renderBoard();
         renderTroops();
     }
@@ -659,6 +793,8 @@
         if (redPigs > 0 && bluePigs <= 0) winner = '🔴 RED ПОБЕДИЛ! 🐷';
         else if (bluePigs > 0 && redPigs <= 0) winner = '🔵 BLU ПОБЕДИЛ! 🐗';
         else winner = '⚡ НИЧЬЯ!';
+        
+        resetTimer();
         
         resultBox.classList.remove('hidden');
         resultBox.innerHTML = `
@@ -672,18 +808,19 @@
     }
     
     function resetGame() {
+        resetTimer();
         generateWire();
         redPositions = [];
         bluePositions = [];
-        placedMines.clear();
+        mines.clear();
         redPigs = START_PIGS;
         bluePigs = START_PIGS;
         round = 1;
-        currentSelector = 'red';
+        currentTurn = 'red';
         phase = 'selection';
         gameActive = true;
         resultBox.classList.add('hidden');
-        readyBtn.style.display = 'none';
+        readyBtn.classList.add('hidden');
         
         turnText.innerHTML = '🔴 ВЫБОР RED';
         messageDiv.innerHTML = '🎯 RED выбирает 6 позиций (противник не видит)';
@@ -691,26 +828,18 @@
         renderTroops();
     }
     
-    modeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        modeDropdown.classList.toggle('show');
-    });
+    settingsBtn.addEventListener('click', showSettings);
+    readyBtn.addEventListener('click', finishSelection);
+    resetBtn.addEventListener('click', resetGame);
     
-    document.querySelectorAll('.mode-option').forEach(opt => {
-        opt.addEventListener('click', (e) => {
-            const mode = opt.getAttribute('data-mode');
-            gameMode = mode;
-            modeDropdown.classList.remove('show');
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            gameMode = btn.getAttribute('data-mode');
             resetGame();
         });
     });
-    
-    document.addEventListener('click', () => {
-        modeDropdown.classList.remove('show');
-    });
-    
-    readyBtn.addEventListener('click', finishSelection);
-    resetBtn.addEventListener('click', resetGame);
     
     generateWire();
     renderBoard();
