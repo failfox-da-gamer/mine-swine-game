@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Mine Swine | RED vs BLU | Release 2.4</title>
+    <title>Свиньи-сапёры | RED vs BLU | Release 2.2</title>
     <style>
         * {
             user-select: none;
@@ -76,25 +76,45 @@
             font-size: 0.8rem;
         }
 
-        .mode-selector {
+        /* Выбор режима */
+        .mode-container {
             display: flex;
-            gap: 10px;
             justify-content: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            position: relative;
         }
-        .mode-btn {
-            background: #2d241c;
+        .mode-dropdown-btn {
+            background: #c97e3a;
             border: 2px solid #e6b86e;
-            color: #f3d382;
+            color: #f7e6b0;
             font-family: inherit;
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: bold;
-            padding: 5px 15px;
+            padding: 8px 25px;
             border-radius: 40px;
             cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
         }
-        .mode-btn.active { background: #c97e3a; color: #fff3bf; }
+        .mode-dropdown-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .mode-dropdown {
+            position: absolute;
+            top: 50px;
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 10;
+            display: none;
+        }
+        .mode-dropdown.show { display: block; }
+        .mode-option {
+            padding: 10px 25px;
+            color: #f3d382;
+            cursor: pointer;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .mode-option:hover { background: #c97e3a; color: #fff3bf; }
 
         .game-layout {
             display: flex;
@@ -176,15 +196,11 @@
         }
         .cell.selected-red { background: #ff6b4a; box-shadow: 0 0 0 3px #ffcc66; }
         .cell.selected-blue { background: #6bb5ff; box-shadow: 0 0 0 3px #ffcc66; }
+        .cell.placed-mine-red { background: #ff6b4a; color: white; }
+        .cell.placed-mine-blue { background: #6bb5ff; color: white; }
         .cell.temp-mine-red { background: #ff6b4a; animation: blink-red 0.3s ease-in-out 2; }
         .cell.temp-mine-blue { background: #6bb5ff; animation: blink-blue 0.3s ease-in-out 2; }
         .cell.explosion { background: #ff5e3a; animation: shake 0.2s ease-in-out 0s 2; }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
-        }
 
         @keyframes blink-red {
             0% { background-color: #ff6b4a; }
@@ -195,6 +211,11 @@
             0% { background-color: #6bb5ff; }
             50% { background-color: #0033cc; box-shadow: 0 0 20px 10px rgba(0,51,204,0.9); }
             100% { background-color: #6bb5ff; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
         }
 
         .game-info {
@@ -240,9 +261,9 @@
 
         footer {
             text-align: center;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             margin-top: 20px;
-            color: #aa8b60;
+            color: #dbb87c;
         }
 
         .result-box {
@@ -258,12 +279,15 @@
 <body>
 <div class="game-container">
     <div class="tf2-panel">
-        <h1>🐷 RED vs BLU: СВИНЬИ-САПЁРЫ 💣</h1>
-        <div class="sub">Release 2.4 — Бомбы видны лишь мгновение</div>
+        <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
+        <div class="sub">Правильные конфликты — взрывается только последний заложивший!</div>
 
-        <div class="mode-selector">
-            <div class="mode-btn active" data-mode="2p">👥 2 ИГРОКА</div>
-            <div class="mode-btn" data-mode="ai">🤖 ПРОТИВ AI</div>
+        <div class="mode-container">
+            <button class="mode-dropdown-btn" id="modeBtn">🎮 ВЫБРАТЬ РЕЖИМ</button>
+            <div class="mode-dropdown" id="modeDropdown">
+                <div class="mode-option" data-mode="2p">👥 2 ИГРОКА</div>
+                <div class="mode-option" data-mode="ai">🤖 ПРОТИВ AI</div>
+            </div>
         </div>
 
         <div class="game-layout">
@@ -288,12 +312,13 @@
         <div class="message" id="message">🎯 RED выбирает 6 позиций (противник не видит)</div>
         <button id="readyBtn" class="ready-btn hidden" style="background:#4caf50; display:none;">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
-        <footer>💣 Бомбы показываются на 1 секунду, потом исчезают! Конфликт — по номерам.</footer>
+
+        <footer>🐗🐷 Release 2.2 — При конфликте взрывается только тот, кто заложил бомбу ПОСЛЕДНИМ!</footer>
     </div>
 </div>
 
 <script>
-    // ========== RELEASE 2.4 — БОМБЫ ВИДНЫ ЛИШЬ МГНОВЕНИЕ ==========
+    // ========== RELEASE 2.2 — ПРАВИЛЬНЫЕ КОНФЛИКТЫ (ВЗРЫВАЕТСЯ ТОЛЬКО ПОСЛЕДНИЙ) ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -311,11 +336,9 @@
     let redPigs = START_PIGS;
     let bluePigs = START_PIGS;
     
-    // Для битвы
-    let mines = new Map();  // постоянные бомбы (после конфликтов)
+    let placedMines = new Map();
     let battleQueue = [];
     let battleIndex = 0;
-    let battleActive = false;
     
     // DOM
     const boardEl = document.getElementById('board');
@@ -326,6 +349,8 @@
     const readyBtn = document.getElementById('readyBtn');
     const resultBox = document.getElementById('resultBox');
     const resetBtn = document.getElementById('resetBtn');
+    const modeBtn = document.getElementById('modeBtn');
+    const modeDropdown = document.getElementById('modeDropdown');
     
     function generateWire() {
         wireCells = [];
@@ -377,9 +402,9 @@
                 }
             }
             else if (phase === 'battle') {
-                const mine = mines.get(i);
+                const mine = placedMines.get(i);
                 if (mine) {
-                    cell.classList.add(mine.owner === 'red' ? 'has-red-mine' : 'has-blue-mine');
+                    cell.classList.add(mine.owner === 'red' ? 'placed-mine-red' : 'placed-mine-blue');
                     cell.innerHTML = `${mine.owner === 'red' ? '🐷' : '🐗'}<div style="font-size:0.7rem;">${mine.number}</div>`;
                 } else {
                     cell.textContent = '';
@@ -416,6 +441,13 @@
             if (positions.length < maxPigs) {
                 positions.push(idx);
                 messageDiv.textContent = `${currentSelector === 'red' ? '🔴 RED' : '🔵 BLU'} выбрал позицию (${positions.length}/${maxPigs})`;
+                const cellDiv = boardEl.children[idx];
+                if (cellDiv) {
+                    cellDiv.classList.add(currentSelector === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    setTimeout(() => {
+                        if (cellDiv) cellDiv.classList.remove(currentSelector === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    }, 400);
+                }
             } else {
                 messageDiv.textContent = `❌ Нельзя выбрать больше ${maxPigs} позиций!`;
                 return;
@@ -486,9 +518,8 @@
         messageDiv.textContent = `⚔️ РАУНД ${round}! Битва начинается...`;
         turnText.innerHTML = '⚔️ БИТВА';
         
-        mines.clear();
+        placedMines.clear();
         
-        // Создаём очередь ходов
         battleQueue = [];
         for (let i = 1; i <= START_PIGS; i++) {
             if (i <= redPigs && i-1 < redPositions.length) {
@@ -504,7 +535,6 @@
     }
     
     function showTemporaryMine(cell, owner, number, onComplete) {
-        // Показываем бомбу на 1 секунду
         const cellDiv = boardEl.children[cell];
         if (cellDiv) {
             cellDiv.classList.add(owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
@@ -513,10 +543,9 @@
             setTimeout(() => {
                 if (cellDiv) {
                     cellDiv.classList.remove(owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
-                    cellDiv.innerHTML = '';
                 }
                 if (onComplete) onComplete();
-            }, 800);
+            }, 600);
         } else {
             if (onComplete) onComplete();
         }
@@ -536,7 +565,7 @@
         
         // Проверяем конфликт
         let conflict = null;
-        for (let [cell, mine] of mines) {
+        for (let [cell, mine] of placedMines) {
             if (cell === move.cell) {
                 conflict = mine;
                 break;
@@ -544,36 +573,42 @@
         }
         
         if (conflict) {
-            // Конфликт! Сначала показываем бомбу, потом взрыв
+            // Конфликт! Взрывается тот, у кого номер БОЛЬШЕ (кто заложил последним)
             showTemporaryMine(move.cell, move.owner, move.number, () => {
                 if (move.number > conflict.number) {
+                    // Текущий взрывается (он заложил позже)
                     if (move.owner === 'red') {
                         redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐷 RED (№${move.number}) > 🐗 BLU (№${conflict.number}) → RED взорвался!`;
+                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐷 RED (№${move.number}) заложил позже чем 🐗 BLU (№${conflict.number}) → RED взорвался!`;
                     } else {
                         bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐗 BLU (№${move.number}) > 🐷 RED (№${conflict.number}) → BLU взорвался!`;
+                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐗 BLU (№${move.number}) заложил позже чем 🐷 RED (№${conflict.number}) → BLU взорвался!`;
                     }
                     renderTroops();
+                    // Бомба не ставится, конфликтная клетка остаётся с бомбой конфликта
                 } 
                 else if (conflict.number > move.number) {
+                    // Конфликтный взрывается (он заложил позже)
                     if (conflict.owner === 'red') {
                         redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐷 RED (№${conflict.number}) > 🐗 BLU (№${move.number}) → RED взорвался!`;
+                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐷 RED (№${conflict.number}) заложил позже чем 🐗 BLU (№${move.number}) → RED взорвался!`;
                     } else {
                         bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐗 BLU (№${conflict.number}) > 🐷 RED (№${move.number}) → BLU взорвался!`;
+                        messageDiv.textContent = `💥 КОНФЛИКТ! 🐗 BLU (№${conflict.number}) заложил позже чем 🐷 RED (№${move.number}) → BLU взорвался!`;
                     }
-                    mines.delete(move.cell);
+                    // Заменяем бомбу на новую (текущий ставит свою)
+                    placedMines.delete(move.cell);
+                    placedMines.set(move.cell, { owner: move.owner, number: move.number });
                     renderTroops();
                 }
                 else {
+                    // Равные номера — такого не может быть, но на всякий случай
                     if (move.owner === 'red') redPigs--;
                     else bluePigs--;
                     if (conflict.owner === 'red') redPigs--;
                     else bluePigs--;
                     messageDiv.textContent = `💥 КОНФЛИКТ! Обе бомбы №${move.number} взорвались!`;
-                    mines.delete(move.cell);
+                    placedMines.delete(move.cell);
                     renderTroops();
                 }
                 
@@ -587,16 +622,16 @@
                         renderBoard();
                         battleIndex++;
                         processNextBattleMove();
-                    }, 600);
+                    }, 500);
                 } else {
                     battleIndex++;
                     processNextBattleMove();
                 }
             });
         } else {
-            // Нет конфликта — показываем бомбу, потом ставим постоянную
+            // Нет конфликта — ставим бомбу
             showTemporaryMine(move.cell, move.owner, move.number, () => {
-                mines.set(move.cell, { owner: move.owner, number: move.number });
+                placedMines.set(move.cell, { owner: move.owner, number: move.number });
                 renderBoard();
                 battleIndex++;
                 processNextBattleMove();
@@ -608,6 +643,7 @@
         round++;
         redPositions = [];
         bluePositions = [];
+        placedMines.clear();
         currentSelector = 'red';
         phase = 'selection';
         
@@ -639,13 +675,13 @@
         generateWire();
         redPositions = [];
         bluePositions = [];
+        placedMines.clear();
         redPigs = START_PIGS;
         bluePigs = START_PIGS;
         round = 1;
         currentSelector = 'red';
         phase = 'selection';
         gameActive = true;
-        mines.clear();
         resultBox.classList.add('hidden');
         readyBtn.style.display = 'none';
         
@@ -655,17 +691,26 @@
         renderTroops();
     }
     
-    readyBtn.addEventListener('click', finishSelection);
-    resetBtn.addEventListener('click', resetGame);
+    modeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modeDropdown.classList.toggle('show');
+    });
     
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            gameMode = btn.getAttribute('data-mode');
+    document.querySelectorAll('.mode-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+            const mode = opt.getAttribute('data-mode');
+            gameMode = mode;
+            modeDropdown.classList.remove('show');
             resetGame();
         });
     });
+    
+    document.addEventListener('click', () => {
+        modeDropdown.classList.remove('show');
+    });
+    
+    readyBtn.addEventListener('click', finishSelection);
+    resetBtn.addEventListener('click', resetGame);
     
     generateWire();
     renderBoard();
