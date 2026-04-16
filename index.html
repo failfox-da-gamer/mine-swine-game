@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU | Release 2.6.4</title>
+    <title>Свиньи-сапёры | RED vs BLU | Release 2.9</title>
     <style>
         * {
             user-select: none;
@@ -132,57 +132,82 @@
         }
         .mode-option:hover { background: #c97e3a; color: #fff3bf; }
         
-        .settings-btn {
-            background: #2d241c;
-            border: 2px solid #e6b86e;
-            color: #f3d382;
-            font-size: 1rem;
-            padding: 5px 12px;
+        .reset-btn {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 20px;
             border-radius: 40px;
             cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
         }
-        .timer-display {
-            background: #1a1510;
-            padding: 5px 15px;
-            border-radius: 40px;
-            color: #ff5e3a;
-            font-size: 1rem;
-            font-family: monospace;
-        }
-        .settings-modal {
+        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+
+        /* Модальное окно подтверждения */
+        .confirm-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 200;
+            z-index: 400;
         }
-        .settings-modal-content {
+        .confirm-card {
             background: #3c2c1f;
             border-radius: 40px;
-            padding: 25px;
+            padding: 30px;
             text-align: center;
-            border: 3px solid #e6b86e;
-            min-width: 300px;
+            border: 4px solid #e6b86e;
+            min-width: 320px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
-        .settings-modal-content input {
-            background: #2d241c;
-            border: 2px solid #e6b86e;
-            color: #f3d382;
+        .confirm-title {
+            font-size: 1.5rem;
+            color: #f7e05e;
+            margin-bottom: 20px;
+        }
+        .confirm-text {
+            color: #ffd78c;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .confirm-yes {
+            background: #4caf50;
+            border: none;
             font-family: inherit;
-            font-size: 1.2rem;
-            padding: 8px 15px;
-            border-radius: 30px;
-            width: 100px;
-            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2e7d32;
         }
-        .settings-modal-content button {
-            margin: 5px;
+        .confirm-no {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
         }
+        .confirm-yes:active, .confirm-no:active { transform: translateY(2px); }
 
         .game-layout {
             display: flex;
@@ -303,20 +328,6 @@
             font-size: 1rem;
         }
 
-        button {
-            background: #c97e3a;
-            border: none;
-            font-family: inherit;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #f7e6b0;
-            padding: 8px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
-        }
-        button:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
-
         .message {
             background: #1a1510;
             padding: 8px 15px;
@@ -354,7 +365,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Release 2.6.4 — Новая игра в настройках</div>
+        <div class="sub">Release 2.9 — Подтверждение сброса игры</div>
 
         <div class="top-panel">
             <div style="position: relative;">
@@ -364,10 +375,7 @@
                     <div class="mode-option" data-mode="ai">🤖 ПРОТИВ AI</div>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <div class="settings-btn" id="settingsBtn">⚙️ НАСТРОЙКИ</div>
-                <div class="timer-display" id="timerDisplay">⏱️ ∞</div>
-            </div>
+            <button class="reset-btn" id="resetBtn">🔄 НОВАЯ ИГРА</button>
         </div>
 
         <div class="game-layout">
@@ -392,7 +400,7 @@
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 2.6.4 — Новая игра в настройках</footer>
+        <footer>🐗🐷 Release 2.9 — Подтверждение перед сбросом игры</footer>
     </div>
 </div>
 
@@ -401,7 +409,7 @@
 </div>
 
 <script>
-    // ========== RELEASE 2.6.4 — НОВАЯ ИГРА В НАСТРОЙКАХ ==========
+    // ========== RELEASE 2.9 — ПОДТВЕРЖДЕНИЕ ПЕРЕД СБРОСОМ ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -419,10 +427,7 @@
     let bluePigs = START_PIGS;
     let mines = new Map();
     
-    // Таймер
-    let timerSeconds = 0;
-    let timerInterval = null;
-    let timerActive = false;
+    let finalRouletteTriggered = false;
     
     // DOM
     const boardEl = document.getElementById('board');
@@ -432,116 +437,81 @@
     const messageDiv = document.getElementById('message');
     const readyBtn = document.getElementById('readyBtn');
     const resultBox = document.getElementById('resultBox');
-    const settingsBtn = document.getElementById('settingsBtn');
-    const timerDisplay = document.getElementById('timerDisplay');
+    const resetBtn = document.getElementById('resetBtn');
     const modeBtn = document.getElementById('modeBtn');
     const modeDropdown = document.getElementById('modeDropdown');
     
-    function showSettings() {
-        let modal = document.createElement('div');
-        modal.className = 'settings-modal';
+    function showConfirmModal(onConfirm) {
+        const modal = document.createElement('div');
+        modal.className = 'confirm-modal';
         modal.innerHTML = `
-            <div class="settings-modal-content">
-                <h2 style="color:#f7e05e;">⚙️ НАСТРОЙКИ</h2>
-                <div style="margin: 15px 0;">
-                    <label style="color:#ffd78c;">⏱️ ТАЙМЕР (секунд):</label><br>
-                    <input type="number" id="timerInput" min="0" max="300" value="${timerSeconds === 0 ? 0 : timerSeconds}" style="margin-top:8px;">
-                    <div style="font-size:0.7rem; color:#aaa; margin-top:5px;">0 = бесконечно</div>
+            <div class="confirm-card">
+                <div class="confirm-title">🍖 ПОДТВЕРЖДЕНИЕ 🍖</div>
+                <div class="confirm-text">Вы точно не хотите готовить шашлык дальше?</div>
+                <div class="confirm-buttons">
+                    <button class="confirm-yes" id="confirmYes">✅ ДА, НОВАЯ ИГРА</button>
+                    <button class="confirm-no" id="confirmNo">❌ НЕТ, ПРОДОЛЖИТЬ</button>
                 </div>
-                <hr style="border-color:#846b4a; margin:15px 0;">
-                <button id="resetFromSettingsBtn" style="background:#ff5e3a;">🔄 НОВАЯ ИГРА</button>
-                <button id="saveSettingsBtn" style="background:#4caf50;">💾 СОХРАНИТЬ ТАЙМЕР</button>
-                <button id="closeSettingsBtn">❌ ЗАКРЫТЬ</button>
             </div>
         `;
         document.body.appendChild(modal);
         
-        document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-            const val = parseInt(document.getElementById('timerInput').value);
-            if (!isNaN(val) && val >= 0) {
-                timerSeconds = val;
-                if (timerSeconds === 0) {
-                    timerDisplay.innerHTML = '⏱️ ∞';
-                } else {
-                    timerDisplay.innerHTML = `⏱️ ${timerSeconds}с`;
-                }
-                resetTimer();
-                if (timerSeconds > 0 && gameActive && redPigs === 1 && bluePigs === 1) {
-                    startTimer();
-                }
-            }
+        document.getElementById('confirmYes').addEventListener('click', () => {
             modal.remove();
+            onConfirm();
         });
         
-        document.getElementById('resetFromSettingsBtn').addEventListener('click', () => {
-            resetGame();
-            modal.remove();
-        });
-        
-        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+        document.getElementById('confirmNo').addEventListener('click', () => {
             modal.remove();
         });
     }
     
-    function resetTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-        timerActive = false;
-        let msg = messageDiv.innerHTML;
-        if (msg.includes('⏰')) {
-            messageDiv.innerHTML = msg.replace(/ ⏰ \d+с/, '');
-        }
-    }
-    
-    function startTimer() {
-        if (timerSeconds <= 0) return;
-        if (timerInterval) clearInterval(timerInterval);
+    function showFinalRoulette(onComplete) {
+        let currentOption = 0;
+        let ticks = 0;
+        const minTicks = 12;
+        const maxTicks = 24;
+        const totalTicks = Math.floor(Math.random() * (maxTicks - minTicks + 1) + minTicks);
         
-        let timeLeft = timerSeconds;
-        timerActive = true;
-        let msg = messageDiv.innerHTML;
-        if (msg.includes('⏰')) {
-            msg = msg.replace(/ ⏰ \d+с/, '');
-        }
-        messageDiv.innerHTML = msg + ` ⏰ ${timeLeft}с`;
+        const modal = document.createElement('div');
+        modal.className = 'final-roulette-modal';
+        modal.innerHTML = `
+            <div class="final-roulette-card">
+                <div class="final-roulette-title">🎲 ФИНАЛЬНАЯ РУЛЕТКА 🎲</div>
+                <div class="final-roulette-dice">🎲</div>
+                <div class="final-roulette-selector red" id="finalRouletteSelector">🔴 RED ПОБЕДА</div>
+                <div style="font-size:0.8rem; margin-top:10px;">Определяется абсолютный победитель...</div>
+            </div>
+        `;
+        document.body.appendChild(modal);
         
-        timerInterval = setInterval(() => {
-            if (!gameActive || redPigs !== 1 || bluePigs !== 1) {
-                resetTimer();
-                return;
-            }
-            timeLeft--;
-            let currentMsg = messageDiv.innerHTML;
-            if (currentMsg.includes('⏰')) {
-                currentMsg = currentMsg.replace(/⏰ \d+с/, `⏰ ${timeLeft}с`);
-                messageDiv.innerHTML = currentMsg;
+        const selectorDiv = document.getElementById('finalRouletteSelector');
+        
+        const interval = setInterval(() => {
+            if (currentOption === 0) {
+                selectorDiv.className = 'final-roulette-selector blue';
+                selectorDiv.innerHTML = '🔵 BLU ПОБЕДА';
+                currentOption = 1;
+            } else if (currentOption === 1) {
+                selectorDiv.className = 'final-roulette-selector draw';
+                selectorDiv.innerHTML = '⚡ НИЧЬЯ ⚡';
+                currentOption = 2;
             } else {
-                messageDiv.innerHTML = currentMsg + ` ⏰ ${timeLeft}с`;
+                selectorDiv.className = 'final-roulette-selector red';
+                selectorDiv.innerHTML = '🔴 RED ПОБЕДА';
+                currentOption = 0;
             }
+            ticks++;
             
-            if (timeLeft <= 0) {
-                resetTimer();
-                messageDiv.innerHTML = "⏰ ТАЙМЕР ВЫШЕЛ! НИЧЬЯ! ⏰";
-                gameActive = false;
-                resultBox.classList.remove('hidden');
-                resultBox.innerHTML = `
-                    <div style="font-size:1.2rem;">🏆 НИЧЬЯ ПО ТАЙМЕРУ 🏆</div>
-                    <div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div>
-                    <button id="playAgainBtn" style="margin-top:12px;">🎮 СЫГРАТЬ ЕЩЁ</button>
-                `;
-                turnText.innerHTML = '⚡ НИЧЬЯ ПО ТАЙМЕРУ';
-                document.getElementById('playAgainBtn')?.addEventListener('click', () => resetGame());
+            if (ticks >= totalTicks) {
+                clearInterval(interval);
+                const finalResult = currentOption === 0 ? 'red' : (currentOption === 1 ? 'blue' : 'draw');
+                setTimeout(() => {
+                    modal.remove();
+                    onComplete(finalResult);
+                }, 500);
             }
-        }, 1000);
-    }
-    
-    function checkTimerCondition() {
-        resetTimer();
-        if (timerSeconds > 0 && gameActive && redPigs === 1 && bluePigs === 1) {
-            startTimer();
-        }
+        }, 200);
     }
     
     function generateWire() {
@@ -570,7 +540,6 @@
             pig.textContent = '🐗';
             blueTroopEl.appendChild(pig);
         }
-        checkTimerCondition();
     }
     
     function renderBoard() {
@@ -730,13 +699,41 @@
         
         let index = 0;
         
-        function processNext() {
+        async function processNext() {
             if (index >= battleQueue.length) {
                 if (redPigs <= 0 || bluePigs <= 0) {
                     endGame();
                 } else {
                     nextRound();
                 }
+                return;
+            }
+            
+            if (!finalRouletteTriggered && redPigs === 1 && bluePigs === 1 && index === 0) {
+                finalRouletteTriggered = true;
+                messageDiv.textContent = "🎲 ФИНАЛЬНАЯ РУЛЕТКА! Определяется абсолютный победитель... 🎲";
+                renderBoard();
+                
+                await new Promise((resolve) => {
+                    showFinalRoulette((result) => {
+                        if (result === 'red') {
+                            bluePigs = 0;
+                            messageDiv.textContent = "🎲 ФИНАЛЬНАЯ РУЛЕТКА! 🔴 RED ПОБЕДИЛ! 🎲";
+                        } else if (result === 'blue') {
+                            redPigs = 0;
+                            messageDiv.textContent = "🎲 ФИНАЛЬНАЯ РУЛЕТКА! 🔵 BLU ПОБЕДИЛ! 🎲";
+                        } else {
+                            messageDiv.textContent = "🎲 ФИНАЛЬНАЯ РУЛЕТКА! ⚡ НИЧЬЯ! ⚡ 🎲";
+                            redPigs = 0;
+                            bluePigs = 0;
+                        }
+                        renderTroops();
+                        renderBoard();
+                        resolve();
+                    });
+                });
+                
+                endGame();
                 return;
             }
             
@@ -748,29 +745,87 @@
                     if (move.owner === 'red') redPigs--;
                     else bluePigs--;
                     messageDiv.textContent = `💥 ${move.owner === 'red' ? '🔴 RED' : '🔵 BLU'} взорвался!`;
+                    renderTroops();
+                    const cellDiv = boardEl.children[move.cell];
+                    if (cellDiv) {
+                        cellDiv.classList.add('explosion');
+                        cellDiv.innerHTML = '💥';
+                        setTimeout(() => {
+                            if (cellDiv) cellDiv.classList.remove('explosion');
+                            renderBoard();
+                        }, 300);
+                    }
                 } else if (conflict.number > move.number) {
                     if (conflict.owner === 'red') redPigs--;
                     else bluePigs--;
                     mines.set(move.cell, { owner: move.owner, number: move.number });
                     messageDiv.textContent = `💥 ${conflict.owner === 'red' ? '🔴 RED' : '🔵 BLU'} взорвался!`;
+                    renderTroops();
+                    const cellDiv = boardEl.children[move.cell];
+                    if (cellDiv) {
+                        cellDiv.classList.add('explosion');
+                        cellDiv.innerHTML = '💥';
+                        setTimeout(() => {
+                            if (cellDiv) cellDiv.classList.remove('explosion');
+                            renderBoard();
+                        }, 300);
+                    }
                 } else {
-                    if (move.owner === 'red') redPigs--;
-                    else bluePigs--;
-                    if (conflict.owner === 'red') redPigs--;
-                    else bluePigs--;
-                    mines.delete(move.cell);
-                    messageDiv.textContent = `💥 Обе бомбы №${move.number} взорвались!`;
-                }
-                renderTroops();
-                
-                const cellDiv = boardEl.children[move.cell];
-                if (cellDiv) {
-                    cellDiv.classList.add('explosion');
-                    cellDiv.innerHTML = '💥';
-                    setTimeout(() => {
-                        if (cellDiv) cellDiv.classList.remove('explosion');
-                        renderBoard();
-                    }, 300);
+                    messageDiv.textContent = `🎲 РАВНЫЕ НОМЕРА №${move.number}! РУЛЕТКА! 🎲`;
+                    renderBoard();
+                    
+                    await new Promise((resolve) => {
+                        let isRedTurn = true;
+                        let ticks = 0;
+                        const minTicks = 8;
+                        const maxTicks = 16;
+                        const totalTicks = Math.floor(Math.random() * (maxTicks - minTicks + 1) + minTicks);
+                        
+                        const modal = document.createElement('div');
+                        modal.className = 'roulette-modal';
+                        modal.innerHTML = `
+                            <div class="roulette-card">
+                                <div class="roulette-title">🎲 РУЛЕТКА 🎲</div>
+                                <div class="roulette-dice">🎲</div>
+                                <div class="roulette-selector red" id="rouletteSelector">🔴 RED</div>
+                                <div>Клетка ${Math.floor(move.cell/5)+1},${move.cell%5+1} | Бомба №${move.number}</div>
+                            </div>
+                        `;
+                        document.body.appendChild(modal);
+                        
+                        const selectorDiv = document.getElementById('rouletteSelector');
+                        
+                        const interval = setInterval(() => {
+                            if (isRedTurn) {
+                                selectorDiv.className = 'roulette-selector blue';
+                                selectorDiv.innerHTML = '🔵 BLU';
+                            } else {
+                                selectorDiv.className = 'roulette-selector red';
+                                selectorDiv.innerHTML = '🔴 RED';
+                            }
+                            isRedTurn = !isRedTurn;
+                            ticks++;
+                            
+                            if (ticks >= totalTicks) {
+                                clearInterval(interval);
+                                const winner = isRedTurn ? 'blue' : 'red';
+                                setTimeout(() => {
+                                    modal.remove();
+                                    if (winner === 'red') {
+                                        bluePigs--;
+                                        messageDiv.textContent = `🎲 РУЛЕТКА! 🔴 RED (№${move.number}) выиграл, 🔵 BLU взорвался!`;
+                                    } else {
+                                        redPigs--;
+                                        messageDiv.textContent = `🎲 РУЛЕТКА! 🔵 BLU (№${move.number}) выиграл, 🔴 RED взорвался!`;
+                                    }
+                                    mines.set(move.cell, { owner: winner, number: move.number });
+                                    renderTroops();
+                                    renderBoard();
+                                    resolve();
+                                }, 300);
+                            }
+                        }, 200);
+                    });
                 }
             } else {
                 mines.set(move.cell, { owner: move.owner, number: move.number });
@@ -811,11 +866,11 @@
         let title = '';
         let subtitle = '';
         
-        if (redPigs > bluePigs) {
+        if (redPigs > 0 && bluePigs <= 0) {
             winner = '🔴 RED ПОБЕДИЛ! 🐷';
             title = 'ПОБЕДА RED';
             subtitle = 'Свиньи оказались сильнее!';
-        } else if (bluePigs > redPigs) {
+        } else if (bluePigs > 0 && redPigs <= 0) {
             winner = '🔵 BLU ПОБЕДИЛ! 🐗';
             title = 'ПОБЕДА BLU';
             subtitle = 'Кабаны показали класс!';
@@ -824,8 +879,6 @@
             title = 'НИЧЬЯ';
             subtitle = 'ВЫ ВСЕ НЕУДАЧНИКИ';
         }
-        
-        resetTimer();
         
         resultBox.classList.remove('hidden');
         resultBox.innerHTML = `
@@ -841,7 +894,6 @@
     }
     
     function resetGame() {
-        resetTimer();
         generateWire();
         redPositions = [];
         bluePositions = [];
@@ -852,6 +904,7 @@
         currentTurn = 'red';
         phase = 'selection';
         gameActive = true;
+        finalRouletteTriggered = false;
         resultBox.classList.add('hidden');
         readyBtn.classList.add('hidden');
         
@@ -861,7 +914,7 @@
         renderTroops();
     }
     
-    // Выпадающее меню выбора режима
+    // Обработчики событий
     modeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         modeDropdown.classList.toggle('show');
@@ -880,8 +933,11 @@
         modeDropdown.classList.remove('show');
     });
     
-    settingsBtn.addEventListener('click', showSettings);
     readyBtn.addEventListener('click', finishSelection);
+    
+    resetBtn.addEventListener('click', () => {
+        showConfirmModal(() => resetGame());
+    });
     
     generateWire();
     renderBoard();
