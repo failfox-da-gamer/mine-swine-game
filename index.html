@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | Онлайн | Release 3.0.2</title>
+    <title>Свиньи-сапёры | Онлайн бета | Release 3.0.3</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         * {
@@ -30,12 +30,6 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             z-index: 0;
             pointer-events: none;
-        }
-        .cloud::before, .cloud::after {
-            content: '';
-            position: absolute;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 50%;
         }
         .cloud1 { width: 140px; height: 80px; top: 8%; left: 3%; }
         .cloud2 { width: 200px; height: 110px; top: 15%; right: 8%; }
@@ -308,7 +302,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Онлайн бета 3.0.2 | Играй с другом по ссылке!</div>
+        <div class="sub">Онлайн бета 3.0.3 | ⚠️ Только для теста на одном устройстве (разные вкладки)</div>
 
         <div class="online-panel">
             <input type="text" id="nickInput" class="online-input" placeholder="Твой ник" maxlength="15" value="Свин">
@@ -359,7 +353,7 @@
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 3.0.2 — Код комнаты появляется сразу!</footer>
+        <footer>🐗🐷 Release 3.0.3 — Онлайн в бете (работает на одном устройстве). Для игры с другом используй локальный режим.</footer>
     </div>
 </div>
 
@@ -368,7 +362,7 @@
 </div>
 
 <script>
-    // ========== RELEASE 3.0.2 — ОНЛАЙН БЕТА (РАБОТАЕТ!) ==========
+    // ========== RELEASE 3.0.3 — ОНЛАЙН БЕТА (ТОЛЬКО ДЛЯ ТЕСТА) ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -397,7 +391,6 @@
     let opponentNick = '';
     let roomCode = '';
     let waitingForOpponent = false;
-    let peerId = null;
     
     // DOM
     const boardEl = document.getElementById('board');
@@ -809,13 +802,12 @@
         }
     }
     
-    // ========== ОНЛАЙН ФУНКЦИИ (С ГЕНЕРАЦИЕЙ КОДА) ==========
+    // ========== ОНЛАЙН ФУНКЦИИ (ДЛЯ ТЕСТА) ==========
     function createRoom() {
         myNick = nickInput.value.trim() || "Игрок";
         myTeam = teamSelect.value;
         opponentTeam = myTeam === 'red' ? 'blue' : 'red';
         
-        // Генерируем код комнаты сразу
         roomCode = generateRoomCode();
         roomCodeSpan.textContent = roomCode;
         roomInfoDiv.classList.remove('hidden');
@@ -826,12 +818,10 @@
         messageDiv.textContent = `🌐 Комната создана! Код: ${roomCode}. Отправь его другу. Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
         turnText.innerHTML = '🌐 ОЖИДАНИЕ';
         
-        // Создаём Peer и сохраняем ID
         peer = new Peer();
         peer.on('open', (id) => {
-            peerId = id;
             localStorage.setItem('room_' + roomCode, id);
-            console.log('Peer открыт, ID:', id, 'Код комнаты:', roomCode);
+            console.log('Peer открыт, ID:', id);
         });
         
         peer.on('connection', (connection) => {
@@ -841,7 +831,6 @@
         
         peer.on('error', (err) => {
             messageDiv.textContent = `❌ Ошибка: ${err.message}`;
-            console.error(err);
         });
     }
     
@@ -865,10 +854,9 @@
         myTeam = teamSelect.value;
         opponentTeam = myTeam === 'red' ? 'blue' : 'red';
         
-        // Ищем Peer ID по коду комнаты
         const hostPeerId = localStorage.getItem('room_' + code);
         if (!hostPeerId) {
-            messageDiv.textContent = "❌ Комната с таким кодом не найдена!";
+            messageDiv.textContent = "❌ Комната с таким кодом не найдена! (онлайн работает только на одном устройстве)";
             return;
         }
         
@@ -882,7 +870,6 @@
         
         peer.on('error', (err) => {
             messageDiv.textContent = `❌ Ошибка подключения: ${err.message}`;
-            console.error(err);
         });
     }
     
