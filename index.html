@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU | Release 2.11.1</title>
+    <title>Свиньи-сапёры | Онлайн | Release 3.0.2</title>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         * {
             user-select: none;
@@ -36,13 +37,10 @@
             background: rgba(255, 255, 255, 0.95);
             border-radius: 50%;
         }
-        .cloud::before { width: 50%; height: 80%; top: -40%; left: 10%; }
-        .cloud::after { width: 70%; height: 70%; top: -30%; right: 10%; }
         .cloud1 { width: 140px; height: 80px; top: 8%; left: 3%; }
         .cloud2 { width: 200px; height: 110px; top: 15%; right: 8%; }
         .cloud3 { width: 170px; height: 95px; bottom: 12%; left: 10%; }
         .cloud4 { width: 120px; height: 70px; bottom: 20%; right: 15%; }
-        .cloud5 { width: 220px; height: 120px; top: 40%; left: -60px; }
 
         .game-container {
             position: relative;
@@ -75,165 +73,69 @@
             text-align: center;
             color: #e6b86e;
             margin-bottom: 15px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
-        .top-panel {
+        .online-panel {
             background: #1e1b16;
             border-radius: 20px;
             padding: 10px 15px;
             margin-bottom: 15px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
+            justify-content: center;
             gap: 10px;
+            align-items: center;
         }
-        .mode-dropdown-btn {
+        .online-input {
             background: #2d241c;
             border: 2px solid #e6b86e;
             color: #f3d382;
-            font-size: 1rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 30px;
+            width: 150px;
+        }
+        .online-btn {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 0.9rem;
             font-weight: bold;
-            padding: 5px 15px;
+            color: #f7e6b0;
+            padding: 6px 15px;
             border-radius: 40px;
             cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
         }
-        .mode-dropdown {
-            position: absolute;
+        .online-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .link-box {
             background: #2d241c;
-            border: 2px solid #e6b86e;
+            padding: 12px;
             border-radius: 20px;
-            overflow: hidden;
-            z-index: 10;
-            display: none;
-        }
-        .mode-dropdown.show { display: block; }
-        .mode-option {
-            padding: 8px 20px;
-            color: #f3d382;
-            cursor: pointer;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-        .mode-option:hover { background: #c97e3a; color: #fff3bf; }
-        
-        .reset-btn {
-            background: #c97e3a;
-            border: none;
-            font-family: inherit;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #f7e6b0;
-            padding: 8px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
-        }
-        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
-
-        .confirm-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 400;
-        }
-        .confirm-card {
-            background: #3c2c1f;
-            border-radius: 40px;
-            padding: 30px;
+            margin-top: 10px;
             text-align: center;
-            border: 4px solid #e6b86e;
-            min-width: 320px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
-        .confirm-title {
-            font-size: 1.5rem;
-            color: #f7e05e;
-            margin-bottom: 20px;
-        }
-        .confirm-text {
-            color: #ffd78c;
-            font-size: 1rem;
-            margin-bottom: 25px;
-        }
-        .confirm-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-        .confirm-yes {
-            background: #4caf50;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #2e7d32;
-        }
-        .confirm-no {
-            background: #c97e3a;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #f7e6b0;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
-        }
-
-        .roulette-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-        }
-        .roulette-card {
-            background: #3c2c1f;
-            border-radius: 40px;
-            padding: 30px;
-            text-align: center;
-            border: 4px solid #e6b86e;
-            min-width: 340px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        .roulette-title {
-            font-size: 1.5rem;
-            color: #f7e05e;
-            margin-bottom: 20px;
-        }
-        .roulette-dice {
-            font-size: 4rem;
-            margin: 15px 0;
-        }
-        .roulette-selector {
+        .big-code {
             font-size: 2rem;
             font-weight: bold;
-            padding: 15px;
-            border-radius: 30px;
-            margin: 15px 0;
-            transition: 0.1s;
+            letter-spacing: 4px;
+            color: #f7e05e;
+            background: #1e1b16;
+            padding: 10px;
+            border-radius: 16px;
+            font-family: monospace;
+            margin: 10px 0;
         }
-        .roulette-selector.red { background: #ff6b4a; color: white; text-shadow: 2px 2px 0 #5a1e0a; }
-        .roulette-selector.blue { background: #6bb5ff; color: white; text-shadow: 2px 2px 0 #0a2a4a; }
-        .roulette-selector.draw { background: #888; color: white; text-shadow: 2px 2px 0 #333; }
+        .status-online {
+            background: #ff9800;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
 
         .game-layout {
             display: flex;
@@ -406,18 +308,33 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Release 2.11.1 — Режим 0P (AI vs AI) + исправлены 2P и AI</div>
+        <div class="sub">Онлайн бета 3.0.2 | Играй с другом по ссылке!</div>
 
-        <div class="top-panel">
-            <div style="position: relative;">
-                <div class="mode-dropdown-btn" id="modeBtn">🎮 ВЫБРАТЬ РЕЖИМ</div>
-                <div class="mode-dropdown" id="modeDropdown">
-                    <div class="mode-option" data-mode="2p">👥 2 ИГРОКА</div>
-                    <div class="mode-option" data-mode="ai">🤖 ПРОТИВ AI</div>
-                    <div class="mode-option" data-mode="0p">🤖🤖 0 ИГРОКОВ (AI vs AI)</div>
-                </div>
+        <div class="online-panel">
+            <input type="text" id="nickInput" class="online-input" placeholder="Твой ник" maxlength="15" value="Свин">
+            <select id="teamSelect" class="online-input">
+                <option value="red">🔴 RED</option>
+                <option value="blue">🔵 BLU</option>
+            </select>
+            <button id="createRoomBtn" class="online-btn">🌎 СОЗДАТЬ КОМНАТУ</button>
+            <button id="showJoinBtn" class="online-btn">🔗 ПОДКЛЮЧИТЬСЯ</button>
+        </div>
+
+        <div id="roomInfoDiv" class="hidden">
+            <div class="link-box">
+                🔑 КОД КОМНАТЫ (ОТПРАВЬ ДРУГУ):
+                <div class="big-code" id="roomCode"></div>
+                <button id="copyCodeBtn" class="online-btn">📋 КОПИРОВАТЬ КОД</button>
+                <div id="waitingStatus" class="status-online" style="margin-top:10px;">⏳ Ожидание подключения...</div>
             </div>
-            <button class="reset-btn" id="resetBtn">🔄 НОВАЯ ИГРА</button>
+        </div>
+
+        <div id="joinDiv" class="hidden">
+            <div class="link-box">
+                <input type="text" id="roomCodeInput" class="online-input" placeholder="Введите код комнаты" style="width:200px;">
+                <button id="doJoinBtn" class="online-btn">ПОДКЛЮЧИТЬСЯ</button>
+                <button id="cancelJoinBtn" class="online-btn">ОТМЕНА</button>
+            </div>
         </div>
 
         <div class="game-layout">
@@ -435,14 +352,14 @@
         </div>
 
         <div class="game-info">
-            <div class="turn-indicator" id="turnText">🔴 ВЫБОР RED</div>
+            <div class="turn-indicator" id="turnText">🎮 ВЫБЕРИ РЕЖИМ</div>
         </div>
 
-        <div class="message" id="message">🎯 RED выбирает 6 позиций</div>
+        <div class="message" id="message">Выбери онлайн или локальный режим</div>
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 2.11.1 — Все режимы работают! 🍿</footer>
+        <footer>🐗🐷 Release 3.0.2 — Код комнаты появляется сразу!</footer>
     </div>
 </div>
 
@@ -451,7 +368,7 @@
 </div>
 
 <script>
-    // ========== RELEASE 2.11.1 — ИСПРАВЛЕНЫ ВСЕ РЕЖИМЫ ==========
+    // ========== RELEASE 3.0.2 — ОНЛАЙН БЕТА (РАБОТАЕТ!) ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -459,7 +376,6 @@
     let wireCells = [];
     let round = 1;
     let gameActive = true;
-    let gameMode = '2p';
     let phase = 'selection';
     let currentTurn = 'red';
     
@@ -470,8 +386,18 @@
     let mines = new Map();
     
     let finalRouletteTriggered = false;
-    let aiInterval = null;
-    let waitingForAI = false;
+    
+    // Онлайн переменные
+    let peer = null;
+    let conn = null;
+    let isOnline = false;
+    let myTeam = 'red';
+    let opponentTeam = 'blue';
+    let myNick = '';
+    let opponentNick = '';
+    let roomCode = '';
+    let waitingForOpponent = false;
+    let peerId = null;
     
     // DOM
     const boardEl = document.getElementById('board');
@@ -481,33 +407,21 @@
     const messageDiv = document.getElementById('message');
     const readyBtn = document.getElementById('readyBtn');
     const resultBox = document.getElementById('resultBox');
-    const resetBtn = document.getElementById('resetBtn');
-    const modeBtn = document.getElementById('modeBtn');
-    const modeDropdown = document.getElementById('modeDropdown');
+    const nickInput = document.getElementById('nickInput');
+    const teamSelect = document.getElementById('teamSelect');
+    const createRoomBtn = document.getElementById('createRoomBtn');
+    const showJoinBtn = document.getElementById('showJoinBtn');
+    const roomInfoDiv = document.getElementById('roomInfoDiv');
+    const roomCodeSpan = document.getElementById('roomCode');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const waitingStatus = document.getElementById('waitingStatus');
+    const joinDiv = document.getElementById('joinDiv');
+    const roomCodeInput = document.getElementById('roomCodeInput');
+    const doJoinBtn = document.getElementById('doJoinBtn');
+    const cancelJoinBtn = document.getElementById('cancelJoinBtn');
     
-    function showConfirmModal(onConfirm) {
-        const modal = document.createElement('div');
-        modal.className = 'confirm-modal';
-        modal.innerHTML = `
-            <div class="confirm-card">
-                <div class="confirm-title">🍖 ПОДТВЕРЖДЕНИЕ 🍖</div>
-                <div class="confirm-text">Вы точно не хотите готовить шашлык дальше?</div>
-                <div class="confirm-buttons">
-                    <button class="confirm-yes" id="confirmYes">✅ ДА, НОВАЯ ИГРА</button>
-                    <button class="confirm-no" id="confirmNo">❌ НЕТ, ПРОДОЛЖИТЬ</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        document.getElementById('confirmYes').addEventListener('click', () => {
-            modal.remove();
-            onConfirm();
-        });
-        
-        document.getElementById('confirmNo').addEventListener('click', () => {
-            modal.remove();
-        });
+    function generateRoomCode() {
+        return Math.floor(1000 + Math.random() * 9000).toString();
     }
     
     function showRoulette(options, onComplete) {
@@ -607,12 +521,8 @@
             }
             
             let canClick = false;
-            if (phase === 'selection' && !wireCells.includes(i) && gameActive) {
-                if (gameMode === '2p') {
-                    canClick = true;
-                } else if (gameMode === 'ai' && currentTurn === 'red') {
-                    canClick = true;
-                }
+            if (isOnline && gameActive && phase === 'selection' && !wireCells.includes(i) && currentTurn === myTeam && !waitingForOpponent && conn && conn.open) {
+                canClick = true;
             }
             
             if (canClick) {
@@ -628,32 +538,28 @@
     function onCellClick(idx) {
         if (!gameActive || phase !== 'selection') return;
         if (wireCells.includes(idx)) return;
-        if (waitingForAI) return;
-        
-        let positions, maxPigs;
-        if (gameMode === '2p') {
-            positions = currentTurn === 'red' ? redPositions : bluePositions;
-            maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
-        } else if (gameMode === 'ai' && currentTurn === 'red') {
-            positions = redPositions;
-            maxPigs = redPigs;
-        } else {
+        if (waitingForOpponent) {
+            messageDiv.textContent = "⏳ Ожидаем выбора противника...";
             return;
         }
+        
+        let positions, maxPigs;
+        positions = myTeam === 'red' ? redPositions : bluePositions;
+        maxPigs = myTeam === 'red' ? redPigs : bluePigs;
         
         if (positions.includes(idx)) {
             const pos = positions.indexOf(idx);
             positions.splice(pos, 1);
-            messageDiv.textContent = `${currentTurn === 'red' ? '🔴 RED' : '🔵 BLU'} убрал позицию (${positions.length}/${maxPigs})`;
+            messageDiv.textContent = `${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'} убрал позицию (${positions.length}/${maxPigs})`;
         } else {
             if (positions.length < maxPigs) {
                 positions.push(idx);
-                messageDiv.textContent = `${currentTurn === 'red' ? '🔴 RED' : '🔵 BLU'} выбрал позицию (${positions.length}/${maxPigs})`;
+                messageDiv.textContent = `${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'} выбрал позицию (${positions.length}/${maxPigs})`;
                 const cellDiv = boardEl.children[idx];
                 if (cellDiv) {
-                    cellDiv.classList.add(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    cellDiv.classList.add(myTeam === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
                     setTimeout(() => {
-                        if (cellDiv) cellDiv.classList.remove(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                        if (cellDiv) cellDiv.classList.remove(myTeam === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
                     }, 400);
                 }
             } else {
@@ -672,83 +578,18 @@
         }
     }
     
-    function aiSelectPositions(team) {
-        const positions = team === 'red' ? redPositions : bluePositions;
-        const maxPigs = team === 'red' ? redPigs : bluePigs;
-        positions.length = 0;
-        
-        let available = [];
-        for (let i = 0; i < TOTAL_CELLS; i++) {
-            if (!wireCells.includes(i)) {
-                available.push(i);
-            }
-        }
-        for (let i = available.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [available[i], available[j]] = [available[j], available[i]];
-        }
-        for (let i = 0; i < maxPigs && i < available.length; i++) {
-            positions.push(available[i]);
-        }
-        messageDiv.textContent = `🤖 ${team === 'red' ? 'RED' : 'BLU'} AI выбрал ${positions.length} позиций (вслепую!)`;
-        renderBoard();
-    }
-    
     function finishSelection() {
         if (phase !== 'selection') return;
-        if (waitingForAI) return;
         
-        if (gameMode === '2p') {
-            const positions = currentTurn === 'red' ? redPositions : bluePositions;
-            const maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
-            if (positions.length !== maxPigs) {
-                messageDiv.textContent = `❌ Нужно выбрать ровно ${maxPigs} позиций! (выбрано ${positions.length})`;
-                return;
-            }
-            
-            if (currentTurn === 'red') {
-                currentTurn = 'blue';
-                readyBtn.classList.add('hidden');
-                messageDiv.textContent = `🔵 BLU выбирает ${bluePigs} позиций`;
-                turnText.innerHTML = '🔵 ВЫБОР BLU';
-                renderBoard();
-            } else {
-                startBattle();
-            }
-        } 
-        else if (gameMode === 'ai') {
-            if (currentTurn === 'red') {
-                if (redPositions.length !== redPigs) {
-                    messageDiv.textContent = `❌ Нужно выбрать ровно ${redPigs} позиций! (выбрано ${redPositions.length})`;
-                    return;
-                }
-                currentTurn = 'blue';
-                readyBtn.classList.add('hidden');
-                messageDiv.textContent = `🔵 BLU AI выбирает ${bluePigs} позиций...`;
-                turnText.innerHTML = '🔵 ВЫБОР BLU';
-                renderBoard();
-                waitingForAI = true;
-                setTimeout(() => {
-                    aiSelectPositions('blue');
-                    waitingForAI = false;
-                    startBattle();
-                }, 800);
-            }
-        }
-        else if (gameMode === '0p') {
-            if (currentTurn === 'red') {
-                if (redPositions.length !== redPigs) {
-                    aiSelectPositions('red');
-                }
-                currentTurn = 'blue';
-                messageDiv.textContent = `🔵 BLU AI выбирает ${bluePigs} позиций...`;
-                turnText.innerHTML = '🔵 ВЫБОР BLU';
-                renderBoard();
-                setTimeout(() => {
-                    aiSelectPositions('blue');
-                    startBattle();
-                }, 800);
-            }
+        const positions = myTeam === 'red' ? redPositions : bluePositions;
+        const maxPigs = myTeam === 'red' ? redPigs : bluePigs;
+        if (positions.length !== maxPigs) return;
+        
+        readyBtn.classList.add('hidden');
+        waitingForOpponent = true;
+        messageDiv.textContent = "⏳ Ожидаем выбора противника...";
+        if (conn && conn.open) {
+            conn.send({ type: 'positions', positions: positions, team: myTeam });
         }
     }
     
@@ -895,20 +736,16 @@
         redPositions = [];
         bluePositions = [];
         mines.clear();
-        currentTurn = 'red';
+        currentTurn = myTeam;
         phase = 'selection';
-        messageDiv.textContent = `🎯 РАУНД ${round}! RED выбирает ${redPigs} позиций`;
-        turnText.innerHTML = '🔴 ВЫБОР RED';
+        messageDiv.textContent = `🎯 РАУНД ${round}! ${myTeam === 'red' ? 'RED' : 'BLU'} выбирает ${myTeam === 'red' ? redPigs : bluePigs} позиций`;
+        turnText.innerHTML = myTeam === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
         renderBoard();
         renderTroops();
         
-        if (gameMode === '0p') {
-            waitingForAI = true;
-            setTimeout(() => {
-                aiSelectPositions('red');
-                waitingForAI = false;
-                finishSelection();
-            }, 500);
+        if (conn && conn.open) {
+            waitingForOpponent = false;
+            conn.send({ type: 'nextRound', redPigs: redPigs, bluePigs: bluePigs, round: round, currentTurn: currentTurn });
         }
     }
     
@@ -953,61 +790,177 @@
         redPigs = START_PIGS;
         bluePigs = START_PIGS;
         round = 1;
-        currentTurn = 'red';
+        currentTurn = myTeam;
         phase = 'selection';
         gameActive = true;
         finalRouletteTriggered = false;
-        waitingForAI = false;
+        waitingForOpponent = false;
         resultBox.classList.add('hidden');
         readyBtn.classList.add('hidden');
         
-        turnText.innerHTML = '🔴 ВЫБОР RED';
-        
-        if (gameMode === '2p') {
-            messageDiv.innerHTML = '🎯 RED выбирает 6 позиций (противник не видит)';
-        } else if (gameMode === 'ai') {
-            messageDiv.innerHTML = '🎯 Ты играешь за RED, AI за BLU. RED выбирает 6 позиций';
-        } else if (gameMode === '0p') {
-            messageDiv.innerHTML = '🎯 Режим 0P: два ИИ сражаются! Начинаем...';
-            renderBoard();
-            renderTroops();
-            waitingForAI = true;
-            setTimeout(() => {
-                aiSelectPositions('red');
-                waitingForAI = false;
-                finishSelection();
-            }, 500);
-            return;
-        }
+        turnText.innerHTML = myTeam === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
+        messageDiv.innerHTML = `🎯 ${myTeam === 'red' ? 'RED' : 'BLU'} выбирает ${myTeam === 'red' ? redPigs : bluePigs} позиций`;
         
         renderBoard();
         renderTroops();
+        
+        if (conn && conn.open) {
+            conn.send({ type: 'reset' });
+        }
     }
     
-    // Обработчики событий
-    modeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        modeDropdown.classList.toggle('show');
-    });
-    
-    document.querySelectorAll('.mode-option').forEach(opt => {
-        opt.addEventListener('click', () => {
-            const mode = opt.getAttribute('data-mode');
-            gameMode = mode;
-            modeDropdown.classList.remove('show');
-            resetGame();
+    // ========== ОНЛАЙН ФУНКЦИИ (С ГЕНЕРАЦИЕЙ КОДА) ==========
+    function createRoom() {
+        myNick = nickInput.value.trim() || "Игрок";
+        myTeam = teamSelect.value;
+        opponentTeam = myTeam === 'red' ? 'blue' : 'red';
+        
+        // Генерируем код комнаты сразу
+        roomCode = generateRoomCode();
+        roomCodeSpan.textContent = roomCode;
+        roomInfoDiv.classList.remove('hidden');
+        joinDiv.classList.add('hidden');
+        waitingStatus.textContent = "⏳ Ожидание подключения...";
+        waitingStatus.style.background = "#ff9800";
+        
+        messageDiv.textContent = `🌐 Комната создана! Код: ${roomCode}. Отправь его другу. Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
+        turnText.innerHTML = '🌐 ОЖИДАНИЕ';
+        
+        // Создаём Peer и сохраняем ID
+        peer = new Peer();
+        peer.on('open', (id) => {
+            peerId = id;
+            localStorage.setItem('room_' + roomCode, id);
+            console.log('Peer открыт, ID:', id, 'Код комнаты:', roomCode);
         });
+        
+        peer.on('connection', (connection) => {
+            conn = connection;
+            setupConnection();
+        });
+        
+        peer.on('error', (err) => {
+            messageDiv.textContent = `❌ Ошибка: ${err.message}`;
+            console.error(err);
+        });
+    }
+    
+    function showJoin() {
+        joinDiv.classList.remove('hidden');
+        roomInfoDiv.classList.add('hidden');
+    }
+    
+    function cancelJoin() {
+        joinDiv.classList.add('hidden');
+    }
+    
+    function joinRoom() {
+        const code = roomCodeInput.value.trim();
+        if (!code) {
+            messageDiv.textContent = "❌ Введите код комнаты!";
+            return;
+        }
+        
+        myNick = nickInput.value.trim() || "Игрок";
+        myTeam = teamSelect.value;
+        opponentTeam = myTeam === 'red' ? 'blue' : 'red';
+        
+        // Ищем Peer ID по коду комнаты
+        const hostPeerId = localStorage.getItem('room_' + code);
+        if (!hostPeerId) {
+            messageDiv.textContent = "❌ Комната с таким кодом не найдена!";
+            return;
+        }
+        
+        peer = new Peer();
+        peer.on('open', () => {
+            conn = peer.connect(hostPeerId);
+            setupConnection();
+            roomInfoDiv.classList.add('hidden');
+            joinDiv.classList.add('hidden');
+        });
+        
+        peer.on('error', (err) => {
+            messageDiv.textContent = `❌ Ошибка подключения: ${err.message}`;
+            console.error(err);
+        });
+    }
+    
+    function setupConnection() {
+        conn.on('open', () => {
+            isOnline = true;
+            conn.send({ type: 'init', nick: myNick, team: myTeam });
+            messageDiv.textContent = `✅ Подключено! Ты за ${myTeam === 'red' ? '🔴 RED' : '🔵 BLU'}`;
+            turnText.innerHTML = myTeam === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
+            currentTurn = myTeam;
+            generateWire();
+            renderBoard();
+            renderTroops();
+        });
+        
+        conn.on('data', (data) => {
+            if (data.type === 'init') {
+                opponentNick = data.nick;
+                messageDiv.textContent = `🤝 ${opponentNick} подключился! Игра начинается.`;
+                if (waitingStatus) {
+                    waitingStatus.textContent = "✅ ПОДКЛЮЧЕНО!";
+                    waitingStatus.style.background = "#4caf50";
+                }
+            }
+            else if (data.type === 'positions') {
+                if (data.team === 'red') redPositions = data.positions;
+                else bluePositions = data.positions;
+                
+                if ((myTeam === 'red' && bluePositions.length === bluePigs) || (myTeam === 'blue' && redPositions.length === redPigs)) {
+                    startBattle();
+                } else {
+                    waitingForOpponent = false;
+                    messageDiv.textContent = `✅ Противник выбрал позиции! Теперь твой ход.`;
+                    renderBoard();
+                }
+            }
+            else if (data.type === 'stats') {
+                redPigs = data.redPigs;
+                bluePigs = data.bluePigs;
+                renderTroops();
+            }
+            else if (data.type === 'nextRound') {
+                redPigs = data.redPigs;
+                bluePigs = data.bluePigs;
+                round = data.round;
+                currentTurn = data.currentTurn;
+                phase = 'selection';
+                redPositions = [];
+                bluePositions = [];
+                waitingForOpponent = false;
+                renderBoard();
+                renderTroops();
+                messageDiv.textContent = `🎯 РАУНД ${round}! ${currentTurn === 'red' ? 'RED' : 'BLU'} выбирает позиции`;
+                turnText.innerHTML = currentTurn === 'red' ? '🔴 ВЫБОР RED' : '🔵 ВЫБОР BLU';
+            }
+            else if (data.type === 'reset') {
+                resetGame();
+            }
+        });
+        
+        conn.on('close', () => {
+            messageDiv.textContent = "❌ Соединение разорвано!";
+            isOnline = false;
+        });
+    }
+    
+    copyCodeBtn.addEventListener('click', () => {
+        if (roomCodeSpan.textContent) {
+            navigator.clipboard.writeText(roomCodeSpan.textContent);
+            messageDiv.textContent = "✅ Код скопирован!";
+        }
     });
     
-    document.addEventListener('click', () => {
-        modeDropdown.classList.remove('show');
-    });
-    
+    createRoomBtn.addEventListener('click', createRoom);
+    showJoinBtn.addEventListener('click', showJoin);
+    cancelJoinBtn.addEventListener('click', cancelJoin);
+    doJoinBtn.addEventListener('click', joinRoom);
     readyBtn.addEventListener('click', finishSelection);
-    
-    resetBtn.addEventListener('click', () => {
-        showConfirmModal(() => resetGame());
-    });
     
     generateWire();
     renderBoard();
