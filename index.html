@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU | Release 2.16</title>
+    <title>Свиньи-сапёры | RED vs BLU | Release 2.23</title>
     <style>
         * {
             user-select: none;
@@ -69,108 +69,6 @@
             font-size: 0.7rem;
         }
 
-        /* Стартовое меню */
-        .start-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .start-card {
-            background: #3c2c1f;
-            border-radius: 60px;
-            padding: 30px;
-            text-align: center;
-            border: 4px solid #e6b86e;
-            min-width: 340px;
-            max-width: 500px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        .start-title {
-            font-size: 2rem;
-            color: #f7e05e;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px 0 #7a2e19;
-        }
-        .start-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .start-btn {
-            background: #c97e3a;
-            border: none;
-            font-family: inherit;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #f7e6b0;
-            padding: 12px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
-            transition: 0.05s linear;
-        }
-        .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
-        .howto-btn {
-            background: #2d241c;
-            border: 2px solid #e6b86e;
-        }
-        .close-btn {
-            background: #555;
-            margin-top: 10px;
-        }
-
-        /* Модальное окно правил */
-        .howto-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1100;
-        }
-        .howto-card {
-            background: #3c2c1f;
-            border-radius: 40px;
-            padding: 25px;
-            text-align: center;
-            border: 4px solid #e6b86e;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        .howto-title {
-            font-size: 1.5rem;
-            color: #f7e05e;
-            margin-bottom: 15px;
-        }
-        .howto-text {
-            color: #ffd78c;
-            font-size: 0.9rem;
-            text-align: left;
-            margin: 15px 0;
-            line-height: 1.4;
-        }
-        .howto-text p {
-            margin: 10px 0;
-        }
-        .howto-close {
-            background: #c97e3a;
-            margin-top: 15px;
-        }
-
         .top-panel {
             background: #1e1b16;
             border-radius: 20px;
@@ -225,13 +123,74 @@
         }
         .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a); }
 
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 400;
+        }
+        .confirm-card {
+            background: #3c2c1f;
+            border-radius: 40px;
+            padding: 30px;
+            text-align: center;
+            border: 4px solid #e6b86e;
+            min-width: 320px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .confirm-title {
+            font-size: 1.5rem;
+            color: #f7e05e;
+            margin-bottom: 20px;
+        }
+        .confirm-text {
+            color: #ffd78c;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .confirm-yes {
+            background: #4caf50;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2e7d32;
+        }
+        .confirm-no {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
+        }
+
         .turn-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: black;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -273,13 +232,109 @@
         }
         .turn-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2e7d32; }
 
+        .start-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .start-card {
+            background: #3c2c1f;
+            border-radius: 60px;
+            padding: 30px;
+            text-align: center;
+            border: 4px solid #e6b86e;
+            min-width: 340px;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .start-title {
+            font-size: 2rem;
+            color: #f7e05e;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #7a2e19;
+        }
+        .start-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .start-btn {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 12px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
+            transition: 0.05s linear;
+        }
+        .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .howto-btn {
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+        }
+
+        .howto-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+        }
+        .howto-card {
+            background: #3c2c1f;
+            border-radius: 40px;
+            padding: 25px;
+            text-align: center;
+            border: 4px solid #e6b86e;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .howto-title {
+            font-size: 1.5rem;
+            color: #f7e05e;
+            margin-bottom: 15px;
+        }
+        .howto-text {
+            color: #ffd78c;
+            font-size: 0.9rem;
+            text-align: left;
+            margin: 15px 0;
+            line-height: 1.4;
+        }
+        .howto-text p {
+            margin: 10px 0;
+        }
+        .howto-close {
+            background: #c97e3a;
+            margin-top: 15px;
+        }
+
         .roulette-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -457,6 +512,16 @@
             margin-top: 12px;
             text-align: center;
         }
+        .result-box .winner {
+            font-size: 1.5rem;
+            color: #f7e05e;
+            text-shadow: 2px 2px 0 #7a2e19;
+        }
+        .result-box .subtitle {
+            font-size: 1.1rem;
+            color: #ffaa44;
+            margin-bottom: 10px;
+        }
         .ready-btn {
             background: #4caf50;
             box-shadow: 0 4px 0 #2e7d32;
@@ -486,7 +551,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Release 2.16 — Стартовое меню</div>
+        <div class="sub">Release 2.23 — После битвы бомбы получают номер 0</div>
 
         <div class="top-panel">
             <div style="position: relative;">
@@ -522,7 +587,7 @@
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 2.16 — Стартовое меню с правилами</footer>
+        <footer>🐗🐷 Release 2.23 — После битвы бомбы становятся нейтральными (номер 0)</footer>
     </div>
 </div>
 
@@ -531,7 +596,7 @@
 </div>
 
 <script>
-    // ========== RELEASE 2.16 — СТАРТОВОЕ МЕНЮ ==========
+    // ========== RELEASE 2.23 — ПОСЛЕ БИТВЫ БОМБЫ ПОЛУЧАЮТ НОМЕР 0 ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -830,7 +895,7 @@
         
         const existingMine = placedMines.get(idx);
         if (existingMine && existingMine.owner === currentTurn) {
-            messageDiv.textContent = `❌ Здесь уже есть твоя бомба (№${existingMine.number})!`;
+            messageDiv.textContent = `❌ Здесь уже есть твоя бомба!`;
             return;
         }
         
@@ -981,6 +1046,12 @@
         
         async function processNext() {
             if (index >= battleQueue.length) {
+                // После битвы все бомбы становятся нейтральными (номер 0)
+                for (let [cell, mine] of placedMines) {
+                    placedMines.set(cell, { owner: mine.owner, number: 0 });
+                }
+                renderBoard();
+                
                 if (redPigs <= 0 || bluePigs <= 0) {
                     endGame();
                 } else {
@@ -1080,6 +1151,10 @@
         renderBoard();
         renderTroops();
         
+        if (gameMode === '2p') {
+            showTurnModal('red', () => {});
+        }
+        
         if (gameMode === '0p') {
             waitingForAI = true;
             setTimeout(() => {
@@ -1112,9 +1187,9 @@
         
         resultBox.classList.remove('hidden');
         resultBox.innerHTML = `
-            <div style="font-size:1.2rem;">🏆 ${winner} 🏆</div>
-            <div style="font-size:1rem; margin-top:5px;">${title}</div>
-            <div style="font-size:0.9rem; color:#ffaa44; margin-bottom:10px;">${subtitle}</div>
+            <div class="winner">🏆 ${winner} 🏆</div>
+            <div class="subtitle">${title}</div>
+            <div style="color:#ffaa44; margin-bottom:10px;">${subtitle}</div>
             <div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div>
             <div>Раундов сыграно: ${round}</div>
             <button id="playAgainBtn" style="margin-top:12px;">🎮 СЫГРАТЬ ЕЩЁ</button>
@@ -1200,7 +1275,7 @@
     // Показываем стартовое меню
     showStartMenu();
     
-    // Инициализация (пустая, ждём меню)
+    // Инициализация
     generateWire();
     renderBoard();
     renderTroops();
