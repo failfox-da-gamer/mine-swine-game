@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU | Release 2.23</title>
+    <title>Свиньи-сапёры | RED vs BLU | Release 2.34</title>
     <style>
         * {
             user-select: none;
@@ -121,7 +121,7 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #6a3c1a;
         }
-        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a); }
+        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
 
         .confirm-modal {
             position: fixed;
@@ -454,7 +454,11 @@
         .cell.placed-mine-blue { background: #6bb5ff; color: white; }
         .cell.temp-mine-red { background: #ff6b4a; animation: blink-red 0.3s ease-in-out 2; }
         .cell.temp-mine-blue { background: #6bb5ff; animation: blink-blue 0.3s ease-in-out 2; }
-        .cell.explosion { background: #ff5e3a; animation: shake 0.2s ease-in-out 0s 2; }
+        .cell.explosion {
+            animation: shake 0.2s ease-in-out 0s 2;
+            background: #555 !important;
+            background-image: none !important;
+        }
 
         @keyframes blink-red {
             0% { background-color: #ff6b4a; }
@@ -551,7 +555,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Release 2.23 — После битвы бомбы получают номер 0</div>
+        <div class="sub">Release 2.34 — Клетка становится серой после взрыва</div>
 
         <div class="top-panel">
             <div style="position: relative;">
@@ -587,16 +591,16 @@
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🐗🐷 Release 2.23 — После битвы бомбы становятся нейтральными (номер 0)</footer>
+        <footer>🐗🐷 Свиньи-сапёры | Идея: Максим Гриневич | Код: DeepSeek | Тест: Роман Чуманов</footer>
     </div>
 </div>
 
 <div class="credits">
-    🐷 СВИНЬИ-САПЁРЫ | Идея: Максим Гриневич | Код: DeepSeek | Тест: Роман Чуманов | Оригинал: Happy Beacon Games
+    🐷 СВИНЬИ-САПЁРЫ | Багфикс 2.34
 </div>
 
 <script>
-    // ========== RELEASE 2.23 — ПОСЛЕ БИТВЫ БОМБЫ ПОЛУЧАЮТ НОМЕР 0 ==========
+    // ========== ОРИГИНАЛЬНЫЙ РАБОЧИЙ КОД + СЕРАЯ КЛЕТКА ПОСЛЕ ВЗРЫВА ==========
     
     const TOTAL_CELLS = 25;
     const START_PIGS = 6;
@@ -621,7 +625,6 @@
     let waitingForInitialConfirm = true;
     let gameStarted = false;
     
-    // DOM
     const boardEl = document.getElementById('board');
     const redTroopEl = document.getElementById('redTroop');
     const blueTroopEl = document.getElementById('blueTroop');
@@ -676,30 +679,24 @@
             <div class="howto-card">
                 <div class="howto-title">📖 ПРАВИЛА ИГРЫ</div>
                 <div class="howto-text">
-                    <p>🎯 <strong>Цель:</strong> Оставить больше свиней/кабанов в живых, чем у противника.</p>
+                    <p>🎯 <strong>Цель:</strong> Оставить больше свиней/кабанов в живых.</p>
                     <p>🐷 <strong>RED (свиньи)</strong> и 🐗 <strong>BLU (кабаны)</strong> ходят по очереди.</p>
-                    <p>💣 Каждый выбирает по 6 клеток для своих бомб (не видя выбор врага).</p>
-                    <p>⚡ На некоторых клетках есть проволока — туда нельзя ставить бомбы.</p>
-                    <p>🔥 <strong>Конфликт:</strong> Если бомбы RED и BLU оказались на одной клетке, взрывается тот, у кого номер бомбы БОЛЬШЕ (кто поставил позже).</p>
-                    <p>🎲 При равных номерах — рулетка, которая случайно выбирает победителя.</p>
-                    <p>🏆 Игра идёт несколько раундов. Побеждает тот, у кого осталось больше свиней/кабанов.</p>
-                    <p>👥 <strong>2 игрока:</strong> Играйте на одном устройстве, передавая его друг другу.</p>
-                    <p>🤖 <strong>Против AI:</strong> Компьютер играет за BLU.</p>
+                    <p>💣 Каждый выбирает по 6 клеток для бомб (не видя выбор врага).</p>
+                    <p>⚡ На некоторых клетках проволока — туда нельзя ставить бомбы.</p>
+                    <p>🔥 <strong>Конфликт:</strong> Если бомбы на одной клетке, взрывается тот, у кого номер БОЛЬШЕ.</p>
+                    <p>🎲 При равных номерах — рулетка.</p>
+                    <p>💥 После взрыва клетка становится серой.</p>
                 </div>
                 <button class="start-btn howto-close" id="howtoCloseBtn">❌ ЗАКРЫТЬ</button>
             </div>
         `;
         document.body.appendChild(modal);
-        
-        document.getElementById('howtoCloseBtn').addEventListener('click', () => {
-            modal.remove();
-        });
+        document.getElementById('howtoCloseBtn').addEventListener('click', () => modal.remove());
     }
     
     function showTurnModal(nextPlayer, onConfirm) {
         if (turnModalActive) return;
         turnModalActive = true;
-        
         const modal = document.createElement('div');
         modal.className = 'turn-modal';
         modal.innerHTML = `
@@ -713,7 +710,6 @@
             </div>
         `;
         document.body.appendChild(modal);
-        
         document.getElementById('turnConfirmBtn').addEventListener('click', () => {
             modal.remove();
             turnModalActive = false;
@@ -724,7 +720,6 @@
     function showInitialConfirm(onConfirm) {
         if (turnModalActive) return;
         turnModalActive = true;
-        
         const modal = document.createElement('div');
         modal.className = 'turn-modal';
         modal.innerHTML = `
@@ -736,7 +731,6 @@
             </div>
         `;
         document.body.appendChild(modal);
-        
         document.getElementById('initialConfirmBtn').addEventListener('click', () => {
             modal.remove();
             turnModalActive = false;
@@ -758,15 +752,8 @@
             </div>
         `;
         document.body.appendChild(modal);
-        
-        document.getElementById('confirmYes').addEventListener('click', () => {
-            modal.remove();
-            onConfirm();
-        });
-        
-        document.getElementById('confirmNo').addEventListener('click', () => {
-            modal.remove();
-        });
+        document.getElementById('confirmYes').addEventListener('click', () => { modal.remove(); onConfirm(); });
+        document.getElementById('confirmNo').addEventListener('click', () => modal.remove());
     }
     
     function showRoulette(options, onComplete) {
@@ -789,19 +776,14 @@
         document.body.appendChild(modal);
         
         const selectorDiv = document.getElementById('rouletteSelector');
-        
         const interval = setInterval(() => {
             currentIndex = (currentIndex + 1) % options.length;
             selectorDiv.className = `roulette-selector ${options[currentIndex].class}`;
             selectorDiv.innerHTML = options[currentIndex].text;
             ticks++;
-            
             if (ticks >= totalTicks) {
                 clearInterval(interval);
-                setTimeout(() => {
-                    modal.remove();
-                    onComplete(currentIndex);
-                }, 500);
+                setTimeout(() => { modal.remove(); onComplete(currentIndex); }, 500);
             }
         }, 200);
     }
@@ -846,24 +828,16 @@
             } 
             else if (phase === 'selection') {
                 const mine = placedMines.get(i);
-                const isMyMine = mine && mine.owner === currentTurn;
+                const isMyOldMine = mine && mine.owner === currentTurn;
                 const isMySelected = (currentTurn === 'red' && redPositions.includes(i)) || (currentTurn === 'blue' && bluePositions.includes(i));
                 
-                if (isMyMine) {
+                if (isMyOldMine) {
                     cell.classList.add(mine.owner === 'red' ? 'placed-mine-red' : 'placed-mine-blue');
-                    cell.innerHTML = `${mine.owner === 'red' ? '🐷' : '🐗'}<div style="font-size:0.7rem;">${mine.number}</div>`;
+                    cell.innerHTML = mine.owner === 'red' ? '🐷' : '🐗';
+                    cell.innerHTML += `<div style="font-size:0.7rem;">${mine.number}</div>`;
                 } else if (isMySelected) {
                     cell.classList.add(currentTurn === 'red' ? 'selected-red' : 'selected-blue');
                     cell.textContent = currentTurn === 'red' ? '🐷' : '🐗';
-                } else {
-                    cell.textContent = '';
-                }
-            }
-            else if (phase === 'battle') {
-                const mine = placedMines.get(i);
-                if (mine) {
-                    cell.classList.add(mine.owner === 'red' ? 'placed-mine-red' : 'placed-mine-blue');
-                    cell.innerHTML = `${mine.owner === 'red' ? '🐷' : '🐗'}<div style="font-size:0.7rem;">${mine.number}</div>`;
                 } else {
                     cell.textContent = '';
                 }
@@ -1026,6 +1000,25 @@
         }
     }
     
+    function showTemporaryMine(cell, owner, number, onComplete) {
+        const cellDiv = boardEl.children[cell];
+        if (cellDiv) {
+            cellDiv.classList.add(owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+            cellDiv.innerHTML = owner === 'red' ? '🐷' : '🐗';
+            cellDiv.innerHTML += `<div style="font-size:0.7rem;">${number}</div>`;
+            
+            setTimeout(() => {
+                if (cellDiv) {
+                    cellDiv.classList.remove(owner === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    cellDiv.innerHTML = '';
+                }
+                if (onComplete) onComplete();
+            }, 600);
+        } else {
+            if (onComplete) onComplete();
+        }
+    }
+    
     function startBattle() {
         phase = 'battle';
         readyBtn.classList.add('hidden');
@@ -1046,7 +1039,6 @@
         
         async function processNext() {
             if (index >= battleQueue.length) {
-                // После битвы все бомбы становятся нейтральными (номер 0)
                 for (let [cell, mine] of placedMines) {
                     placedMines.set(cell, { owner: mine.owner, number: 0 });
                 }
@@ -1065,43 +1057,55 @@
             
             if (conflict) {
                 if (move.number > conflict.number) {
-                    if (move.owner === 'red') {
-                        redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED (№${move.number}) > 🔵 BLU (№${conflict.number}) → RED взорвался!`;
-                    } else {
-                        bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU (№${move.number}) > 🔴 RED (№${conflict.number}) → BLU взорвался!`;
-                    }
-                    renderTroops();
-                    const cellDiv = boardEl.children[move.cell];
-                    if (cellDiv) {
-                        cellDiv.classList.add('explosion');
-                        cellDiv.innerHTML = '💥';
-                        setTimeout(() => {
-                            if (cellDiv) cellDiv.classList.remove('explosion');
-                            renderBoard();
-                        }, 300);
-                    }
+                    await new Promise((resolve) => {
+                        showTemporaryMine(move.cell, move.owner, move.number, () => {
+                            if (move.owner === 'red') {
+                                redPigs--;
+                                messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED (№${move.number}) > 🔵 BLU (№${conflict.number}) → RED взорвался!`;
+                            } else {
+                                bluePigs--;
+                                messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU (№${move.number}) > 🔴 RED (№${conflict.number}) → BLU взорвался!`;
+                            }
+                            renderTroops();
+                            const cellDiv = boardEl.children[move.cell];
+                            if (cellDiv) {
+                                cellDiv.classList.add('explosion');
+                                setTimeout(() => {
+                                    if (cellDiv) cellDiv.classList.remove('explosion');
+                                    renderBoard();
+                                    resolve();
+                                }, 400);
+                            } else {
+                                resolve();
+                            }
+                        });
+                    });
                 } 
                 else if (conflict.number > move.number) {
-                    if (conflict.owner === 'red') {
-                        redPigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED (№${conflict.number}) > 🔵 BLU (№${move.number}) → RED взорвался!`;
-                    } else {
-                        bluePigs--;
-                        messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU (№${conflict.number}) > 🔴 RED (№${move.number}) → BLU взорвался!`;
-                    }
-                    placedMines.set(move.cell, { owner: move.owner, number: move.number });
-                    renderTroops();
-                    const cellDiv = boardEl.children[move.cell];
-                    if (cellDiv) {
-                        cellDiv.classList.add('explosion');
-                        cellDiv.innerHTML = '💥';
-                        setTimeout(() => {
-                            if (cellDiv) cellDiv.classList.remove('explosion');
-                            renderBoard();
-                        }, 300);
-                    }
+                    await new Promise((resolve) => {
+                        showTemporaryMine(move.cell, move.owner, move.number, () => {
+                            if (conflict.owner === 'red') {
+                                redPigs--;
+                                messageDiv.textContent = `💥 КОНФЛИКТ! 🔴 RED (№${conflict.number}) > 🔵 BLU (№${move.number}) → RED взорвался!`;
+                            } else {
+                                bluePigs--;
+                                messageDiv.textContent = `💥 КОНФЛИКТ! 🔵 BLU (№${conflict.number}) > 🔴 RED (№${move.number}) → BLU взорвался!`;
+                            }
+                            placedMines.set(move.cell, { owner: move.owner, number: move.number });
+                            renderTroops();
+                            const cellDiv = boardEl.children[move.cell];
+                            if (cellDiv) {
+                                cellDiv.classList.add('explosion');
+                                setTimeout(() => {
+                                    if (cellDiv) cellDiv.classList.remove('explosion');
+                                    renderBoard();
+                                    resolve();
+                                }, 400);
+                            } else {
+                                resolve();
+                            }
+                        });
+                    });
                 }
                 else {
                     messageDiv.textContent = `🎲 РАВНЫЕ НОМЕРА №${move.number}! РУЛЕТКА! 🎲`;
@@ -1128,13 +1132,18 @@
                     });
                 }
             } else {
-                placedMines.set(move.cell, { owner: move.owner, number: move.number });
-                messageDiv.textContent = `${move.owner === 'red' ? '🔴 RED' : '🔵 BLU'} поставил бомбу №${move.number} на клетку ${Math.floor(move.cell/5)+1},${move.cell%5+1}`;
-                renderBoard();
+                await new Promise((resolve) => {
+                    showTemporaryMine(move.cell, move.owner, move.number, () => {
+                        placedMines.set(move.cell, { owner: move.owner, number: move.number });
+                        messageDiv.textContent = `${move.owner === 'red' ? '🔴 RED' : '🔵 BLU'} поставил бомбу №${move.number} на клетку ${Math.floor(move.cell/5)+1},${move.cell%5+1}`;
+                        renderBoard();
+                        resolve();
+                    });
+                });
             }
             
             index++;
-            setTimeout(processNext, 600);
+            setTimeout(processNext, 200);
         }
         
         processNext();
@@ -1272,10 +1281,7 @@
         showConfirmModal(() => resetGame());
     });
     
-    // Показываем стартовое меню
     showStartMenu();
-    
-    // Инициализация
     generateWire();
     renderBoard();
     renderTroops();
