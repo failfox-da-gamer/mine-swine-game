@@ -23,7 +23,6 @@
             overflow-x: hidden;
         }
 
-        /* Луна */
         .moon {
             position: fixed;
             top: 5%;
@@ -50,7 +49,6 @@
             50% { box-shadow: 0 0 100px rgba(255, 230, 100, 1); }
         }
 
-        /* Вороны */
         .raven {
             position: fixed;
             font-size: 2rem;
@@ -66,7 +64,6 @@
             100% { transform: translateX(110vw) translateY(0); }
         }
 
-        /* Тыквы */
         .pumpkin {
             position: fixed;
             font-size: 3.5rem;
@@ -79,7 +76,6 @@
         .pumpkin3 { top: 15px; left: 15px; bottom: auto; }
         .pumpkin4 { top: 15px; right: 15px; bottom: auto; }
 
-        /* Облака */
         .cloud {
             position: fixed;
             background: rgba(40, 30, 60, 0.5);
@@ -92,7 +88,6 @@
         .cloud2 { width: 280px; height: 140px; top: 60%; right: -60px; }
         .cloud3 { width: 170px; height: 90px; bottom: 10%; left: 15%; }
 
-        /* Игровой контейнер */
         .game-container {
             position: relative;
             z-index: 1;
@@ -379,7 +374,7 @@
         <div class="message" id="message">🎯 RED выбирает 6 позиций</div>
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
-        <footer>🌕 ПОЛНОЛУНИЕ 2026 | Идея: Максим Гриневич | Введи help() в консоль</footer>
+        <footer>🌕 ПОЛНОЛУНИЕ 2026 | Идея: Максим Гриневич</footer>
     </div>
 </div>
 
@@ -421,17 +416,17 @@
     const modeBtn = document.getElementById('modeBtn');
     const modeDropdown = document.getElementById('modeDropdown');
     
-    // КОНСОЛЬНЫЕ КОМАНДЫ
+    // КОНСОЛЬНЫЕ КОМАНДЫ (скрытые, для разработчика)
     window.help = function() {
         console.log("%c🧪 СВИНЬИ-САПЁРЫ | КОНСОЛЬНЫЕ КОМАНДЫ 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
         console.log("%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "color: #b89ecc;");
-        console.log("%c🎮 debugState()     — показать текущее состояние игры", "color: #88ffaa;");
-        console.log("%c🎮 skipTurn()       — принудительно завершить ход", "color: #88ffaa;");
-        console.log("%c🎮 forceWin('red')  — принудительная победа RED", "color: #88ffaa;");
-        console.log("%c🎮 forceWin('blue') — принудительная победа BLU", "color: #88ffaa;");
-        console.log("%c🎮 setPigs('red', 10) — установить количество свиней RED", "color: #88ffaa;");
-        console.log("%c🎮 setPigs('blue', 5) — установить количество свиней BLU", "color: #88ffaa;");
-        console.log("%c🎮 addRaven()        — добавить новую ворону 🐦‍⬛", "color: #88ffaa;");
+        console.log("%c🎮 debugState()     — показать состояние игры", "color: #88ffaa;");
+        console.log("%c🎮 skipTurn()       — завершить ход", "color: #88ffaa;");
+        console.log("%c🎮 forceWin('red')  — победа RED", "color: #88ffaa;");
+        console.log("%c🎮 forceWin('blue') — победа BLU", "color: #88ffaa;");
+        console.log("%c🎮 setPigs('red', 10) — установить свиней RED", "color: #88ffaa;");
+        console.log("%c🎮 setPigs('blue', 5) — установить свиней BLU", "color: #88ffaa;");
+        console.log("%c🎮 addRaven()        — добавить ворону", "color: #88ffaa;");
         console.log("%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "color: #b89ecc;");
     };
     
@@ -442,13 +437,12 @@
         console.log("🔴 Ход:", currentTurn === 'red' ? 'RED' : 'BLU');
         console.log("🐷 RED свиней:", redPigs);
         console.log("🐗 BLU свиней:", bluePigs);
-        console.log("💣 Расставленные зелья:", Array.from(placedMines.entries()).map(([k,v]) => `кл.${Math.floor(k/5)+1},${k%5+1} → ${v.owner} №${v.number}`));
         console.groupEnd();
-        return { round, phase, currentTurn, redPigs, bluePigs, placedMines: Array.from(placedMines.entries()) };
+        return { round, phase, currentTurn, redPigs, bluePigs };
     };
     
     window.skipTurn = function() {
-        if (phase === 'selection') { console.log("%c⚡ Принудительное завершение хода!", "color: #ffaa44;"); finishSelection(); }
+        if (phase === 'selection') { console.log("%c⚡ Ход завершён!", "color: #ffaa44;"); finishSelection(); }
         else console.log("%c❌ Сейчас не фаза выбора", "color: #ff6666;");
     };
     
@@ -461,8 +455,8 @@
     
     window.setPigs = function(team, count) {
         count = Math.max(0, Math.min(20, count));
-        if (team === 'red') { redPigs = count; console.log(`%c🐷 RED: ${count} свиней`, "#ff8888;"); }
-        else if (team === 'blue') { bluePigs = count; console.log(`%c🐗 BLU: ${count} свиней`, "#8888ff;"); }
+        if (team === 'red') { redPigs = count; console.log(`%c🐷 RED: ${count}`, "#ff8888;"); }
+        else if (team === 'blue') { bluePigs = count; console.log(`%c🐗 BLU: ${count}`, "#8888ff;"); }
         else return;
         renderTroops(); renderBoard();
     };
@@ -480,11 +474,6 @@
         setTimeout(() => raven.remove(), 30000);
     };
     
-    setTimeout(() => {
-        console.log("%c🌕 ДОБРО ПОЖАЛОВАТЬ В ИВЕНТ «ПОЛНОЛУНИЕ» 2026! 🌕", "color: #ffcc66; font-size: 14px; font-weight: bold;");
-        console.log("%cВведи help() для списка консольных команд 🧪", "color: #88ffaa;");
-    }, 1000);
-    
     // ОСНОВНАЯ ЛОГИКА ИГРЫ
     function showStartMenu() {
         const modal = document.createElement('div'); modal.className = 'start-menu';
@@ -498,7 +487,7 @@
     
     function showHowTo() {
         const modal = document.createElement('div'); modal.className = 'howto-modal';
-        modal.innerHTML = `<div class="howto-card"><div class="howto-title">🌕 ПОЛНОЛУНИЕ 2026</div><div class="howto-text"><p>🎯 Цель: Оставить больше свиней-зомби в живых.</p><p>🧪 Зелья вместо бомб</p><p>🪦 Надгробия вместо проводов</p><p>🐦‍⬛ Вороны летают по экрану</p><p>🔥 Конфликт: взрывается тот, у кого номер БОЛЬШЕ</p><p>🎲 При равных — рулетка</p><p>💻 Консоль: F12 → help()</p></div><button class="start-btn howto-close" id="howtoCloseBtn">❌ ЗАКРЫТЬ</button></div>`;
+        modal.innerHTML = `<div class="howto-card"><div class="howto-title">🌕 ПОЛНОЛУНИЕ 2026</div><div class="howto-text"><p>🎯 Цель: Оставить больше свиней-зомби в живых.</p><p>🧪 Зелья вместо бомб</p><p>🪦 Надгробия вместо проводов</p><p>🐦‍⬛ Вороны летают по экрану</p><p>🔥 Конфликт: взрывается тот, у кого номер БОЛЬШЕ</p><p>🎲 При равных — рулетка</p></div><button class="start-btn howto-close" id="howtoCloseBtn">❌ ЗАКРЫТЬ</button></div>`;
         document.body.appendChild(modal);
         document.getElementById('howtoCloseBtn').onclick = () => modal.remove();
     }
