@@ -74,46 +74,46 @@
             cursor: pointer; box-shadow: 0 4px 0 #2a1a40;
         }
         .reset-btn:active, .howto-top-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
-        .skin-btn {
-            background: #c97e3a; border: none; font-family: inherit; font-size: 0.9rem;
-            font-weight: bold; color: #f7e6b0; padding: 5px 15px; border-radius: 40px;
-            cursor: pointer; box-shadow: 0 3px 0 #6a3c1a;
-        }
-        .skin-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #6a3c1a; }
-        .confirm-modal, .turn-modal, .start-menu, .howto-modal, .roulette-modal, .skin-modal {
+        .confirm-modal, .turn-modal, .start-menu, .howto-modal, .roulette-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.95); display: flex; justify-content: center; align-items: center;
             z-index: 9999; backdrop-filter: blur(8px);
         }
-        .confirm-card, .turn-card, .start-card, .howto-card, .roulette-card, .skin-card {
+        .confirm-card, .turn-card, .start-card, .howto-card, .roulette-card {
             background: #1a1230; border-radius: 40px; padding: 30px; text-align: center;
             border: 4px solid #b89ecc; min-width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
             position: relative; z-index: 10000;
         }
-        .skin-options {
-            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 20px 0;
-        }
-        .skin-option {
-            background: #2a2038; border-radius: 20px; padding: 15px; cursor: pointer;
-            transition: 0.1s; border: 2px solid #6a4e9e;
-        }
-        .skin-option:hover { border-color: #ffcc66; transform: scale(1.02); }
-        .skin-option.active { border-color: #ffcc66; background: #3a2a58; }
-        .skin-preview { font-size: 2.5rem; margin-bottom: 10px; }
-        .confirm-title, .turn-title, .start-title, .howto-title, .roulette-title, .skin-title {
+        .confirm-title, .turn-title, .start-title, .howto-title, .roulette-title {
             font-size: 1.5rem; color: #ffcc66; margin-bottom: 20px;
         }
         .confirm-text, .howto-text { color: #e6c8ff; font-size: 1rem; margin-bottom: 25px; }
         .howto-text { text-align: left; line-height: 1.4; }
         .howto-text p { margin: 10px 0; }
-        .confirm-yes, .confirm-no, .turn-btn, .start-btn, .howto-close, .skin-close {
+        .confirm-yes {
+            background: #4caf50; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: white; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #2e7d32; margin: 5px;
+        }
+        .confirm-yes:active { transform: translateY(2px); box-shadow: 0 2px 0 #2e7d32; }
+        .confirm-no {
+            background: #6a4e9e; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: #f0e0ff; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #2a1a40; margin: 5px;
+        }
+        .confirm-no:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
+        .turn-btn {
             background: #6a4e9e; border: none; font-family: inherit; font-size: 1rem;
             font-weight: bold; color: white; padding: 8px 25px; border-radius: 40px;
             cursor: pointer; box-shadow: 0 4px 0 #2a1a40; margin: 5px;
         }
-        .confirm-yes { background: #4caf50; box-shadow: 0 4px 0 #2e7d32; }
-        .confirm-no { background: #6a4e9e; }
-        .confirm-yes:active, .confirm-no:active, .turn-btn:active, .start-btn:active, .howto-close:active, .skin-close:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
+        .turn-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
+        .start-btn {
+            background: #c97e3a; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: #f7e6b0; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #6a3c1a; margin: 5px;
+        }
+        .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
         .turn-player { font-size: 2rem; font-weight: bold; margin: 15px 0; }
         .turn-player.red { color: #ff6b4a; text-shadow: 2px 2px 0 #5a1e0a; }
         .turn-player.blue { color: #6bb5ff; text-shadow: 2px 2px 0 #0a2a4a; }
@@ -196,7 +196,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🧪 СВИНЬИ-САПЁРЫ: RED vs BLU 🌕</h1>
-        <div class="sub">Ивент «ПОЛНОЛУНИЕ» — Версия 2.41 (Светлые скины)</div>
+        <div class="sub">Ивент «ПОЛНОЛУНИЕ» — Зелья, надгробия, зомби-свиньи</div>
 
         <div class="top-panel">
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -208,7 +208,6 @@
                         <div class="mode-option" data-mode="0p">🤖🤖 0 ИГРОКОВ</div>
                     </div>
                 </div>
-                <button class="skin-btn" id="skinBtn">🎩 ПРИМЕРОЧНАЯ</button>
                 <button class="howto-top-btn" id="howtoTopBtn">📕 КАК ИГРАТЬ?</button>
             </div>
             <button class="reset-btn" id="resetBtn">🔄 НОВАЯ ИГРА</button>
@@ -236,12 +235,12 @@
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
 
-        <footer>🌕 ПОЛНОЛУНИЕ | Версия 2.41 — Светлые скины 🎩</footer>
+        <footer>🌕 ПОЛНОЛУНИЕ | Идея: Максим Гриневич | Код: DeepSeek</footer>
     </div>
 </div>
 
 <div class="credits">
-    🧪 Версия 2.41 — Теперь скины читаются отлично! | Введи help()
+    🧪 Версия 2.42 — Чистый ивент, без скинов | Введи help()
 </div>
 
 <script>
@@ -267,88 +266,6 @@
     let waitingForInitialConfirm = true;
     let gameStarted = false;
     
-    let redSkin = { pig: '🐷', effect: '💀' };
-    let blueSkin = { pig: '🐗', effect: '💀' };
-    
-    const redSkinsList = [
-        { pig: '🐷', effect: '💀', name: 'Классика', desc: 'Зомби-свинья' },
-        { pig: '🐷', effect: '🕊️', name: 'Голубь', desc: 'Мирная свинья' },
-        { pig: '🐷', effect: '🦩', name: 'Фламинго', desc: 'Розовая свинья' },
-        { pig: '🐷', effect: '🐤', name: 'Цыпа', desc: 'Цыплёнок-свинья' }
-    ];
-    const blueSkinsList = [
-        { pig: '🐗', effect: '💀', name: 'Классика', desc: 'Зомби-кабан' },
-        { pig: '🐗', effect: '🐦', name: 'Воробей', desc: 'Птица-кабан' },
-        { pig: '🐗', effect: '🐿️', name: 'Белка', desc: 'Пушистый' },
-        { pig: '🐗', effect: '🐹', name: 'Хомяк', desc: 'Милый' }
-    ];
-    
-    function loadSkins() {
-        const savedRed = localStorage.getItem('redSkin');
-        const savedBlue = localStorage.getItem('blueSkin');
-        if (savedRed) redSkin = JSON.parse(savedRed);
-        if (savedBlue) blueSkin = JSON.parse(savedBlue);
-        renderTroops();
-    }
-    
-    function saveSkins() {
-        localStorage.setItem('redSkin', JSON.stringify(redSkin));
-        localStorage.setItem('blueSkin', JSON.stringify(blueSkin));
-    }
-    
-    function showSkinModal() {
-        const modal = document.createElement('div'); modal.className = 'skin-modal';
-        modal.innerHTML = `
-            <div class="skin-card">
-                <div class="skin-title">🎩 ПРИМЕРОЧНАЯ 🎩</div>
-                <div style="color:#ffcc66; margin-bottom:10px;">🔴 RED</div>
-                <div class="skin-options" id="redSkinOptions"></div>
-                <div style="color:#ffcc66; margin-bottom:10px; margin-top:20px;">🔵 BLU</div>
-                <div class="skin-options" id="blueSkinOptions"></div>
-                <button class="skin-close" id="skinCloseBtn">❌ ЗАКРЫТЬ</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        const redContainer = document.getElementById('redSkinOptions');
-        redSkinsList.forEach((skin) => {
-            const isActive = redSkin.pig === skin.pig && redSkin.effect === skin.effect;
-            const div = document.createElement('div');
-            div.className = 'skin-option' + (isActive ? ' active' : '');
-            div.innerHTML = `<div class="skin-preview">${skin.pig}${skin.effect}</div>
-                            <div style="font-size:0.8rem; color:#ffffff;">${skin.name}</div>
-                            <div style="font-size:0.6rem; color:#ffcc66;">${skin.desc}</div>`;
-            div.onclick = () => {
-                redSkin = { pig: skin.pig, effect: skin.effect };
-                saveSkins();
-                renderTroops();
-                document.querySelectorAll('#redSkinOptions .skin-option').forEach(opt => opt.classList.remove('active'));
-                div.classList.add('active');
-            };
-            redContainer.appendChild(div);
-        });
-        
-        const blueContainer = document.getElementById('blueSkinOptions');
-        blueSkinsList.forEach((skin) => {
-            const isActive = blueSkin.pig === skin.pig && blueSkin.effect === skin.effect;
-            const div = document.createElement('div');
-            div.className = 'skin-option' + (isActive ? ' active' : '');
-            div.innerHTML = `<div class="skin-preview">${skin.pig}${skin.effect}</div>
-                            <div style="font-size:0.8rem; color:#ffffff;">${skin.name}</div>
-                            <div style="font-size:0.6rem; color:#ffcc66;">${skin.desc}</div>`;
-            div.onclick = () => {
-                blueSkin = { pig: skin.pig, effect: skin.effect };
-                saveSkins();
-                renderTroops();
-                document.querySelectorAll('#blueSkinOptions .skin-option').forEach(opt => opt.classList.remove('active'));
-                div.classList.add('active');
-            };
-            blueContainer.appendChild(div);
-        });
-        
-        document.getElementById('skinCloseBtn').onclick = () => modal.remove();
-    }
-    
     const boardEl = document.getElementById('board');
     const redTroopEl = document.getElementById('redTroop');
     const blueTroopEl = document.getElementById('blueTroop');
@@ -361,7 +278,7 @@
     const modeDropdown = document.getElementById('modeDropdown');
     
     window.help = function() {
-        console.log("%c🧪 СВИНЬИ-САПЁРЫ 2.41 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
+        console.log("%c🧪 СВИНЬИ-САПЁРЫ 2.42 (Полнолуние) 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
         console.log("%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "color: #b89ecc;");
         console.log("%c🎮 debugState()     — показать состояние игры", "color: #88ffaa;");
         console.log("%c🎮 skipTurn()       — завершить ход", "color: #88ffaa;");
@@ -377,7 +294,6 @@
         console.group("%c🔍 СОСТОЯНИЕ ИГРЫ", "color: #ffcc66;");
         console.log("Раунд:", round, "Фаза:", phase, "Ход:", currentTurn);
         console.log("RED:", redPigs, "BLU:", bluePigs);
-        console.log("Скины RED:", redSkin.pig+redSkin.effect, "BLU:", blueSkin.pig+blueSkin.effect);
         console.log("Зелья:", Array.from(placedMines.entries()).map(([k,v]) => `${Math.floor(k/5)+1},${k%5+1}:${v.owner} №${v.number}`));
         console.groupEnd();
         return { round, phase, currentTurn, redPigs, bluePigs, placedMines: Array.from(placedMines.entries()) };
@@ -395,7 +311,7 @@
         setTimeout(() => raven.remove(), 30000);
     };
     
-    setTimeout(() => console.log("%c🌕 ИВЕНТ 2.41! Светлые скины 🎩", "color: #ffcc66; font-size:14px"), 1000);
+    setTimeout(() => console.log("%c🌕 ИВЕНТ «ПОЛНОЛУНИЕ» 2.42! Введи help() 🧪", "color: #ffcc66; font-size:14px"), 1000);
     
     function showStartMenu() {
         const modal = document.createElement('div'); modal.className = 'start-menu';
@@ -422,7 +338,6 @@
             <p>🎲 При равных номерах — рулетка.</p>
             <p>🧪 Зелья сохраняются между раундами.</p>
             <p>👁️ Вражеские зелья НЕ ВИДНЫ никогда!</p>
-            <p>🎩 Можно наряжать свиней в примерочной!</p>
             <p>💻 Консольные команды: F12 → help()</p></div>
             <button class="start-btn howto-close" id="howtoCloseBtn">❌ ЗАКРЫТЬ</button></div>`;
         document.body.appendChild(modal);
@@ -506,11 +421,11 @@
     function renderTroops() {
         redTroopEl.innerHTML = ''; for (let i = 0; i < redPigs; i++) { 
             const pig = document.createElement('div'); pig.className = 'pig-card red'; 
-            pig.textContent = redSkin.pig + redSkin.effect; redTroopEl.appendChild(pig); 
+            pig.textContent = '🐷💀'; redTroopEl.appendChild(pig); 
         }
         blueTroopEl.innerHTML = ''; for (let i = 0; i < bluePigs; i++) { 
             const pig = document.createElement('div'); pig.className = 'pig-card blue'; 
-            pig.textContent = blueSkin.pig + blueSkin.effect; blueTroopEl.appendChild(pig); 
+            pig.textContent = '🐗💀'; blueTroopEl.appendChild(pig); 
         }
     }
     
@@ -749,14 +664,12 @@
     document.addEventListener('click', () => modeDropdown.classList.remove('show'));
     readyBtn.addEventListener('click', finishSelection);
     resetBtn.addEventListener('click', () => showConfirmModal(() => resetGame()));
-    document.getElementById('skinBtn').onclick = () => showSkinModal();
     document.getElementById('howtoTopBtn').onclick = () => showHowTo();
     
     showStartMenu();
     generateWire();
     renderBoard();
     renderTroops();
-    loadSkins();
 </script>
 </body>
 </html>
