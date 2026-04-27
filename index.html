@@ -91,59 +91,27 @@
         .howto-text { text-align: left; line-height: 1.4; }
         .howto-text p { margin: 10px 0; }
         .confirm-yes {
-            background: #4caf50;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #2e7d32;
-            margin: 5px;
+            background: #4caf50; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: white; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #2e7d32; margin: 5px;
         }
         .confirm-yes:active { transform: translateY(2px); box-shadow: 0 2px 0 #2e7d32; }
         .confirm-no {
-            background: #6a4e9e;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #f0e0ff;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #2a1a40;
-            margin: 5px;
+            background: #6a4e9e; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: #f0e0ff; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #2a1a40; margin: 5px;
         }
         .confirm-no:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
         .turn-btn {
-            background: #6a4e9e;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #2a1a40;
-            margin: 5px;
+            background: #6a4e9e; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: white; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #2a1a40; margin: 5px;
         }
         .turn-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
         .start-btn {
-            background: #c97e3a;
-            border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #f7e6b0;
-            padding: 8px 25px;
-            border-radius: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
-            margin: 5px;
+            background: #c97e3a; border: none; font-family: inherit; font-size: 1rem;
+            font-weight: bold; color: #f7e6b0; padding: 8px 25px; border-radius: 40px;
+            cursor: pointer; box-shadow: 0 4px 0 #6a3c1a; margin: 5px;
         }
         .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
         .turn-player { font-size: 2rem; font-weight: bold; margin: 15px 0; }
@@ -228,7 +196,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🧪 СВИНЬИ-САПЁРЫ: RED vs BLU 🌕</h1>
-        <div class="sub">Ивент «ПОЛНОЛУНИЕ» — Версия 2.38 (фикс самоубийства)</div>
+        <div class="sub">Ивент «ПОЛНОЛУНИЕ» — Версия 2.39 (вражеские зелья скрыты)</div>
 
         <div class="top-panel">
             <div style="position: relative;">
@@ -269,7 +237,7 @@
 </div>
 
 <div class="credits">
-    🧪 Версия 2.38 — Нельзя ставить на своё зелье | Введи help()
+    🧪 Версия 2.39 — Вражеские зелья скрыты всегда | Введи help()
 </div>
 
 <script>
@@ -307,7 +275,7 @@
     const modeDropdown = document.getElementById('modeDropdown');
     
     window.help = function() {
-        console.log("%c🧪 СВИНЬИ-САПЁРЫ 2.38 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
+        console.log("%c🧪 СВИНЬИ-САПЁРЫ 2.39 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
         console.log("%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "color: #b89ecc;");
         console.log("%c🎮 debugState()     — показать состояние игры", "color: #88ffaa;");
         console.log("%c🎮 skipTurn()       — завершить ход", "color: #88ffaa;");
@@ -340,7 +308,7 @@
         setTimeout(() => raven.remove(), 30000);
     };
     
-    setTimeout(() => console.log("%c🌕 ИВЕНТ 2.38! Нельзя ставить на своё зелье 🧪", "color: #ffcc66; font-size:14px"), 1000);
+    setTimeout(() => console.log("%c🌕 ИВЕНТ 2.39! Вражеские зелья скрыты 🧪", "color: #ffcc66; font-size:14px"), 1000);
     
     function showStartMenu() {
         const modal = document.createElement('div'); modal.className = 'start-menu';
@@ -365,7 +333,7 @@
             <p>🔥 КОНФЛИКТ: Если зелья на одной клетке, взрывается тот, у кого номер МЕНЬШЕ.</p>
             <p>🎲 При равных номерах — рулетка.</p>
             <p>🧪 Зелья сохраняются между раундами.</p>
-            <p>🚫 Нельзя ставить зелье на клетку со своим зельем!</p>
+            <p>👁️ Вражеские зелья НЕ ВИДНЫ никогда!</p>
             <p>💻 Консольные команды: F12 → help()</p></div>
             <button class="start-btn howto-close" id="howtoCloseBtn">❌ ЗАКРЫТЬ</button></div>`;
         document.body.appendChild(modal);
@@ -458,13 +426,21 @@
             if (wireCells.includes(i)) { cell.classList.add('wire'); cell.textContent = '🪦'; }
             else if (phase === 'selection') {
                 const mine = placedMines.get(i);
+                // ПОКАЗЫВАЕМ ТОЛЬКО СВОИ ЗЕЛЬЯ
                 const isMyOldMine = mine && mine.owner === currentTurn;
                 const isMySelected = (currentTurn === 'red' && redPositions.includes(i)) || (currentTurn === 'blue' && bluePositions.includes(i));
+                
                 if (isMyOldMine) {
                     cell.classList.add(mine.owner === 'red' ? 'placed-mine-red' : 'placed-mine-blue');
                     cell.innerHTML = '🧪';
-                    if (mine.number !== 0) cell.innerHTML += `<div style="font-size:0.7rem;">${mine.number}</div>`;
-                } else if (isMySelected) { cell.classList.add(currentTurn === 'red' ? 'selected-red' : 'selected-blue'); cell.textContent = '🧪'; }
+                    if (mine.number !== 0) {
+                        cell.innerHTML += `<div style="font-size:0.7rem;">${mine.number}</div>`;
+                    }
+                } else if (isMySelected) {
+                    cell.classList.add(currentTurn === 'red' ? 'selected-red' : 'selected-blue');
+                    cell.textContent = '🧪';
+                }
+                // ВРАЖЕСКИЕ ЗЕЛЬЯ НЕ ПОКАЗЫВАЕМ ВООБЩЕ
             } 
             else if (phase === 'battle') {
                 cell.textContent = '';
@@ -485,14 +461,13 @@
         }
     }
     
-    // ОСНОВНАЯ ЛОГИКА С ЗАПРЕТОМ СТАВИТЬ НА СВОЁ ЗЕЛЬЕ
     function onCellClick(idx) {
         if (turnModalActive) return;
         if (!gameActive || phase !== 'selection') return;
         if (wireCells.includes(idx)) return;
         if (waitingForAI) return;
         
-        // ЗАПРЕЩАЕМ СТАВИТЬ НА СВОЁ ЖЕ ЗЕЛЬЕ
+        // Нельзя ставить на своё зелье
         let existingMine = placedMines.get(idx);
         if (existingMine && existingMine.owner === currentTurn) {
             messageDiv.textContent = `❌ Здесь уже твоё зелье (№${existingMine.number})! Нельзя ставить на свою клетку.`;
