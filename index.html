@@ -1,0 +1,17 @@
+let canClick = false;
+if (phase === 'selection' && !wireCells.includes(i) && gameActive && gameStarted && !waitingForInitialConfirm) {
+    if (gameMode === '2p') {
+        // В 2P режиме кликать можно только если:
+        // 1. Это твой ход (currentTurn === соответствующая команда)
+        // 2. Нет активной модалки перехода хода
+        // 3. Не ждём подтверждения от AI
+        if (!turnModalActive && !waitingForAI) {
+            if ((currentTurn === 'red' && (gameMode === '2p' || gameMode === 'ai')) ||
+                (currentTurn === 'blue' && gameMode === '2p')) {
+                canClick = true;
+            }
+        }
+    } else if (gameMode === 'ai' && currentTurn === 'red' && !turnModalActive && !waitingForAI) {
+        canClick = true;
+    }
+}
