@@ -90,12 +90,62 @@
         .confirm-text, .howto-text { color: #e6c8ff; font-size: 1rem; margin-bottom: 25px; }
         .howto-text { text-align: left; line-height: 1.4; }
         .howto-text p { margin: 10px 0; }
-        .confirm-yes, .turn-btn, .start-btn, .howto-close {
-            background: #6a4e9e; border: none; font-family: inherit; font-size: 1rem;
-            font-weight: bold; color: white; padding: 8px 25px; border-radius: 40px;
-            cursor: pointer; box-shadow: 0 4px 0 #2a1a40; margin: 5px;
+        .confirm-yes {
+            background: #4caf50;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2e7d32;
+            margin: 5px;
         }
-        .confirm-no { background: #3a2a5a; box-shadow: 0 4px 0 #1a0a30; }
+        .confirm-yes:active { transform: translateY(2px); box-shadow: 0 2px 0 #2e7d32; }
+        .confirm-no {
+            background: #6a4e9e;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #f0e0ff;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2a1a40;
+            margin: 5px;
+        }
+        .confirm-no:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
+        .turn-btn {
+            background: #6a4e9e;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2a1a40;
+            margin: 5px;
+        }
+        .turn-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
+        .start-btn {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
+            margin: 5px;
+        }
+        .start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
         .turn-player { font-size: 2rem; font-weight: bold; margin: 15px 0; }
         .turn-player.red { color: #ff6b4a; text-shadow: 2px 2px 0 #5a1e0a; }
         .turn-player.blue { color: #6bb5ff; text-shadow: 2px 2px 0 #0a2a4a; }
@@ -178,7 +228,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🧪 СВИНЬИ-САПЁРЫ: RED vs BLU 🌕</h1>
-        <div class="sub">Ивент «ПОЛНОЛУНИЕ» — Без мелькания поля</div>
+        <div class="sub">Ивент «ПОЛНОЛУНИЕ» — Версия 2.38 (фикс самоубийства)</div>
 
         <div class="top-panel">
             <div style="position: relative;">
@@ -219,7 +269,7 @@
 </div>
 
 <div class="credits">
-    🧪 Финальная стабильная версия | Введи help()
+    🧪 Версия 2.38 — Нельзя ставить на своё зелье | Введи help()
 </div>
 
 <script>
@@ -257,7 +307,7 @@
     const modeDropdown = document.getElementById('modeDropdown');
     
     window.help = function() {
-        console.log("%c🧪 ФИНАЛЬНЫЕ КОМАНДЫ 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
+        console.log("%c🧪 СВИНЬИ-САПЁРЫ 2.38 🧪", "color: #ffcc66; font-size: 16px; font-weight: bold;");
         console.log("%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "color: #b89ecc;");
         console.log("%c🎮 debugState()     — показать состояние игры", "color: #88ffaa;");
         console.log("%c🎮 skipTurn()       — завершить ход", "color: #88ffaa;");
@@ -290,7 +340,7 @@
         setTimeout(() => raven.remove(), 30000);
     };
     
-    setTimeout(() => console.log("%c🌕 ИВЕНТ «ПОЛНОЛУНИЕ»! Без мелькания поля 🧪", "color: #ffcc66; font-size:14px"), 1000);
+    setTimeout(() => console.log("%c🌕 ИВЕНТ 2.38! Нельзя ставить на своё зелье 🧪", "color: #ffcc66; font-size:14px"), 1000);
     
     function showStartMenu() {
         const modal = document.createElement('div'); modal.className = 'start-menu';
@@ -314,7 +364,9 @@
             <p>🪦 Надгробия — туда нельзя ставить зелья.</p>
             <p>🔥 КОНФЛИКТ: Если зелья на одной клетке, взрывается тот, у кого номер МЕНЬШЕ.</p>
             <p>🎲 При равных номерах — рулетка.</p>
-            <p>🧪 Зелья сохраняются между раундами.</p></div>
+            <p>🧪 Зелья сохраняются между раундами.</p>
+            <p>🚫 Нельзя ставить зелье на клетку со своим зельем!</p>
+            <p>💻 Консольные команды: F12 → help()</p></div>
             <button class="start-btn howto-close" id="howtoCloseBtn">❌ ЗАКРЫТЬ</button></div>`;
         document.body.appendChild(modal);
         document.getElementById('howtoCloseBtn').onclick = () => modal.remove();
@@ -340,7 +392,7 @@
         if (turnModalActive) return;
         turnModalActive = true;
         const modal = document.createElement('div'); modal.className = 'turn-modal';
-        modal.innerHTML = `<div class="turn-card"><div class="turn-title">🌕 НАЧАЛО</div>
+        modal.innerHTML = `<div class="turn-card"><div class="turn-title">🌕 НАЧАЛО ИВЕНТА</div>
             <div class="turn-player red">🔴 RED</div>
             <div class="confirm-text">Первый игрок, нажмите «Я ГОТОВ»</div>
             <button class="turn-btn" id="initialConfirmBtn">✅ Я ГОТОВ</button></div>`;
@@ -354,10 +406,12 @@
     
     function showConfirmModal(onConfirm) {
         const modal = document.createElement('div'); modal.className = 'confirm-modal';
-        modal.innerHTML = `<div class="confirm-card"><div class="confirm-title">🧪 ПОДТВЕРЖДЕНИЕ</div>
-            <div class="confirm-text">Начать новую игру?</div>
-            <div class="confirm-buttons"><button class="confirm-yes" id="confirmYes">✅ ДА</button>
-            <button class="confirm-no" id="confirmNo">❌ НЕТ</button></div></div>`;
+        modal.innerHTML = `<div class="confirm-card"><div class="confirm-title">🧟 ПОДТВЕРЖДЕНИЕ 🧟</div>
+            <div class="confirm-text">Вы точно не хотите воскрешать зомби?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-yes" id="confirmYes">✅ ДА, ВОСКРЕСИТЬ</button>
+                <button class="confirm-no" id="confirmNo">❌ НЕТ, ОСТАВИТЬ В ПОКОЕ</button>
+            </div></div>`;
         document.body.appendChild(modal);
         document.getElementById('confirmYes').onclick = () => { modal.remove(); onConfirm(); };
         document.getElementById('confirmNo').onclick = () => modal.remove();
@@ -413,7 +467,6 @@
                 } else if (isMySelected) { cell.classList.add(currentTurn === 'red' ? 'selected-red' : 'selected-blue'); cell.textContent = '🧪'; }
             } 
             else if (phase === 'battle') {
-                // Полностью скрываем содержимое клеток в битве
                 cell.textContent = '';
                 cell.style.background = '#2a2038';
             }
@@ -432,11 +485,19 @@
         }
     }
     
+    // ОСНОВНАЯ ЛОГИКА С ЗАПРЕТОМ СТАВИТЬ НА СВОЁ ЗЕЛЬЕ
     function onCellClick(idx) {
         if (turnModalActive) return;
         if (!gameActive || phase !== 'selection') return;
         if (wireCells.includes(idx)) return;
         if (waitingForAI) return;
+        
+        // ЗАПРЕЩАЕМ СТАВИТЬ НА СВОЁ ЖЕ ЗЕЛЬЕ
+        let existingMine = placedMines.get(idx);
+        if (existingMine && existingMine.owner === currentTurn) {
+            messageDiv.textContent = `❌ Здесь уже твоё зелье (№${existingMine.number})! Нельзя ставить на свою клетку.`;
+            return;
+        }
         
         let positions, maxPigs;
         if (gameMode === '2p') {
@@ -477,7 +538,10 @@
         let available = [];
         for (let i = 0; i < TOTAL_CELLS; i++) {
             if (!wireCells.includes(i)) {
-                available.push(i);
+                const mine = placedMines.get(i);
+                if (!mine || mine.owner !== team) {
+                    available.push(i);
+                }
             }
         }
         for (let i = available.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [available[i], available[j]] = [available[j], available[i]]; }
@@ -519,20 +583,12 @@
         phase = 'battle'; readyBtn.classList.add('hidden');
         messageDiv.textContent = `⚔️ РАУНД ${round}! Битва зелий начинается... 🧪`;
         turnText.innerHTML = '⚔️ БИТВА';
-        
-        // Скрываем поле сразу
         renderBoard();
-        
-        // НЕ ОЧИЩАЕМ placedMines
         
         let battleQueue = [];
         for (let i = 1; i <= START_PIGS; i++) {
-            if (i <= redPigs && i-1 < redPositions.length) {
-                battleQueue.push({ owner: 'red', cell: redPositions[i-1], number: i });
-            }
-            if (i <= bluePigs && i-1 < bluePositions.length) {
-                battleQueue.push({ owner: 'blue', cell: bluePositions[i-1], number: i });
-            }
+            if (i <= redPigs && i-1 < redPositions.length) battleQueue.push({ owner: 'red', cell: redPositions[i-1], number: i });
+            if (i <= bluePigs && i-1 < bluePositions.length) battleQueue.push({ owner: 'blue', cell: bluePositions[i-1], number: i });
         }
         
         let index = 0;
@@ -540,11 +596,8 @@
         async function processNext() {
             if (index >= battleQueue.length) {
                 renderBoard();
-                if (redPigs <= 0 || bluePigs <= 0) {
-                    endGame();
-                } else {
-                    nextRound();
-                }
+                if (redPigs <= 0 || bluePigs <= 0) endGame();
+                else nextRound();
                 return;
             }
             
