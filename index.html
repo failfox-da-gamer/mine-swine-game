@@ -104,6 +104,25 @@
             box-shadow: 0 4px 0 #6a3c1a;
         }
         .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .site-btn {
+            background: #4a6a3a;
+            border: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2a3a1a;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+        }
+        .site-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a3a1a; }
+        .site-btn:hover { background: #5a7a4a; }
         .mine-counter {
             background: #2d241c;
             padding: 5px 15px;
@@ -221,6 +240,22 @@
         .ready-btn { background: #4caf50; box-shadow: 0 4px 0 #2e7d32; display: block; margin-left: auto; margin-right: auto; }
         .hidden { display: none; }
         .credits { position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #dbb87c; font-size: 0.6rem; padding: 5px 10px; border-radius: 20px; font-family: monospace; z-index: 100; pointer-events: none; backdrop-filter: blur(4px); }
+
+        @media (max-width: 700px) {
+            .top-panel { flex-direction: column; align-items: stretch; }
+            .top-panel > * { justify-content: center; }
+            .game-layout { flex-direction: column; }
+            .troop { min-width: unset; width: 100%; }
+            .pigs-container { grid-template-columns: repeat(6, 1fr); }
+            .pig-card { width: 100%; }
+        }
+        @media (max-width: 500px) {
+            h1 { font-size: 1.3rem; }
+            .cell { font-size: 1rem; }
+            .pig-card { font-size: 1.8rem; padding: 5px; }
+            .pigs-container { gap: 8px; }
+            .board { padding: 8px; gap: 5px; }
+        }
     </style>
 </head>
 <body>
@@ -228,7 +263,7 @@
 <div class="game-container">
     <div class="tf2-panel">
         <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Бомбы сохраняются | Вражеские бомбы НЕ ВИДНЫ | Звуки</div>
+        <div class="sub">Бомбы сохраняются | Вражеские бомбы НЕ ВИДНЫ</div>
         <div class="top-panel">
             <div style="position:relative">
                 <div class="mode-dropdown-btn" id="modeBtn">🎮 РЕЖИМ</div>
@@ -241,6 +276,7 @@
             <div class="mine-counter">💣 СОХРАНЁННЫХ БОМБ: <span id="mineCount">0</span></div>
             <div class="sound-toggle" id="soundToggle">🔊 ЗВУК ВКЛ</div>
             <button class="reset-btn" id="resetBtn">🔄 НОВАЯ ИГРА</button>
+            <a href="https://failfox-da-gamer.github.io/weather/" target="_blank" class="site-btn">🥛 ДРУГОЙ САЙТ ОТ ЭТОГО РАЗРАБОТЧИКА</a>
         </div>
         <div class="game-layout">
             <div class="troop"><div class="troop-title">🔴 RED</div><div class="pigs-container" id="redTroop"></div></div>
@@ -251,22 +287,23 @@
         <div class="message" id="message">🎯 RED выбирает 6 позиций</div>
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
-        <footer>🐗 Бомбы сохраняются | Вражеские НЕ ВИДНЫ | Звуки: bomb_boom.mp3 | win.mp3 | stalemate_tie_draw.mp3</footer>
+        <footer>🐗 Бомбы сохраняются | Вражеские НЕ ВИДНЫ | Звуки из папки /Звуки/</footer>
     </div>
 </div>
-<div class="credits">🐷 Файлы: bomb_boom.mp3 | win.mp3 | stalemate_tie_draw.mp3 (в корне сайта)</div>
+<div class="credits">🐷 Файлы: /Звуки/bomb_boom.mp3 | /Звуки/win.mp3 | /Звуки/stalemate_tie_draw.mp3</div>
 
 <script>
-    // ========== ЗВУКИ ==========
+    // ========== ЗВУКИ (из папки "Звуки") ==========
     let soundEnabled = true;
     let explosionAudio = null;
     let victoryAudio = null;
     let stalemateAudio = null;
     
     function initSounds() {
-        explosionAudio = new Audio('bomb_boom.mp3');
-        victoryAudio = new Audio('win.mp3');
-        stalemateAudio = new Audio('stalemate_tie_draw.mp3');
+        // ПУТИ К ЗВУКАМ — ПАПКА "Звуки" (на русском)
+        explosionAudio = new Audio('Звуки/bomb_boom.mp3');
+        victoryAudio = new Audio('Звуки/win.mp3');
+        stalemateAudio = new Audio('Звуки/stalemate_tie_draw.mp3');
         if(explosionAudio) explosionAudio.load();
         if(victoryAudio) victoryAudio.load();
         if(stalemateAudio) stalemateAudio.load();
@@ -328,7 +365,6 @@
                 cell.textContent = '⚡';
             }
             else if(phase === 'selection') {
-                // ПОКАЗЫВАЕМ ТОЛЬКО СВОИ БОМБЫ
                 let myMines = currentTurn === 'red' ? redMines : blueMines;
                 let myMineNum = myMines.get(i);
                 let isSelected = (currentTurn === 'red' && redPos.includes(i)) || (currentTurn === 'blue' && bluePos.includes(i));
@@ -341,7 +377,6 @@
                     cell.classList.add(currentTurn === 'red' ? 'selected-red' : 'selected-blue');
                     cell.textContent = currentTurn === 'red' ? '🐷' : '🐗';
                 }
-                // ВРАЖЕСКИЕ БОМБЫ НЕ ПОКАЗЫВАЕМ ВООБЩЕ!
             }
             else if(phase === 'battle') {
                 let redNum = redMines.get(i);
@@ -366,7 +401,6 @@
     function onCellClick(idx) {
         if(!gameActive || phase !== 'selection' || wireCells.includes(idx) || waitingForAI || turnModalActive) return;
         
-        // НЕЛЬЗЯ СТАВИТЬ НА СВОЮ БОМБУ
         let myMines = currentTurn === 'red' ? redMines : blueMines;
         if(myMines.has(idx)) {
             messageDiv.textContent = `❌ Здесь уже твоя бомба (№${myMines.get(idx)})! Нельзя ставить на свою клетку.`;
@@ -402,7 +436,7 @@
         let myMines = team === 'red' ? redMines : blueMines;
         
         for(let i=0;i<TOTAL;i++) {
-            if(!wireCells.includes(i) && !myMines.has(i)) { // НЕЛЬЗЯ НА СВОИ
+            if(!wireCells.includes(i) && !myMines.has(i)) {
                 avail.push(i);
             }
         }
@@ -422,7 +456,6 @@
             let cell = positions[i];
             if(!wireCells.includes(cell)) {
                 myMines.set(cell, i+1);
-                // Визуальный эффект своей бомбы
                 let cd = boardEl.children[cell];
                 if(cd) {
                     cd.classList.add(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
@@ -652,7 +685,7 @@
         else { winner = '⚡ НИЧЬЯ! ⚡'; playStalemate(); }
         
         resultBox.classList.remove('hidden');
-        resultBox.innerHTML = `<div class="winner">🏆 ${winner} 🏆</div><div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div><div>Раунд: ${round}</div><button id="againBtn" style="margin-top:12px;">🎮 СЫГРАТЬ ЕЩЁ</button>`;
+        resultBox.innerHTML = `<div class="winner">🏆 ${winner} 🏆</div><div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div><div>Раунд: ${round}</div><button id="againBtn" style="margin-top:12px; background:#6a4e9e; border:none; font-family:inherit; font-size:1rem; font-weight:bold; color:white; padding:8px 25px; border-radius:40px; cursor:pointer; box-shadow:0 4px 0 #2a1a40;">🎮 СЫГРАТЬ ЕЩЁ</button>`;
         turnText.innerHTML = winner;
         document.getElementById('againBtn')?.addEventListener('click', () => resetGame());
     }
