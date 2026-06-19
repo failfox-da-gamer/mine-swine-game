@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>404 — Свиньи-сапёры: Проволока!</title>
+    <style>
+        * {
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            padding: 20px;
+            position: relative;
+        }
+
+        .cloud {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1000px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .cloud1 { width: 140px; height: 80px; top: 8%; left: 3%; }
+        .cloud2 { width: 200px; height: 110px; top: 15%; right: 8%; }
+        .cloud3 { width: 170px; height: 95px; bottom: 12%; left: 10%; }
+        .cloud4 { width: 120px; height: 70px; bottom: 20%; right: 15%; }
+        .cloud5 { width: 100px; height: 60px; top: 45%; right: 20%; }
+        .cloud6 { width: 180px; height: 90px; bottom: 35%; left: 20%; }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            background: rgba(60, 44, 31, 0.85);
+            backdrop-filter: blur(3px);
+            border-radius: 60px;
+            padding: 20px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 0 #2d241b, 0 30px 30px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+        }
+
+        .tf2-panel {
+            background: #3c2c1f;
+            border-radius: 40px;
+            padding: 30px 25px;
+            box-shadow: inset 0 0 0 3px #846b4a, inset 0 0 0 8px #5e422c, 0 10px 15px black;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 6rem;
+            margin: 10px 0 0;
+            filter: drop-shadow(6px 8px 0 #2d241b);
+            animation: wobble 0.8s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 15px 0 5px;
+            font-size: 4rem;
+            color: #f7e05e;
+            text-shadow: 6px 6px 0 #7a2e19;
+            letter-spacing: 4px;
+        }
+
+        .sub-error {
+            font-size: 1.7rem;
+            color: #ffb347;
+            text-shadow: 3px 3px 0 #5a2a1a;
+            margin-bottom: 20px;
+            word-break: keep-all;
+        }
+
+        .wire-badge {
+            display: inline-block;
+            background: repeating-linear-gradient(45deg, #777, #777 10px, #555 10px, #555 20px);
+            padding: 10px 25px;
+            border-radius: 60px;
+            color: #f7e6b0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 15px 0;
+            box-shadow: inset 0 0 0 2px #ebc28e, 0 5px 0 #2d1f12;
+            letter-spacing: 2px;
+        }
+
+        .message-box {
+            background: #1e1b16;
+            border-radius: 30px;
+            padding: 18px;
+            margin: 15px 0 20px;
+            border: 2px solid #e6b86e;
+        }
+
+        .message-box p {
+            color: #ffd78c;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-weight: normal;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin: 5px 0;
+        }
+
+        .pig-mine-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .pig-card {
+            background: rgba(0,0,0,0.5);
+            border-radius: 30px;
+            padding: 12px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .pig-card.red { border: 3px solid #ff8866; background: #5a2e3e; }
+        .pig-card.blue { border: 3px solid #88aaff; background: #2e3e5a; }
+        .pig-card span {
+            font-size: 0.9rem;
+            font-family: monospace;
+            font-weight: bold;
+            background: #1e1b16;
+            padding: 5px 12px;
+            border-radius: 40px;
+            color: #f3d382;
+        }
+
+        .button-group {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 12px 28px;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #6a3c1a;
+            transition: 0.05s linear;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .nav-btn.reset-style {
+            background: #4c6e3a;
+            box-shadow: 0 5px 0 #2a401a;
+        }
+        .nav-btn.weather-style {
+            background: #4a6a8a;
+            box-shadow: 0 5px 0 #2a3a5a;
+        }
+        .nav-btn.weather-style:hover { background: #5a7a9a; }
+
+        .footer-404 {
+            text-align: center;
+            font-size: 0.75rem;
+            margin-top: 25px;
+            color: #dbb87c;
+            font-family: monospace;
+        }
+
+        .explosion-mini {
+            display: inline-block;
+            animation: shakeMini 0.3s ease-in-out;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0px) rotate(0deg); }
+            15% { transform: translateX(-8px) rotate(-4deg); }
+            30% { transform: translateX(6px) rotate(3deg); }
+            45% { transform: translateX(-4px) rotate(-2deg); }
+            60% { transform: translateX(3px) rotate(1deg); }
+            75% { transform: translateX(-1px) rotate(0deg); }
+        }
+
+        @keyframes shakeMini {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+            100% { transform: translateX(0); }
+        }
+
+        .blink-warning {
+            animation: blinkAlert 0.9s infinite;
+            font-weight: bold;
+        }
+        @keyframes blinkAlert {
+            0% { opacity: 0.6; text-shadow: 0 0 0px #ff0000; }
+            100% { opacity: 1; text-shadow: 0 0 5px #ff6633; }
+        }
+
+        .console-tip {
+            background: #1a1510;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #b0ffb0;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        @media (max-width: 550px) {
+            h1 { font-size: 2.5rem; }
+            .sub-error { font-size: 1.2rem; }
+            .error-icon { font-size: 4rem; }
+            .pig-card { font-size: 1.2rem; padding: 8px 14px; }
+            .nav-btn { padding: 8px 18px; font-size: 0.9rem; }
+            .button-group { flex-direction: column; align-items: center; }
+            .nav-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+<div class="cloud cloud4"></div>
+<div class="cloud cloud5"></div>
+<div class="cloud cloud6"></div>
+
+<div class="game-container">
+    <div class="tf2-panel">
+        <div class="error-icon">💣🐷⚡</div>
+        <h1>404</h1>
+        <div class="sub-error">СВИНЬЯ НА МИНЕ</div>
+        
+        <div class="wire-badge">
+            ⚡ ПРОВОЛОКА / ОБРЫВ ⚡
+        </div>
+
+        <div class="message-box">
+            <p>🔍 Похоже, ты наступил на растяжку... Страница, которую ты ищешь, <strong class="blink-warning">взорвалась при закладке бомбы</strong>.</p>
+            <p>💥 Или её похитили синие кабаны! (код ошибки: 404 — сектор не обнаружен)</p>
+            <p>🎮 Вернись на безопасное поле, пока RED и BLU не начали новый раунд.</p>
+        </div>
+
+        <div class="pig-mine-row">
+            <div class="pig-card red">
+                🐷 <span>RED</span>
+            </div>
+            <div class="pig-card blue">
+                🐗 <span>BLU</span>
+            </div>
+            <div class="pig-card" style="border-color: #aaaaaa; background:#3a3a2a;">
+                💣 <span>МИНА-404</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="nav-btn" id="goHomeBtn">🏠 НА ГЛАВНУЮ (БАЗУ)</button>
+            <a href="https://failfox-da-gamer.github.io/weather/" target="_blank" class="nav-btn weather-style">🥛 РЯЖЕНКА (ПОГОДА)</a>
+            <button class="nav-btn reset-style" id="randomResetBtn">🎲 ПОПРОБОВАТЬ ЕЩЁ РАЗ</button>
+        </div>
+
+        <div class="console-tip">
+            💡 Введи `help404()` в консоли, если заблудился в проводах...
+        </div>
+
+        <div class="footer-404">
+            🐗🐷 Свиньи-сапёры | Страница потерялась в бою | Вернись к живым свиньям!
+        </div>
+    </div>
+</div>
+
+<div class="credits" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #dbb87c; font-size: 0.6rem; padding: 5px 10px; border-radius: 20px; font-family: monospace; z-index: 100; backdrop-filter: blur(4px); pointer-events: none;">
+    💣 404 ПАТРУЛЬ | Багфикс Вселенной
+</div>
+
+<script>
+    // 404 страница в стиле "Свиньи-сапёры" — консольные пасхалки + динамика
+    (function() {
+        console.log("%c💣🔴 СТРАНИЦА 404 • ЗОНА ОТЧУЖДЕНИЯ 🔵💣", "color: #ffcc66; font-size: 16px; font-weight: bold; background: #2d241c; padding: 4px 10px; border-radius: 20px;");
+        console.log("%c❌ Страница не найдена, но ты можешь вернуться на главную.", "color: #ffaa88;");
+        console.log("%c🐷 Совет: нажми кнопки или введи commands404()", "color: #88ffaa;");
+        console.log("%c🥛 Или загляни в Ряженку — погода там всегда точнее!", "color: #88aaff;");
+
+        window.help404 = function() {
+            console.group("%c🐗 404 КОМАНДЫ ПОМОЩИ 🐷", "color: #f7e05e; font-weight: bold;");
+            console.log("%c• goHome()       — переход на главную страницу", "color: #b0ffb0;");
+            console.log("%c• goWeather()    — переход на Ряженку (погода)", "color: #b0ffb0;");
+            console.log("%c• randomRedirect() — редирект на случайную страницу", "color: #b0ffb0;");
+            console.log("%c• blowUpConsole()  — взрыв в консоли (просто эффект)", "color: #ffaa66;");
+            console.log("%c• easterEgg()      — маленький пасхальный свин", "color: #ffaa66;");
+            console.log("%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "color: #b89ecc;");
+            console.log("%c💡 Используй goHome() или goWeather()", "color: #ffffff;");
+            console.groupEnd();
+        };
+
+        window.commands404 = window.help404;
+
+        window.goHome = function() {
+            console.log("%c🏠 Возвращение на главную...", "color: #88ffaa;");
+            window.location.href = '/';
+        };
+
+        window.goWeather = function() {
+            console.log("%c🥛 Отправляемся в Ряженку за погодой! 🌤️", "color: #88aaff;");
+            window.location.href = 'https://failfox-da-gamer.github.io/weather/';
+        };
+
+        window.randomRedirect = function() {
+            const funnyPaths = ['/', '/game', '/pig-sapper', '/index.html', '/tf2-pigs', 'https://failfox-da-gamer.github.io/weather/'];
+            const randomPath = funnyPaths[Math.floor(Math.random() * funnyPaths.length)];
+            console.log(`🎲 Перенаправление на "${randomPath}" ... авось повезёт`);
+            window.location.href = randomPath;
+        };
+
+        window.blowUpConsole = function() {
+            console.log("%c💥 БАБАХ! 💥", "color: #ff4444; font-size: 20px; font-weight: bold;");
+            console.log("%c🐷 Свиньи разбегаются... но ничего не сломалось (только страница 404)", "color: #ffaa55;");
+            console.log("%c🔧 Попробуй goHome() или goWeather()", "color: #aaaaaa;");
+            const body = document.querySelector('body');
+            if(body) {
+                const fakeExplode = document.createElement('div');
+                fakeExplode.style.position = 'fixed';
+                fakeExplode.style.top = '50%';
+                fakeExplode.style.left = '50%';
+                fakeExplode.style.transform = 'translate(-50%, -50%)';
+                fakeExplode.style.fontSize = '3rem';
+                fakeExplode.style.background = 'rgba(0,0,0,0.8)';
+                fakeExplode.style.padding = '20px 40px';
+                fakeExplode.style.borderRadius = '60px';
+                fakeExplode.style.color = '#ffaa44';
+                fakeExplode.style.zIndex = '10000';
+                fakeExplode.style.fontWeight = 'bold';
+                fakeExplode.style.fontFamily = 'monospace';
+                fakeExplode.innerHTML = '💥 КОНСОЛЬНЫЙ ВЗРЫВ 💥<br><span style="font-size:1rem;">но это просто шутка</span>';
+                document.body.appendChild(fakeExplode);
+                setTimeout(() => fakeExplode.remove(), 1200);
+            }
+        };
+
+        window.easterEgg = function() {
+            console.log("%c🐖 *хрюк* Ты нашёл секретную свинью! 🐖", "color: #ff99cc; font-size: 14px;");
+            alert("🐷 Хрю! Страница 404, но свинья тут. Лучше вернись на главную через кнопку!");
+        };
+
+        // Анимация при наведении на контейнер (игровая атмосфера)
+        const container = document.querySelector('.game-container');
+        if(container) {
+            container.addEventListener('mouseenter', () => {
+                console.log("%c🐗 Свиньи-сапёры чувствуют твоё присутствие...", "color: #b8a070");
+            });
+        }
+
+        // Главная кнопка возврата на главную страницу
+        const homeBtn = document.getElementById('goHomeBtn');
+        if(homeBtn) {
+            homeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const messageDiv = document.querySelector('.message-box');
+                if(messageDiv) {
+                    const originalHTML = messageDiv.innerHTML;
+                    messageDiv.innerHTML = '<p>💣🔴 РАЗМИНИРОВАНИЕ... ПЕРЕХОД НА БАЗУ 🔵💣</p>';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 400);
+                    setTimeout(() => {
+                        if(messageDiv) messageDiv.innerHTML = originalHTML;
+                    }, 600);
+                } else {
+                    window.location.href = '/';
+                }
+            });
+        }
+
+        // Кнопка "Попробовать ещё раз" — эмуляция сброса
+        const randomBtn = document.getElementById('randomResetBtn');
+        if(randomBtn) {
+            randomBtn.addEventListener('click', () => {
+                const effects = ['redirect', 'reload', 'funnyMessage'];
+                const chosen = effects[Math.floor(Math.random() * effects.length)];
+                if(chosen === 'redirect') {
+                    const randPaths = ['/', '/index.html', '/game.html', 'https://failfox-da-gamer.github.io/weather/'];
+                    const target = randPaths[Math.floor(Math.random() * randPaths.length)];
+                    const msgBox = document.querySelector('.message-box');
+                    if(msgBox) {
+                        msgBox.innerHTML = '<p>🎲 Рулетка: пытаемся найти живую страницу...</p><p style="font-size:0.8rem;">➡️ ' + target + '</p>';
+                        setTimeout(() => { window.location.href = target; }, 700);
+                    } else {
+                        window.location.href = target;
+                    }
+                } else if(chosen === 'reload') {
+                    const msgBox = document.querySelector('.message-box');
+                    if(msgBox) {
+                        msgBox.innerHTML = '<p>🔄 Перезагрузка сектора... возможно, страница появится? 🤞</p>';
+                        setTimeout(() => { window.location.reload(); }, 800);
+                    } else {
+                        window.location.reload();
+                    }
+                } else {
+                    const msgDiv = document.querySelector('.message-box');
+                    if(msgDiv) {
+                        msgDiv.classList.add('explosion-mini');
+                        msgDiv.innerHTML = '<p>🔍 Ничего не изменилось, 404 так и осталась 404.</p><p>🐗 Но RED и BLU всё ещё воюют! Жми на главную.</p>';
+                        setTimeout(() => {
+                            if(msgDiv) msgDiv.classList.remove('explosion-mini');
+                        }, 600);
+                    }
+                }
+            });
+        }
+
+        // Добавим пару динамических свиней, которые бегают по клику
+        const pigCards = document.querySelectorAll('.pig-card');
+        pigCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const isRed = card.classList.contains('red');
+                const isBlue = card.classList.contains('blue');
+                if(isRed) {
+                    console.log("%c🔴 ХРЮ! RED свинья протестует: '404 - это не наша мина!'", "color:#ff8866");
+                    const msg = document.querySelector('.message-box p');
+                    if(msg) msg.innerHTML = "🔴 RED: Эта страница заминирована! Сваливаем! 🐷💨";
+                } else if(isBlue) {
+                    console.log("%c🔵 BLU кабан фыркнул: 'Потерял координаты, возвращайся на базу!'", "color:#88aaff");
+                    const msg = document.querySelector('.message-box p');
+                    if(msg) msg.innerHTML = "🔵 BLU: 404 в наших картах! Нажми 'НА ГЛАВНУЮ'! 🐗⚡";
+                } else {
+                    console.log("%c💣 Бомба-404 щёлкнула. Не взрывай консоль без необходимости.", "color:#ccaa66");
+                }
+            });
+        });
+
+        // Эффект искр при наведении на "проволочный" бейдж
+        const wireBadge = document.querySelector('.wire-badge');
+        if(wireBadge) {
+            wireBadge.addEventListener('mouseenter', () => {
+                wireBadge.style.transform = 'scale(1.02)';
+                wireBadge.style.transition = '0.1s';
+                console.log("%c⚡ Проволока под напряжением! Страница 404 обесточена.", "color:#99ddff");
+                setTimeout(() => {
+                    if(wireBadge) wireBadge.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
+
+        // Секретная пасхалка — клик 5 раз по заголовку 404
+        let clickCount = 0;
+        const errorTitle = document.querySelector('h1');
+        if(errorTitle) {
+            errorTitle.addEventListener('click', () => {
+                clickCount++;
+                if(clickCount === 3) {
+                    console.log("%c🐷🐗 Секретный уровень: ты почти нашел свинью-сапёра!", "color:#f5cb5c");
+                    const iconDiv = document.querySelector('.error-icon');
+                    if(iconDiv) iconDiv.style.animation = 'none';
+                    setTimeout(() => {
+                        if(iconDiv) iconDiv.style.animation = 'wobble 0.5s ease';
+                    }, 10);
+                }
+                if(clickCount >= 5) {
+                    alert("🐖🎖️ Свин-коммандер: Страница 404, но дух игры не сломлен! Используй кнопки навигации.");
+                    clickCount = 0;
+                }
+            });
+        }
+
+        // Сообщение в консоли после загрузки страницы
+        setTimeout(() => {
+            console.log("%c🐽 Эй, командир! Если ты потерялся, введи help404() в консоли. Бомбы ждать не будут!", "color: #ffaa77; font-size: 12px;");
+        }, 1500);
+
+        // Вибрация для мобильных кнопок
+        const allBtns = document.querySelectorAll('.nav-btn');
+        allBtns.forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                btn.style.transform = 'translateY(2px)';
+                setTimeout(() => { btn.style.transform = ''; }, 120);
+            });
+        });
+
+        // Эффект "мины" под курсором в виде частиц? легкий эффект при клике на фон
+        document.body.addEventListener('click', (e) => {
+            if(e.target.closest('.nav-btn')) return;
+            if(e.target.closest('.pig-card')) return;
+            console.log("%c💣 *тихий щелчок мины* ... страница не взорвалась, но ты на 404", "color:#886633");
+        });
+
+        // Расширенная команда назад в истории
+        window.backToSafety = function() {
+            if(document.referrer && document.referrer !== "") {
+                window.location.href = document.referrer;
+            } else {
+                window.location.href = '/';
+            }
+        };
+        console.log("%c✅ 404 страница загружена в стиле «Свиньи-сапёры». Удачи в разминировании!", "color: #b0ff90;");
+        console.log("%c🥛 А ещё есть Ряженка — нажми кнопку или введи goWeather() в консоли!", "color: #88aaff;");
+    })();
+</script>
+</body>
+</html>
