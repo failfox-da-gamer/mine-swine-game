@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Свиньи-сапёры | RED vs BLU</title>
+    <style>
+        * { user-select: none; box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            padding: 20px;
+            position: relative;
+        }
+        .cloud {
+            position: fixed;
+            background: rgba(255,255,255,0.95);
+            border-radius: 1000px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .cloud1 { width: 140px; height: 80px; top: 8%; left: 3%; }
+        .cloud2 { width: 200px; height: 110px; top: 15%; right: 8%; }
+        .cloud3 { width: 170px; height: 95px; bottom: 12%; left: 10%; }
+        .cloud4 { width: 120px; height: 70px; bottom: 20%; right: 15%; }
+        .game-container {
+            position: relative;
+            z-index: 1;
+            background: rgba(60,44,31,0.85);
+            backdrop-filter: blur(3px);
+            border-radius: 60px;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 20px 0 #2d241b, 0 30px 30px rgba(0,0,0,0.5);
+        }
+        .tf2-panel {
+            background: #3c2c1f;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: inset 0 0 0 3px #846b4a, inset 0 0 0 8px #5e422c, 0 10px 15px black;
+        }
+        h1 { text-align: center; margin: 0 0 5px; font-size: 1.8rem; color: #f7e05e; text-shadow: 4px 4px 0 #7a2e19; }
+        .sub { text-align: center; color: #e6b86e; margin-bottom: 15px; font-size: 0.7rem; }
+        .top-panel {
+            background: #1e1b16;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .sound-toggle {
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            color: #f3d382;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .mode-dropdown-btn {
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            color: #f3d382;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .mode-dropdown {
+            position: absolute;
+            background: #2d241c;
+            border: 2px solid #e6b86e;
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 10;
+            display: none;
+        }
+        .mode-dropdown.show { display: block; }
+        .mode-option { padding: 8px 20px; color: #f3d382; cursor: pointer; font-size: 0.9rem; white-space: nowrap; }
+        .mode-option:hover { background: #c97e3a; color: #fff3bf; }
+        .reset-btn {
+            background: #c97e3a;
+            border: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6a3c1a;
+        }
+        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .site-btn {
+            background: #4a6a3a;
+            border: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #f7e6b0;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2a3a1a;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+        }
+        .site-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a3a1a; }
+        .site-btn:hover { background: #5a7a4a; }
+        .mine-counter {
+            background: #2d241c;
+            padding: 5px 15px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #ffaa66;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .confirm-modal, .turn-modal, .start-menu, .howto-modal, .roulette-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,1);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .confirm-card, .turn-card, .start-card, .howto-card, .roulette-card {
+            background: #1a1230;
+            border-radius: 40px;
+            padding: 30px;
+            text-align: center;
+            border: 4px solid #b89ecc;
+            min-width: 320px;
+            max-width: 90vw;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 10000;
+        }
+        .confirm-title, .turn-title, .start-title, .howto-title, .roulette-title {
+            font-size: 1.5rem;
+            color: #ffcc66;
+            margin-bottom: 20px;
+        }
+        .confirm-text, .howto-text { color: #e6c8ff; font-size: 1rem; margin-bottom: 25px; }
+        .howto-text { text-align: left; line-height: 1.4; }
+        .howto-text p { margin: 10px 0; }
+        .confirm-yes, .turn-btn, .start-btn, .howto-close {
+            background: #6a4e9e;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2a1a40;
+            margin: 5px;
+        }
+        .confirm-no { background: #3a2a5a; box-shadow: 0 4px 0 #1a0a30; }
+        .turn-player { font-size: 2rem; font-weight: bold; margin: 15px 0; }
+        .turn-player.red { color: #ff6b4a; text-shadow: 2px 2px 0 #5a1e0a; }
+        .turn-player.blue { color: #6bb5ff; text-shadow: 2px 2px 0 #0a2a4a; }
+        .game-layout { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+        .troop { flex: 1; min-width: 150px; background: rgba(0,0,0,0.3); border-radius: 30px; padding: 15px; text-align: center; }
+        .troop-title { font-size: 1.5rem; margin-bottom: 10px; }
+        .pigs-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center; align-items: center; }
+        .pig-card { font-size: 2.5rem; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 10px; width: 70px; text-align: center; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .pig-card.red { background: #5a2e3e; border: 2px solid #ff8866; }
+        .pig-card.blue { background: #2e3e5a; border: 2px solid #88aaff; }
+        .board-container { flex: 2; min-width: 280px; }
+        .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; background: #8b6b42; padding: 15px; border-radius: 30px; box-shadow: inset 0 0 0 3px #ebc28e, 0 8px 15px black; }
+        .cell {
+            aspect-ratio: 1 / 1;
+            background: #f5e6c8;
+            background-image: radial-gradient(circle at 25% 30%, #fff8e8, #e8d8b8);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: inset 0 -3px 0 #c9aa7b, 0 4px 8px rgba(0,0,0,0.3);
+            transition: 0.05s linear;
+            flex-direction: column;
+            position: relative;
+        }
+        .cell:active { transform: scale(0.96); }
+        .cell.wire { background: repeating-linear-gradient(45deg, #999, #999 8px, #777 8px, #777 16px); cursor: not-allowed; }
+        .cell.selected-red { background: #ff8866; box-shadow: 0 0 0 3px #ffcc66; }
+        .cell.selected-blue { background: #88aaff; box-shadow: 0 0 0 3px #77aaff; }
+        .cell.placed-mine-red { background: #ff8866; color: white; }
+        .cell.placed-mine-blue { background: #88aaff; color: white; }
+        .cell.temp-mine-red { background: #ff8866; animation: blink-red 0.3s ease-in-out 2; }
+        .cell.temp-mine-blue { background: #88aaff; animation: blink-blue 0.3s ease-in-out 2; }
+        .cell.explosion { animation: shake 0.2s ease-in-out 0s 2; background: #888 !important; background-image: none !important; }
+        @keyframes blink-red {
+            0% { background-color: #ff8866; }
+            50% { background-color: #ff0000; box-shadow: 0 0 20px 10px rgba(255,0,0,0.7); }
+            100% { background-color: #ff8866; }
+        }
+        @keyframes blink-blue {
+            0% { background-color: #88aaff; }
+            50% { background-color: #2255cc; box-shadow: 0 0 20px 10px rgba(0,51,204,0.7); }
+            100% { background-color: #88aaff; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .game-info { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; flex-wrap: wrap; gap: 8px; }
+        .turn-indicator { background: #1e1b16; padding: 8px 20px; border-radius: 40px; color: #f3d382; font-size: 1rem; }
+        .message { background: #1a1510; padding: 8px 15px; border-radius: 30px; color: #ffd78c; text-align: center; font-size: 0.85rem; }
+        footer { text-align: center; font-size: 0.7rem; margin-top: 20px; color: #dbb87c; }
+        .result-box { background: #1e1b16; border-radius: 20px; padding: 12px; margin-top: 12px; text-align: center; }
+        .result-box .winner { font-size: 1.5rem; color: #f7e05e; text-shadow: 2px 2px 0 #7a2e19; }
+        .ready-btn { background: #4caf50; box-shadow: 0 4px 0 #2e7d32; display: block; margin-left: auto; margin-right: auto; }
+        .hidden { display: none; }
+        .credits { position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #dbb87c; font-size: 0.6rem; padding: 5px 10px; border-radius: 20px; font-family: monospace; z-index: 100; pointer-events: none; backdrop-filter: blur(4px); }
+
+        @media (max-width: 700px) {
+            .top-panel { flex-direction: column; align-items: stretch; }
+            .top-panel > * { justify-content: center; }
+            .game-layout { flex-direction: column; }
+            .troop { min-width: unset; width: 100%; }
+            .pigs-container { grid-template-columns: repeat(6, 1fr); }
+            .pig-card { width: 100%; }
+        }
+        @media (max-width: 500px) {
+            h1 { font-size: 1.3rem; }
+            .cell { font-size: 1rem; }
+            .pig-card { font-size: 1.8rem; padding: 5px; }
+            .pigs-container { gap: 8px; }
+            .board { padding: 8px; gap: 5px; }
+            .confirm-card, .turn-card, .start-card, .howto-card, .roulette-card { min-width: unset; width: 95vw; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div><div class="cloud cloud4"></div>
+<div class="game-container">
+    <div class="tf2-panel">
+        <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
+        <div class="sub">Исправлен баг с бессмертием в режиме AI</div>
+        <div class="top-panel">
+            <div style="position:relative">
+                <div class="mode-dropdown-btn" id="modeBtn">🎮 РЕЖИМ</div>
+                <div class="mode-dropdown" id="modeDropdown">
+                    <div class="mode-option" data-mode="2p">👥 2 ИГРОКА</div>
+                    <div class="mode-option" data-mode="ai">🤖 ПРОТИВ AI</div>
+                    <div class="mode-option" data-mode="0p">🤖🤖 0 ИГРОКОВ</div>
+                </div>
+            </div>
+            <div class="mine-counter">💣 СОХРАНЁННЫХ БОМБ: <span id="mineCount">0</span></div>
+            <div class="sound-toggle" id="soundToggle">🔊 ЗВУК ВКЛ</div>
+            <button class="reset-btn" id="resetBtn">🔄 НОВАЯ ИГРА</button>
+            <a href="https://failfox-da-gamer.github.io/weather/" target="_blank" class="site-btn">🥛 ДРУГОЙ САЙТ</a>
+        </div>
+        <div class="game-layout">
+            <div class="troop"><div class="troop-title">🔴 RED</div><div class="pigs-container" id="redTroop"></div></div>
+            <div class="board-container"><div class="board" id="board"></div></div>
+            <div class="troop"><div class="troop-title">🔵 BLU</div><div class="pigs-container" id="blueTroop"></div></div>
+        </div>
+        <div class="game-info"><div class="turn-indicator" id="turnText">🔴 ВЫБОР RED</div></div>
+        <div class="message" id="message">🎯 RED выбирает 6 позиций</div>
+        <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
+        <div id="resultBox" class="result-box hidden"></div>
+        <footer>🐗 Исправлен баг бессмертия в AI | Звуки: /Звуки/</footer>
+    </div>
+</div>
+<div class="credits">🐷 Звуки: /Звуки/bomb_boom.mp3 | /Звуки/win.mp3 | /Звуки/stalemate_tie_draw.mp3</div>
+
+<script>
+    // ========== ЗВУКИ ==========
+    let soundEnabled = true;
+    let explosionAudio = null;
+    let victoryAudio = null;
+    let stalemateAudio = null;
+    
+    function initSounds() {
+        explosionAudio = new Audio('Звуки/bomb_boom.mp3');
+        victoryAudio = new Audio('Звуки/win.mp3');
+        stalemateAudio = new Audio('Звуки/stalemate_tie_draw.mp3');
+        if(explosionAudio) explosionAudio.load();
+        if(victoryAudio) victoryAudio.load();
+        if(stalemateAudio) stalemateAudio.load();
+    }
+    
+    function playExplosion() { if(soundEnabled && explosionAudio) { explosionAudio.currentTime = 0; explosionAudio.play().catch(e=>{}); } }
+    function playVictory() { if(soundEnabled && victoryAudio) { victoryAudio.currentTime = 0; victoryAudio.play().catch(e=>{}); } }
+    function playStalemate() { if(soundEnabled && stalemateAudio) { stalemateAudio.currentTime = 0; stalemateAudio.play().catch(e=>{}); } }
+    
+    const soundToggle = document.getElementById('soundToggle');
+    soundToggle.onclick = () => { soundEnabled = !soundEnabled; soundToggle.textContent = soundEnabled ? '🔊 ЗВУК ВКЛ' : '🔇 ЗВУК ВЫКЛ'; };
+    
+    // ========== ИГРОВЫЕ ПЕРЕМЕННЫЕ ==========
+    const TOTAL = 25, START_PIGS = 6;
+    let wireCells = [];
+    let round = 1, gameActive = true, gameMode = '2p', phase = 'selection', currentTurn = 'red';
+    let redPos = [], bluePos = [];
+    let redMines = new Map(), blueMines = new Map();
+    let redPigs = START_PIGS, bluePigs = START_PIGS;
+    let waitingForAI = false, turnModalActive = false, waitingInit = true, gameStarted = false;
+    
+    function getAllMines() {
+        let all = [];
+        for(let [c, num] of redMines) all.push({owner:'red', cell:c, number:num});
+        for(let [c, num] of blueMines) all.push({owner:'blue', cell:c, number:num});
+        return all;
+    }
+    
+    const boardEl = document.getElementById('board'), redTroopEl = document.getElementById('redTroop'), blueTroopEl = document.getElementById('blueTroop');
+    const turnText = document.getElementById('turnText'), messageDiv = document.getElementById('message'), readyBtn = document.getElementById('readyBtn');
+    const resultBox = document.getElementById('resultBox'), resetBtn = document.getElementById('resetBtn'), modeBtn = document.getElementById('modeBtn');
+    const modeDropdown = document.getElementById('modeDropdown'), mineCountSpan = document.getElementById('mineCount');
+    
+    function updateMineCounter() { mineCountSpan.textContent = redMines.size + blueMines.size; }
+    
+    function generateWire() {
+        wireCells = [];
+        let cnt = Math.floor(Math.random()*3)+1;
+        let all = Array.from({length:TOTAL}, (_,i)=>i);
+        for(let i=all.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [all[i],all[j]]=[all[j],all[i]]; }
+        for(let i=0;i<cnt;i++) wireCells.push(all[i]);
+    }
+    
+    function renderTroops() {
+        redTroopEl.innerHTML = '';
+        for(let i=0;i<redPigs;i++) { let d=document.createElement('div'); d.className='pig-card red'; d.textContent='🐷'; redTroopEl.appendChild(d); }
+        blueTroopEl.innerHTML = '';
+        for(let i=0;i<bluePigs;i++) { let d=document.createElement('div'); d.className='pig-card blue'; d.textContent='🐗'; blueTroopEl.appendChild(d); }
+    }
+    
+    function renderBoard() {
+        boardEl.innerHTML = '';
+        for(let i=0;i<TOTAL;i++) {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            
+            if(wireCells.includes(i)) {
+                cell.classList.add('wire');
+                cell.textContent = '⚡';
+            }
+            else if(phase === 'selection') {
+                let myMines = currentTurn === 'red' ? redMines : blueMines;
+                let myMineNum = myMines.get(i);
+                let isSelected = (currentTurn === 'red' && redPos.includes(i)) || (currentTurn === 'blue' && bluePos.includes(i));
+                
+                if(myMineNum) {
+                    cell.classList.add(currentTurn === 'red' ? 'placed-mine-red' : 'placed-mine-blue');
+                    cell.innerHTML = (currentTurn === 'red' ? '🐷' : '🐗');
+                    cell.innerHTML += `<div style="font-size:0.7rem;">${myMineNum}</div>`;
+                } else if(isSelected) {
+                    cell.classList.add(currentTurn === 'red' ? 'selected-red' : 'selected-blue');
+                    cell.textContent = currentTurn === 'red' ? '🐷' : '🐗';
+                }
+            }
+            else if(phase === 'battle') {
+                let redNum = redMines.get(i);
+                let blueNum = blueMines.get(i);
+                if(redNum !== undefined) {
+                    cell.classList.add('placed-mine-red');
+                    cell.innerHTML = '🐷' + `<div style="font-size:0.7rem;">${redNum}</div>`;
+                } else if(blueNum !== undefined) {
+                    cell.classList.add('placed-mine-blue');
+                    cell.innerHTML = '🐗' + `<div style="font-size:0.7rem;">${blueNum}</div>`;
+                }
+            }
+            
+            let canClick = (phase === 'selection' && !wireCells.includes(i) && gameActive && !turnModalActive && gameStarted && !waitingInit);
+            if(canClick && (gameMode === '2p' || (gameMode === 'ai' && currentTurn === 'red'))) {
+                cell.onclick = (function(idx){ return () => onCellClick(idx); })(i);
+            } else { cell.style.cursor = 'not-allowed'; }
+            boardEl.appendChild(cell);
+        }
+    }
+    
+    function onCellClick(idx) {
+        if(!gameActive || phase !== 'selection' || wireCells.includes(idx) || waitingForAI || turnModalActive) return;
+        
+        let myMines = currentTurn === 'red' ? redMines : blueMines;
+        if(myMines.has(idx)) {
+            messageDiv.textContent = `❌ Здесь уже твоя бомба (№${myMines.get(idx)})!`;
+            return;
+        }
+        
+        let positions = currentTurn === 'red' ? redPos : bluePos;
+        let maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
+        
+        if(positions.includes(idx)) {
+            positions.splice(positions.indexOf(idx),1);
+            messageDiv.textContent = `${currentTurn === 'red' ? '🔴 RED' : '🔵 BLU'} убрал (${positions.length}/${maxPigs})`;
+        } else if(positions.length < maxPigs) {
+            positions.push(idx);
+            messageDiv.textContent = `${currentTurn === 'red' ? '🔴 RED' : '🔵 BLU'} выбрал (${positions.length}/${maxPigs})`;
+            let cd = boardEl.children[idx];
+            if(cd) { 
+                cd.classList.add(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                setTimeout(() => cd.classList.remove(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue'), 400);
+            }
+        } else { messageDiv.textContent = `❌ Нельзя больше ${maxPigs}!`; return; }
+        
+        renderBoard();
+        if(positions.length === maxPigs) { readyBtn.classList.remove('hidden'); messageDiv.textContent = `✅ Готово! Нажми "ЗАКОНЧИЛ ВЫБОР"`; }
+        else readyBtn.classList.add('hidden');
+    }
+    
+    function aiSelect(team) {
+        let positions = team === 'red' ? redPos : bluePos;
+        let maxPigs = team === 'red' ? redPigs : bluePigs;
+        positions.length = 0;
+        let avail = [];
+        let myMines = team === 'red' ? redMines : blueMines;
+        
+        for(let i=0;i<TOTAL;i++) {
+            if(!wireCells.includes(i) && !myMines.has(i)) {
+                avail.push(i);
+            }
+        }
+        for(let i=avail.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [avail[i],avail[j]]=[avail[j],avail[i]]; }
+        for(let i=0;i<maxPigs && i<avail.length;i++) positions.push(avail[i]);
+        renderBoard();
+    }
+    
+    function finishSelection() {
+        if(phase !== 'selection' || waitingForAI) return;
+        let positions = currentTurn === 'red' ? redPos : bluePos;
+        let maxPigs = currentTurn === 'red' ? redPigs : bluePigs;
+        if(positions.length !== maxPigs) { messageDiv.textContent = `❌ Нужно ровно ${maxPigs}!`; return; }
+        
+        let myMines = currentTurn === 'red' ? redMines : blueMines;
+        for(let i=0;i<positions.length;i++) {
+            let cell = positions[i];
+            if(!wireCells.includes(cell)) {
+                myMines.set(cell, i+1);
+                let cd = boardEl.children[cell];
+                if(cd) {
+                    cd.classList.add(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                    cd.innerHTML = (currentTurn === 'red' ? '🐷' : '🐗') + `<div style="font-size:0.7rem;">${i+1}</div>`;
+                    setTimeout(() => {
+                        if(cd) {
+                            cd.classList.remove(currentTurn === 'red' ? 'temp-mine-red' : 'temp-mine-blue');
+                            cd.innerHTML = '';
+                            renderBoard();
+                        }
+                    }, 1000);
+                }
+            }
+        }
+        
+        if(gameMode === '2p') {
+            if(currentTurn === 'red') {
+                showModal('blue', () => {
+                    currentTurn = 'blue';
+                    readyBtn.classList.add('hidden');
+                    messageDiv.textContent = `🔵 BLU выбирает ${bluePigs}`;
+                    turnText.innerHTML = '🔵 ВЫБОР BLU';
+                    renderBoard();
+                });
+            } else {
+                startBattle();
+            }
+        } else if(gameMode === 'ai') {
+            if(currentTurn === 'red') {
+                currentTurn = 'blue';
+                readyBtn.classList.add('hidden');
+                messageDiv.textContent = `🔵 BLU AI выбирает...`;
+                turnText.innerHTML = '🔵 ВЫБОР BLU';
+                renderBoard();
+                waitingForAI = true;
+                setTimeout(() => { aiSelect('blue'); waitingForAI = false; startBattle(); }, 800);
+            } else {
+                startBattle();
+            }
+        } else if(gameMode === '0p') {
+            if(currentTurn === 'red') {
+                if(redPos.length !== redPigs) aiSelect('red');
+                currentTurn = 'blue';
+                messageDiv.textContent = '🔵 AI выбирает...';
+                turnText.innerHTML = '🔵 ВЫБОР BLU';
+                renderBoard();
+                setTimeout(() => { aiSelect('blue'); startBattle(); }, 800);
+            }
+        }
+    }
+    
+    function showModal(next, onOk) {
+        if(turnModalActive) return;
+        turnModalActive = true;
+        let div = document.createElement('div'); 
+        div.className = 'turn-modal';
+        div.innerHTML = `<div class="turn-card"><div class="turn-title">🔄 ПЕРЕХОД ХОДА</div><div class="turn-player ${next}">${next === 'red' ? '🔴 RED' : '🔵 BLU'}</div><div class="confirm-text">Передайте устройство</div><button class="turn-btn" id="tmBtn">✅ Я ГОТОВ</button></div>`;
+        document.body.appendChild(div);
+        document.getElementById('tmBtn').onclick = () => { div.remove(); turnModalActive = false; onOk(); };
+    }
+    
+    function showStart(onOk) {
+        let div = document.createElement('div'); 
+        div.className = 'turn-modal';
+        div.innerHTML = `<div class="turn-card"><div class="turn-title">🎮 НАЧАЛО</div><div class="turn-player red">🔴 RED</div><div class="confirm-text">Нажмите «Я ГОТОВ»</div><button class="turn-btn" id="stBtn">✅ Я ГОТОВ</button></div>`;
+        document.body.appendChild(div);
+        document.getElementById('stBtn').onclick = () => { div.remove(); turnModalActive = false; onOk(); };
+    }
+    
+    function showConfirm(cb) {
+        let div = document.createElement('div'); 
+        div.className = 'confirm-modal';
+        div.innerHTML = `<div class="confirm-card"><div class="confirm-title">🍖 ПОДТВЕРЖДЕНИЕ</div><div class="confirm-text">Новая игра?</div><button class="confirm-yes" id="cYes">✅ ДА</button><button class="confirm-no" id="cNo">❌ НЕТ</button></div>`;
+        document.body.appendChild(div);
+        document.getElementById('cYes').onclick = () => { div.remove(); cb(); };
+        document.getElementById('cNo').onclick = () => div.remove();
+    }
+    
+    function roulette(options, cb) {
+        let idx = 0, ticks = 0, total = Math.floor(Math.random() * 13) + 12;
+        let div = document.createElement('div'); 
+        div.className = 'roulette-modal';
+        div.innerHTML = `<div class="roulette-card"><div class="roulette-title">🎲 РУЛЕТКА</div><div style="font-size:2rem;margin:15px" id="roulText">${options[0].text}</div></div>`;
+        document.body.appendChild(div);
+        let txt = document.getElementById('roulText');
+        let iv = setInterval(() => { 
+            idx = (idx + 1) % options.length; 
+            txt.innerHTML = options[idx].text; 
+            ticks++; 
+            if(ticks >= total) { 
+                clearInterval(iv); 
+                setTimeout(() => { div.remove(); cb(idx); }, 500); 
+            } 
+        }, 200);
+    }
+    
+    function startBattle() {
+        phase = 'battle';
+        readyBtn.classList.add('hidden');
+        messageDiv.textContent = `⚔️ РАУНД ${round}! БИТВА!`;
+        turnText.innerHTML = '⚔️ БИТВА';
+        
+        // Обнуляем сохранённые бомбы
+        for(let [c, num] of redMines) {
+            if(num > 0) redMines.set(c, 0);
+        }
+        for(let [c, num] of blueMines) {
+            if(num > 0) blueMines.set(c, 0);
+        }
+        
+        let allMines = getAllMines();
+        allMines.sort((a,b) => a.number - b.number);
+        let index = 0;
+        
+        function process() {
+            if(index >= allMines.length) {
+                // Удаляем нулевые бомбы
+                for(let [c, num] of redMines) {
+                    if(num === 0) redMines.delete(c);
+                }
+                for(let [c, num] of blueMines) {
+                    if(num === 0) blueMines.delete(c);
+                }
+                renderBoard();
+                updateMineCounter();
+                if(redPigs <= 0 || bluePigs <= 0) endGame();
+                else nextRound();
+                return;
+            }
+            
+            let move = allMines[index];
+            let hasConflict = false;
+            let conflictOwner = null;
+            let conflictNum = null;
+            
+            // Проверяем конфликт на клетке
+            if(move.owner === 'red') {
+                let blueNum = blueMines.get(move.cell);
+                if(blueNum !== undefined) {
+                    hasConflict = true;
+                    conflictOwner = 'blue';
+                    conflictNum = blueNum;
+                }
+            } else {
+                let redNum = redMines.get(move.cell);
+                if(redNum !== undefined) {
+                    hasConflict = true;
+                    conflictOwner = 'red';
+                    conflictNum = redNum;
+                }
+            }
+            
+            if(hasConflict) {
+                if(move.number > conflictNum) {
+                    playExplosion();
+                    let cd = boardEl.children[move.cell];
+                    if(cd) cd.classList.add('explosion');
+                    setTimeout(() => {
+                        // ⚠️ ВАЖНО: Удаляем ОБЕ бомды с клетки
+                        redMines.delete(move.cell);
+                        blueMines.delete(move.cell);
+                        
+                        if(move.owner === 'red') { 
+                            bluePigs--; 
+                            messageDiv.textContent = `💥 RED №${move.number} > BLU №${conflictNum} → BLU потерял кабана!`; 
+                        } else { 
+                            redPigs--; 
+                            messageDiv.textContent = `💥 BLU №${move.number} > RED №${conflictNum} → RED потерял свинью!`; 
+                        }
+                        renderTroops();
+                        if(cd) {
+                            cd.classList.remove('explosion');
+                            renderBoard();
+                        }
+                        index++;
+                        setTimeout(process, 300);
+                    }, 400);
+                } 
+                else if(conflictNum > move.number) {
+                    playExplosion();
+                    let cd = boardEl.children[move.cell];
+                    if(cd) cd.classList.add('explosion');
+                    setTimeout(() => {
+                        // ⚠️ ВАЖНО: Удаляем ОБЕ бомды с клетки
+                        redMines.delete(move.cell);
+                        blueMines.delete(move.cell);
+                        
+                        if(conflictOwner === 'red') { 
+                            redPigs--; 
+                            messageDiv.textContent = `💥 RED №${conflictNum} > BLU №${move.number} → RED потерял свинью!`; 
+                        } else { 
+                            bluePigs--; 
+                            messageDiv.textContent = `💥 BLU №${conflictNum} > RED №${move.number} → BLU потерял кабана!`; 
+                        }
+                        renderTroops();
+                        if(cd) {
+                            cd.classList.remove('explosion');
+                            renderBoard();
+                        }
+                        index++;
+                        setTimeout(process, 300);
+                    }, 400);
+                } 
+                else if(move.number === conflictNum) {
+                    playExplosion();
+                    messageDiv.textContent = `🎲 РАВНЫЕ №${move.number}! РУЛЕТКА!`;
+                    roulette([{text:'🔴 RED'},{text:'🔵 BLU'}], (res) => {
+                        // ⚠️ ВАЖНО: Удаляем ОБЕ бомды с клетки
+                        redMines.delete(move.cell);
+                        blueMines.delete(move.cell);
+                        
+                        if(res === 0) { 
+                            bluePigs--; 
+                            messageDiv.textContent = '🎲 RED победил! BLU потерял кабана!'; 
+                        } else { 
+                            redPigs--; 
+                            messageDiv.textContent = '🎲 BLU победил! RED потерял свинью!'; 
+                        }
+                        renderTroops(); 
+                        renderBoard();
+                        index++;
+                        setTimeout(process, 300);
+                    });
+                }
+            } else {
+                // Нет конфликта
+                setTimeout(() => {
+                    if(move.number !== 0) {
+                        messageDiv.textContent = `${move.owner === 'red' ? '🔴 RED' : '🔵 BLU'} бомба №${move.number} на месте`;
+                    }
+                    renderBoard();
+                    index++;
+                    setTimeout(process, 200);
+                }, 200);
+            }
+        }
+        
+        process();
+    }
+    
+    function nextRound() {
+        round++;
+        redPos = [];
+        bluePos = [];
+        currentTurn = 'red';
+        phase = 'selection';
+        messageDiv.textContent = `🎯 РАУНД ${round}! RED выбирает ${redPigs} | Сохранённых бомб: ${redMines.size + blueMines.size}`;
+        turnText.innerHTML = '🔴 ВЫБОР RED';
+        renderBoard();
+        renderTroops();
+        if(gameMode === '2p') showModal('red', () => {});
+        if(gameMode === '0p') {
+            waitingForAI = true;
+            setTimeout(() => { 
+                aiSelect('red'); 
+                waitingForAI = false; 
+                finishSelection(); 
+            }, 500);
+        }
+    }
+    
+    function endGame() {
+        gameActive = false;
+        let winner = '';
+        
+        if(redPigs > 0 && bluePigs <= 0) { winner = '🔴 RED ПОБЕДИЛ! 🐷'; playVictory(); }
+        else if(bluePigs > 0 && redPigs <= 0) { winner = '🔵 BLU ПОБЕДИЛ! 🐗'; playVictory(); }
+        else { winner = '⚡ НИЧЬЯ! ⚡'; playStalemate(); }
+        
+        resultBox.classList.remove('hidden');
+        resultBox.innerHTML = `<div class="winner">🏆 ${winner} 🏆</div><div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div><div>Раунд: ${round}</div><button id="againBtn" style="margin-top:12px; background:#6a4e9e; border:none; font-family:inherit; font-size:1rem; font-weight:bold; color:white; padding:8px 25px; border-radius:40px; cursor:pointer; box-shadow:0 4px 0 #2a1a40;">🎮 СЫГРАТЬ ЕЩЁ</button>`;
+        turnText.innerHTML = winner;
+        document.getElementById('againBtn')?.addEventListener('click', () => resetGame());
+    }
+    
+    function startGame() {
+        gameStarted = true;
+        waitingInit = true;
+        generateWire();
+        redPos = []; bluePos = [];
+        redMines.clear(); blueMines.clear();
+        redPigs = START_PIGS; bluePigs = START_PIGS;
+        round = 1; currentTurn = 'red'; phase = 'selection'; gameActive = true; waitingForAI = false;
+        resultBox.classList.add('hidden'); readyBtn.classList.add('hidden');
+        turnText.innerHTML = '🔴 ВЫБОР RED';
+        updateMineCounter();
+        if(gameMode === '2p') {
+            messageDiv.innerHTML = '🎯 RED выбирает 6 (бомбы скрыты от врага)';
+            renderBoard(); 
+            renderTroops();
+            showStart(() => { waitingInit = false; renderBoard(); });
+        } else if(gameMode === 'ai') {
+            messageDiv.innerHTML = '🎯 Ты за RED, AI за BLU';
+            waitingInit = false; 
+            renderBoard(); 
+            renderTroops();
+        } else if(gameMode === '0p') {
+            messageDiv.innerHTML = '🎯 AI vs AI';
+            waitingInit = false; 
+            renderBoard(); 
+            renderTroops();
+            waitingForAI = true;
+            setTimeout(() => { 
+                aiSelect('red'); 
+                waitingForAI = false; 
+                finishSelection(); 
+            }, 500);
+        }
+    }
+    
+    function resetGame() { startGame(); }
+    
+    modeBtn.onclick = (e) => { e.stopPropagation(); modeDropdown.classList.toggle('show'); };
+    document.querySelectorAll('.mode-option').forEach(opt => { 
+        opt.onclick = () => { 
+            gameMode = opt.dataset.mode; 
+            modeDropdown.classList.remove('show'); 
+            startGame(); 
+        }; 
+    });
+    document.onclick = () => modeDropdown.classList.remove('show');
+    readyBtn.onclick = finishSelection;
+    resetBtn.onclick = () => showConfirm(() => resetGame());
+    
+    initSounds();
+    startGame();
+</script>
+</body>
+</html>
