@@ -3,42 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Свиньи-сапёры | RED vs BLU</title>
+    <title>🎃 Свиньи-сапёры | Хэллоуин | RED vs BLU 👻</title>
     <style>
         * { user-select: none; box-sizing: border-box; }
         body {
             margin: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: radial-gradient(ellipse at 50% 30%, #1a1a2e 0%, #0a0a1a 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Impact', 'Arial Black', sans-serif;
             padding: 20px;
             position: relative;
+            overflow-x: hidden;
         }
+        /* Луна */
+        .moon {
+            position: fixed; top: 5%; right: 5%; width: 120px; height: 120px;
+            background: radial-gradient(circle at 30% 30%, #fff7b0, #ffdd77);
+            border-radius: 50%; box-shadow: 0 0 60px rgba(255, 230, 100, 0.8);
+            z-index: 0; animation: moonGlow 3s ease-in-out infinite;
+        }
+        @keyframes moonGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 230, 100, 0.6); }
+            50% { box-shadow: 0 0 80px rgba(255, 230, 100, 1); }
+        }
+        /* Вороны */
+        .raven {
+            position: fixed; font-size: 1.8rem; z-index: 0; pointer-events: none;
+            animation: flyRaven 18s linear infinite; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+        }
+        @keyframes flyRaven {
+            0% { transform: translateX(-10%) translateY(0); }
+            30% { transform: translateX(30vw) translateY(-15px); }
+            60% { transform: translateX(60vw) translateY(-5px); }
+            100% { transform: translateX(110vw) translateY(0); }
+        }
+        /* Тыквы */
+        .pumpkin { position: fixed; font-size: 3rem; bottom: 10px; left: 10px; z-index: 0; opacity: 0.7; animation: pumpkinFloat 4s ease-in-out infinite; }
+        .pumpkin2 { right: 10px; left: auto; bottom: 10px; animation-delay: 1s; }
+        .pumpkin3 { top: 10px; left: 10px; bottom: auto; animation-delay: 2s; }
+        @keyframes pumpkinFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+        /* Призрачные облака */
         .cloud {
-            position: fixed;
-            background: rgba(255,255,255,0.95);
-            border-radius: 1000px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            z-index: 0;
-            pointer-events: none;
+            position: fixed; background: rgba(40, 30, 60, 0.7); border-radius: 1000px;
+            z-index: 0; pointer-events: none; filter: blur(3px);
         }
-        .cloud1 { width: 140px; height: 80px; top: 8%; left: 3%; }
-        .cloud2 { width: 200px; height: 110px; top: 15%; right: 8%; }
-        .cloud3 { width: 170px; height: 95px; bottom: 12%; left: 10%; }
-        .cloud4 { width: 120px; height: 70px; bottom: 20%; right: 15%; }
+        .cloud1 { width: 180px; height: 100px; top: 15%; left: -50px; }
+        .cloud2 { width: 250px; height: 130px; top: 60%; right: -50px; }
+        .cloud3 { width: 150px; height: 80px; bottom: 10%; left: 20%; }
+        
         .game-container {
             position: relative;
             z-index: 1;
-            background: rgba(60,44,31,0.85);
-            backdrop-filter: blur(3px);
+            background: rgba(20, 15, 35, 0.9);
+            backdrop-filter: blur(5px);
             border-radius: 60px;
             padding: 20px;
             max-width: 1200px;
             width: 100%;
-            box-shadow: 0 20px 0 #2d241b, 0 30px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 0 #0a0a1a, 0 30px 30px rgba(0,0,0,0.7);
+            border: 1px solid #6a4e9e;
             transition: filter 0.2s ease;
         }
         .game-container.blurred {
@@ -46,15 +75,15 @@
             pointer-events: none;
         }
         .tf2-panel {
-            background: #3c2c1f;
+            background: #1a1230;
             border-radius: 40px;
             padding: 20px;
-            box-shadow: inset 0 0 0 3px #846b4a, inset 0 0 0 8px #5e422c, 0 10px 15px black;
+            box-shadow: inset 0 0 0 3px #6a4e9e, inset 0 0 0 8px #2a1a50, 0 10px 15px black;
         }
-        h1 { text-align: center; margin: 0 0 5px; font-size: 1.8rem; color: #f7e05e; text-shadow: 4px 4px 0 #7a2e19; }
-        .sub { text-align: center; color: #e6b86e; margin-bottom: 15px; font-size: 0.7rem; }
+        h1 { text-align: center; margin: 0 0 5px; font-size: 1.8rem; color: #ffcc66; text-shadow: 4px 4px 0 #5a2e6e; }
+        .sub { text-align: center; color: #b89ecc; margin-bottom: 15px; font-size: 0.7rem; }
         .top-panel {
-            background: #1e1b16;
+            background: #0e0a1a;
             border-radius: 20px;
             padding: 10px 15px;
             margin-bottom: 15px;
@@ -65,9 +94,9 @@
             gap: 10px;
         }
         .sound-toggle {
-            background: #2d241c;
-            border: 2px solid #e6b86e;
-            color: #f3d382;
+            background: #2a1a40;
+            border: 2px solid #b89ecc;
+            color: #e6c8ff;
             font-size: 0.9rem;
             font-weight: bold;
             padding: 5px 15px;
@@ -75,9 +104,9 @@
             cursor: pointer;
         }
         .mode-dropdown-btn {
-            background: #2d241c;
-            border: 2px solid #e6b86e;
-            color: #f3d382;
+            background: #2a1a40;
+            border: 2px solid #b89ecc;
+            color: #e6c8ff;
             font-size: 1rem;
             font-weight: bold;
             padding: 5px 15px;
@@ -86,31 +115,50 @@
         }
         .mode-dropdown {
             position: absolute;
-            background: #2d241c;
-            border: 2px solid #e6b86e;
+            background: #2a1a40;
+            border: 2px solid #b89ecc;
             border-radius: 20px;
             overflow: hidden;
             z-index: 10;
             display: none;
         }
         .mode-dropdown.show { display: block; }
-        .mode-option { padding: 8px 20px; color: #f3d382; cursor: pointer; font-size: 0.9rem; white-space: nowrap; }
-        .mode-option:hover { background: #c97e3a; color: #fff3bf; }
+        .mode-option { padding: 8px 20px; color: #e6c8ff; cursor: pointer; font-size: 0.9rem; white-space: nowrap; }
+        .mode-option:hover { background: #6a4e9e; color: #fff; }
         .reset-btn {
-            background: #c97e3a;
+            background: #6a4e9e;
             border: none;
             font-family: inherit;
             font-size: 0.9rem;
             font-weight: bold;
-            color: #f7e6b0;
+            color: #f0e0ff;
             padding: 8px 20px;
             border-radius: 40px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #6a3c1a;
+            box-shadow: 0 4px 0 #2a1a40;
         }
-        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #6a3c1a; }
+        .reset-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
         .site-btn {
-            background: #4a6a3a;
+            background: #4a3a6a;
+            border: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #f0e0ff;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2a1a40;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+        }
+        .site-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
+        .site-btn:hover { background: #5a4a7a; }
+        .candy-btn {
+            background: #8a4a8a;
             border: none;
             font-family: inherit;
             font-size: 0.85rem;
@@ -119,17 +167,17 @@
             padding: 8px 18px;
             border-radius: 40px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #2a3a1a;
+            box-shadow: 0 4px 0 #4a2a5a;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             transition: 0.1s;
         }
-        .site-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a3a1a; }
-        .site-btn:hover { background: #5a7a4a; }
+        .candy-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a2a5a; }
+        .candy-btn:hover { background: #9a5a9a; }
         .mine-counter {
-            background: #2d241c;
+            background: #2a1a40;
             padding: 5px 15px;
             border-radius: 40px;
             font-size: 0.8rem;
@@ -139,18 +187,18 @@
             gap: 5px;
         }
         .howto-top-btn {
-            background: #6F9E3F;
+            background: #6a4e9e;
             border: none;
             font-family: inherit;
             font-size: 0.9rem;
             font-weight: bold;
-            color: #f7e6b0;
+            color: #f0e0ff;
             padding: 8px 20px;
             border-radius: 40px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #3D6220;
+            box-shadow: 0 4px 0 #2a1a40;
         }
-        .howto-top-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #3D6220; }
+        .howto-top-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a1a40; }
         .turn-modal-blackout {
             position: fixed;
             top: 0;
@@ -167,7 +215,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -175,39 +223,39 @@
             backdrop-filter: blur(8px);
         }
         .confirm-card, .turn-card, .start-card, .howto-card, .roulette-card {
-            background: #FFF9F0;
+            background: #1a1230;
             border-radius: 48px;
             padding: 32px 28px;
             text-align: center;
-            border: none;
+            border: 4px solid #b89ecc;
             min-width: 320px;
             max-width: 440px;
             width: 90%;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.8), 0 0 60px rgba(106,78,158,0.4);
             position: relative;
             z-index: 10001;
         }
         .confirm-title, .turn-title, .start-title, .howto-title, .roulette-title {
             font-size: 1.9rem;
-            color: #D94A2B;
+            color: #ffcc66;
             margin-bottom: 20px;
             font-weight: bold;
             letter-spacing: 1px;
             font-family: 'Impact', 'Arial Black', sans-serif;
-            text-shadow: 1px 1px 0 #FFE0A3;
+            text-shadow: 2px 2px 0 #5a2e6e;
         }
         .confirm-text, .howto-text {
-            color: #2D2F36;
+            color: #e6c8ff;
             font-size: 1rem;
             margin-bottom: 28px;
             font-family: 'Segoe UI', system-ui, sans-serif;
             font-weight: 500;
         }
-        .howto-text { text-align: left; line-height: 1.5; background: #FFF3DF; padding: 16px; border-radius: 28px; margin-bottom: 28px; }
-        .howto-text p { margin: 12px 0; color: #4A2E1E; }
-        .howto-text strong { color: #B3411F; }
+        .howto-text { text-align: left; line-height: 1.5; background: #0e0a1a; padding: 16px; border-radius: 28px; margin-bottom: 28px; border: 1px solid #3a2a5a; }
+        .howto-text p { margin: 12px 0; color: #c8b0e6; }
+        .howto-text strong { color: #ffaa44; }
         .confirm-yes, .turn-btn, .start-btn, .howto-close {
-            background: #FFB347;
+            background: #6a4e9e;
             border: none;
             font-family: 'Impact', 'Arial Black', sans-serif;
             font-size: 1.2rem;
@@ -216,17 +264,17 @@
             padding: 10px 28px;
             border-radius: 60px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #B4621A;
+            box-shadow: 0 4px 0 #2a1a40;
             margin: 8px 10px;
             transition: 0.07s linear;
         }
         .confirm-yes:active, .turn-btn:active, .start-btn:active, .howto-close:active {
             transform: translateY(2px);
-            box-shadow: 0 2px 0 #B4621A;
+            box-shadow: 0 2px 0 #2a1a40;
         }
         .confirm-no {
-            background: #A0A0B0;
-            box-shadow: 0 4px 0 #6A6A7A;
+            background: #3a2a5a;
+            box-shadow: 0 4px 0 #1a0a30;
         }
         .turn-player {
             font-size: 2.4rem;
@@ -234,24 +282,25 @@
             margin: 15px 0;
             letter-spacing: 2px;
         }
-        .turn-player.red { color: #D64531; text-shadow: 2px 2px 0 #FFC4A2; }
-        .turn-player.blue { color: #3C78D8; text-shadow: 2px 2px 0 #B5D0FF; }
+        .turn-player.red { color: #ff6b4a; text-shadow: 2px 2px 0 #5a1e0a; }
+        .turn-player.blue { color: #6bb5ff; text-shadow: 2px 2px 0 #0a2a4a; }
         .start-card {
-            background: #FFF9E8;
+            background: #1a1230;
             border-radius: 56px;
             padding: 36px 30px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.6), 0 0 80px rgba(106,78,158,0.3);
             width: 100%;
             max-width: 420px;
+            border: 3px solid #6a4e9e;
         }
         .start-title {
             font-size: 2rem;
-            color: #CC5522;
+            color: #ffcc66;
             margin-bottom: 30px;
             text-align: center;
             font-weight: bold;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 0 #FFD699;
+            text-shadow: 2px 2px 0 #5a2e6e;
         }
         .start-buttons {
             display: flex;
@@ -260,24 +309,23 @@
             align-items: center;
         }
         .start-btn {
-            background: #F5A65B;
+            background: #6a4e9e;
             font-size: 1.3rem;
             width: 85%;
             padding: 12px 20px;
             border-radius: 44px;
-            box-shadow: 0 5px 0 #A6531E;
+            box-shadow: 0 5px 0 #2a1a40;
             transition: 0.07s linear;
             color: white;
-            text-shadow: 1px 1px 0 #854B1A;
+            text-shadow: 1px 1px 0 #2a1a40;
         }
         .start-btn:active {
             transform: translateY(3px);
-            box-shadow: 0 2px 0 #A6531E;
+            box-shadow: 0 2px 0 #2a1a40;
         }
         .howto-btn {
-            background: #6F9E3F;
-            box-shadow: 0 5px 0 #3D6220;
-            text-shadow: 1px 1px 0 #3D5A1A;
+            background: #6a4e9e;
+            box-shadow: 0 5px 0 #2a1a40;
         }
         .roulette-selector {
             font-size: 2rem;
@@ -285,27 +333,27 @@
             padding: 20px;
             margin: 20px;
             border-radius: 60px;
-            background: #FFEAB5;
+            background: #2a1a40;
             display: inline-block;
             min-width: 180px;
             transition: all 0.1s;
         }
-        .roulette-selector.red { background: #F4A261; color: #831d0a; box-shadow: 0 0 12px #ff7755; }
-        .roulette-selector.blue { background: #6BAEE8; color: #0c2b54; box-shadow: 0 0 12px #88aaff; }
+        .roulette-selector.red { background: #8a3a4a; color: #ffcc66; box-shadow: 0 0 12px #ff7755; }
+        .roulette-selector.blue { background: #3a5a8a; color: #88ddff; box-shadow: 0 0 12px #88aaff; }
         .roulette-dice { font-size: 3rem; margin: 10px; }
         .game-layout { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-        .troop { flex: 1; min-width: 150px; background: rgba(0,0,0,0.3); border-radius: 30px; padding: 15px; text-align: center; }
+        .troop { flex: 1; min-width: 150px; background: rgba(0,0,0,0.4); border-radius: 30px; padding: 15px; text-align: center; border: 1px solid #3a2a5a; }
         .troop-title { font-size: 1.5rem; margin-bottom: 10px; }
         .pigs-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; justify-items: center; align-items: center; }
         .pig-card { font-size: 2.5rem; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 10px; width: 70px; text-align: center; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         .pig-card.red { background: #5a2e3e; border: 2px solid #ff8866; }
         .pig-card.blue { background: #2e3e5a; border: 2px solid #88aaff; }
         .board-container { flex: 2; min-width: 280px; }
-        .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; background: #8b6b42; padding: 15px; border-radius: 30px; box-shadow: inset 0 0 0 3px #ebc28e, 0 8px 15px black; }
+        .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; background: #2a1a30; padding: 15px; border-radius: 30px; box-shadow: inset 0 0 0 3px #6a4e8e, 0 8px 15px black; }
         .cell {
             aspect-ratio: 1 / 1;
-            background: #f5e6c8;
-            background-image: radial-gradient(circle at 25% 30%, #fff8e8, #e8d8b8);
+            background: #2a2038;
+            background-image: radial-gradient(circle at 25% 30%, #3a2a48, #1a1030);
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -313,31 +361,31 @@
             cursor: pointer;
             font-size: 1.5rem;
             font-weight: bold;
-            box-shadow: inset 0 -3px 0 #c9aa7b, 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: inset 0 -3px 0 #4a3a5a, 0 4px 8px rgba(0,0,0,0.3);
             transition: 0.05s linear;
             flex-direction: column;
         }
         .cell:active { transform: scale(0.96); }
-        .cell.wire { 
-            background: repeating-linear-gradient(45deg, #999, #999 8px, #777 8px, #777 16px); 
-            cursor: not-allowed; 
+        .cell.wire {
+            background: repeating-linear-gradient(45deg, #4a3a4a, #4a3a4a 8px, #2a1a2a 8px, #2a1a2a 16px);
+            cursor: not-allowed;
         }
-        .cell.selected-red { background: #ff8866; box-shadow: 0 0 0 3px #ffcc66; }
-        .cell.selected-blue { background: #88aaff; box-shadow: 0 0 0 3px #77aaff; }
-        .cell.placed-mine-red { background: #ff8866; color: white; }
-        .cell.placed-mine-blue { background: #88aaff; color: white; }
-        .cell.temp-mine-red { background: #ff8866; animation: blink-red 0.3s ease-in-out 2; }
-        .cell.temp-mine-blue { background: #88aaff; animation: blink-blue 0.3s ease-in-out 2; }
-        .cell.explosion { animation: shake 0.2s ease-in-out 0s 2; background: #888 !important; background-image: none !important; }
+        .cell.selected-red { background: #8a3a4a; box-shadow: 0 0 0 3px #ffaa77; }
+        .cell.selected-blue { background: #3a5a8a; box-shadow: 0 0 0 3px #77aaff; }
+        .cell.placed-mine-red { background: #8a3a4a; color: white; }
+        .cell.placed-mine-blue { background: #3a5a8a; color: white; }
+        .cell.temp-mine-red { background: #8a3a4a; animation: blink-red 0.3s ease-in-out 2; }
+        .cell.temp-mine-blue { background: #3a5a8a; animation: blink-blue 0.3s ease-in-out 2; }
+        .cell.explosion { animation: shake 0.2s ease-in-out 0s 2; background: #4a2a3a !important; background-image: none !important; }
         @keyframes blink-red {
-            0% { background-color: #ff8866; }
+            0% { background-color: #8a3a4a; }
             50% { background-color: #ff0000; box-shadow: 0 0 20px 10px rgba(255,0,0,0.7); }
-            100% { background-color: #ff8866; }
+            100% { background-color: #8a3a4a; }
         }
         @keyframes blink-blue {
-            0% { background-color: #88aaff; }
-            50% { background-color: #2255cc; box-shadow: 0 0 20px 10px rgba(0,51,204,0.7); }
-            100% { background-color: #88aaff; }
+            0% { background-color: #3a5a8a; }
+            50% { background-color: #0033cc; box-shadow: 0 0 20px 10px rgba(0,51,204,0.7); }
+            100% { background-color: #3a5a8a; }
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -345,14 +393,14 @@
             75% { transform: translateX(4px); }
         }
         .game-info { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; flex-wrap: wrap; gap: 8px; }
-        .turn-indicator { background: #1e1b16; padding: 8px 20px; border-radius: 40px; color: #f3d382; font-size: 1rem; }
-        .message { background: #1a1510; padding: 8px 15px; border-radius: 30px; color: #ffd78c; text-align: center; font-size: 0.85rem; }
-        footer { text-align: center; font-size: 0.7rem; margin-top: 20px; color: #dbb87c; }
-        .result-box { background: #1e1b16; border-radius: 20px; padding: 12px; margin-top: 12px; text-align: center; }
-        .result-box .winner { font-size: 1.5rem; color: #f7e05e; text-shadow: 2px 2px 0 #7a2e19; }
-        .ready-btn { background: #4caf50; box-shadow: 0 4px 0 #2e7d32; display: block; margin-left: auto; margin-right: auto; }
+        .turn-indicator { background: #0e0a1a; padding: 8px 20px; border-radius: 40px; color: #e6c8ff; font-size: 1rem; }
+        .message { background: #0a0515; padding: 8px 15px; border-radius: 30px; color: #c8b0e6; text-align: center; font-size: 0.85rem; }
+        footer { text-align: center; font-size: 0.7rem; margin-top: 20px; color: #b89ecc; }
+        .result-box { background: #0e0a1a; border-radius: 20px; padding: 12px; margin-top: 12px; text-align: center; }
+        .result-box .winner { font-size: 1.5rem; color: #ffcc66; text-shadow: 2px 2px 0 #5a2e6e; }
+        .ready-btn { background: #6a4e9e; box-shadow: 0 4px 0 #2a1a40; display: block; margin-left: auto; margin-right: auto; }
         .hidden { display: none; }
-        .credits { position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #dbb87c; font-size: 0.6rem; padding: 5px 10px; border-radius: 20px; font-family: monospace; z-index: 100; pointer-events: none; backdrop-filter: blur(4px); }
+        .credits { position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #b89ecc; font-size: 0.6rem; padding: 5px 10px; border-radius: 20px; font-family: monospace; z-index: 100; pointer-events: none; backdrop-filter: blur(4px); border: 1px solid #4a3a6a; }
 
         @media (max-width: 700px) {
             .top-panel { flex-direction: column; align-items: stretch; }
@@ -361,6 +409,8 @@
             .troop { min-width: unset; width: 100%; }
             .pigs-container { grid-template-columns: repeat(6, 1fr); }
             .pig-card { width: 100%; }
+            .moon { width: 80px; height: 80px; }
+            .volcano-container { display: none; }
         }
         @media (max-width: 500px) {
             h1 { font-size: 1.3rem; }
@@ -373,11 +423,23 @@
     </style>
 </head>
 <body>
-<div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div><div class="cloud cloud4"></div>
+<!-- Хэллоуин атмосфера -->
+<div class="moon"></div>
+<div class="raven" style="top: 15%; left: -80px; animation-duration: 22s;">🐦‍⬛</div>
+<div class="raven" style="top: 45%; left: -50px; animation-duration: 28s; font-size: 2rem;">🐦‍⬛</div>
+<div class="raven" style="top: 70%; left: -100px; animation-duration: 19s;">🐦‍⬛</div>
+<div class="raven" style="top: 85%; left: -40px; animation-duration: 25s; font-size: 1.5rem;">🐦‍⬛</div>
+<div class="pumpkin">🎃</div>
+<div class="pumpkin pumpkin2">🎃</div>
+<div class="pumpkin pumpkin3">🎃</div>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+
 <div class="game-container" id="gameContainer">
     <div class="tf2-panel">
-        <h1>🐷 СВИНЬИ-САПЁРЫ: RED vs BLU 💣</h1>
-        <div class="sub">Звуки + Сохранение бомб | Правильная логика конфликтов</div>
+        <h1>🎃 СВИНЬИ-САПЁРЫ: ХЭЛЛОУИН 👻</h1>
+        <div class="sub">🌕 Ивент «ПОЛНОЛУНИЕ» | Бомбы сохраняются | Вражеские НЕ ВИДНЫ</div>
         <div class="top-panel">
             <div style="position:relative">
                 <div class="mode-dropdown-btn" id="modeBtn">🎮 РЕЖИМ</div>
@@ -387,30 +449,49 @@
                     <div class="mode-option" data-mode="0p">🤖🤖 0 ИГРОКОВ</div>
                 </div>
             </div>
-            <div class="mine-counter">💣 СОХРАНЁННЫХ БОМБ: <span id="mineCount">0</span></div>
+            <div class="mine-counter">🎃 СОХРАНЁННЫХ БОМБ: <span id="mineCount">0</span></div>
             <div class="sound-toggle" id="soundToggle">🔊 ЗВУК ВКЛ</div>
             <button class="reset-btn" id="resetBtn">🔄 НОВАЯ ИГРА</button>
-            <a href="https://failfox-da-gamer.github.io/weather/" target="_blank" class="site-btn">🥛 ДРУГОЙ САЙТ</a>
+            <a href="https://failfox-da-gamer.github.io/weather/" target="_blank" class="site-btn">🥛 РЯЖЕНКА</a>
+            <a href="https://failfox-da-gamer.github.io/candy-game/" target="_blank" class="candy-btn">🍬 CANDY GAME</a>
             <button class="howto-top-btn" id="howtoTopBtn">📕 КАК ИГРАТЬ?</button>
         </div>
         <div class="game-layout">
-            <div class="troop"><div class="troop-title">🔴 RED</div><div class="pigs-container" id="redTroop"></div></div>
+            <div class="troop"><div class="troop-title">🔴 RED 🐷</div><div class="pigs-container" id="redTroop"></div></div>
             <div class="board-container"><div class="board" id="board"></div></div>
-            <div class="troop"><div class="troop-title">🔵 BLU</div><div class="pigs-container" id="blueTroop"></div></div>
+            <div class="troop"><div class="troop-title">🔵 BLU 🐗</div><div class="pigs-container" id="blueTroop"></div></div>
         </div>
         <div class="game-info"><div class="turn-indicator" id="turnText">🔴 ВЫБОР RED</div></div>
-        <div class="message" id="message">🎯 RED выбирает 6 позиций</div>
+        <div class="message" id="message">🎃 RED выбирает 6 позиций</div>
         <button id="readyBtn" class="ready-btn hidden">✅ ЗАКОНЧИЛ ВЫБОР</button>
         <div id="resultBox" class="result-box hidden"></div>
         <footer>
-            🐗 Проигрывает тот, у кого номер МЕНЬШЕ | Бомды сохраняются | Звуки: /Звуки/
+            👻 Проигрывает тот, у кого номер МЕНЬШЕ | Бомбы сохраняются | Звуки: /Звуки/
             <div style="text-align: center; margin-top: 1.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; opacity: 0.5;">
                 📧 <a href="mailto:maxikgrinevitch@yandex.ru" style="color: #f5c542; text-decoration: none;">maxikgrinevitch@yandex.ru</a>
             </div>
         </footer>
     </div>
 </div>
-<div class="credits">🐷 Звуки: /Звуки/bomb_boom.mp3 | /Звуки/win.mp3 | /Звуки/stalemate_tie_draw.mp3</div>
+
+<!-- ВУЛКАН -->
+<div class="volcano-container" style="position: fixed; bottom: 70px; right: 20px; z-index: 50; background: rgba(20,15,35,0.9); backdrop-filter: blur(8px); border-radius: 30px; padding: 15px 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 1px solid #4a3a5a; width: 220px;">
+    <div style="text-align: center; color: #b89ecc; font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 8px;">🌋 ВУЛКАН ГРОМКОСТИ 🌋</div>
+    <div class="volcano-slider" id="volcanoSlider" style="position: relative; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none;">
+        <div class="crater" id="crater" style="position: relative; width: 100%; height: 22px; background: #2b2f47; border-radius: 40px; box-shadow: inset 0 8px 12px rgba(0,0,0,0.7), 0 0 0 2px #3f4a6b; overflow: visible;">
+            <div class="lava" id="lavaFill" style="position: absolute; top: 0; left: 0; height: 100%; width: 60%; border-radius: 40px; background: linear-gradient(90deg, #ff7e00, #ff3c00, #ffaa00); box-shadow: 0 0 30px #ff5e00, 0 0 60px #ff3c00; transition: width 0.1s cubic-bezier(0.34, 1.5, 0.64, 1); display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; color: #fff3d1; font-weight: bold; font-size: 0.8rem; text-shadow: 0 0 12px #000000aa; clip-path: inset(0 round 40px); z-index: 2;">🔥</div>
+            <div class="bubbles" id="bubblesContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; overflow: hidden; border-radius: 40px;"></div>
+            <div class="handle" id="handle" style="position: absolute; top: 50%; left: 60%; transform: translate(-50%, -50%); width: 30px; height: 30px; background: radial-gradient(circle at 30% 30%, #ffe68f, #f57c00); border-radius: 50%; box-shadow: 0 0 20px #ff9f00, 0 0 60px #ff5500, 0 6px 12px rgba(0,0,0,0.6); border: 2px solid #ffbb44; z-index: 10; transition: left 0.1s cubic-bezier(0.34, 1.5, 0.64, 1); cursor: grab;"></div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; color: #b7c7e8; font-weight: 500; font-size: 0.8rem;">
+        <span>🔊</span>
+        <span class="volume-value" id="volumeDisplay" style="background: #121624; padding: 4px 16px; border-radius: 40px; font-size: 1.2rem; font-weight: 700; color: #ffb347; box-shadow: inset 0 4px 8px #00000099; border-bottom: 2px solid #ff7b00;">60</span>
+        <span>⚡</span>
+    </div>
+</div>
+
+<div class="credits">🎃 Хэллоуин-версия | Звуки: /Звуки/bomb_boom.mp3 | win.mp3 | stalemate_tie_draw.mp3</div>
 
 <script>
     // ========== ЗВУКИ ==========
@@ -435,6 +516,74 @@
     const soundToggle = document.getElementById('soundToggle');
     soundToggle.onclick = () => { soundEnabled = !soundEnabled; soundToggle.textContent = soundEnabled ? '🔊 ЗВУК ВКЛ' : '🔇 ЗВУК ВЫКЛ'; };
     
+    // ========== ВУЛКАН ==========
+    (function volcanoInit() {
+        const slider = document.getElementById('volcanoSlider');
+        const lavaFill = document.getElementById('lavaFill');
+        const handle = document.getElementById('handle');
+        const volumeDisplay = document.getElementById('volumeDisplay');
+        const bubblesContainer = document.getElementById('bubblesContainer');
+        let volume = 60;
+
+        function updateVolume(value) {
+            let val = Math.min(100, Math.max(0, value));
+            volume = val;
+            lavaFill.style.width = val + '%';
+            handle.style.left = val + '%';
+            volumeDisplay.textContent = Math.round(val);
+            generateBubbles(val);
+        }
+
+        function generateBubbles(percent) {
+            const count = Math.floor(2 + (percent / 100) * 18);
+            bubblesContainer.innerHTML = '';
+            if (percent === 0) return;
+            for (let i = 0; i < count; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = 4 + Math.random() * 14 + (percent / 100) * 10;
+                bubble.style.cssText = `
+                    position: absolute; width: ${size}px; height: ${size}px;
+                    left: ${Math.random() * 100}%; top: ${40 + Math.random() * 55}%;
+                    background: radial-gradient(circle at 30% 30%, hsl(${20 + Math.random() * 30}, 100%, 70%), hsl(${10 + Math.random() * 30}, 100%, 50%));
+                    border-radius: 50%; opacity: ${0.3 + (percent / 100) * 0.6};
+                    filter: blur(2px); box-shadow: 0 0 ${10 + percent/6}px #ff8800;
+                    animation: floatUp ${1.8 + Math.random() * 2.2}s ${Math.random() * 3}s infinite alternate ease-in-out;
+                `;
+                bubblesContainer.appendChild(bubble);
+            }
+        }
+
+        function getVolumeFromEvent(e) {
+            const rect = slider.getBoundingClientRect();
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let offsetX = Math.min(rect.width, Math.max(0, clientX - rect.left));
+            return (offsetX / rect.width) * 100;
+        }
+        function handleMove(e) { e.preventDefault(); updateVolume(getVolumeFromEvent(e)); }
+        function handleUp() {
+            document.removeEventListener('mousemove', handleMove);
+            document.removeEventListener('mouseup', handleUp);
+            document.removeEventListener('touchmove', handleMove);
+            document.removeEventListener('touchend', handleUp);
+            document.body.style.cursor = 'default';
+        }
+        function handleDown(e) {
+            e.preventDefault();
+            updateVolume(getVolumeFromEvent(e));
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', handleUp);
+            document.addEventListener('touchmove', handleMove, { passive: false });
+            document.addEventListener('touchend', handleUp);
+            document.body.style.cursor = 'grabbing';
+        }
+        slider.addEventListener('mousedown', handleDown);
+        slider.addEventListener('touchstart', handleDown, { passive: false });
+        slider.addEventListener('dragstart', (e) => e.preventDefault());
+        slider.addEventListener('dblclick', function(e) { e.preventDefault(); updateVolume(100); });
+        updateVolume(volume);
+    })();
+
     // ========== ИГРОВЫЕ ПЕРЕМЕННЫЕ ==========
     const TOTAL = 25, START_PIGS = 6;
     let wireCells = [];
@@ -630,7 +779,7 @@
         let div = document.createElement('div'); 
         div.className = 'turn-modal';
         div.style.zIndex = '10002';
-        div.innerHTML = `<div class="turn-card"><div class="turn-title">🔄 ПЕРЕХОД ХОДА</div><div class="turn-player ${next}">${next === 'red' ? '🔴 RED' : '🔵 BLU'}</div><div class="confirm-text">⚠️ ПРОТИВНИК НЕ ДОЛЖЕН СМОТРЕТЬ! ⚠️<br>Передайте устройство</div><button class="turn-btn" id="tmBtn">✅ Я ГОТОВ, ПОКАЗАТЬ ПОЛЕ</button></div>`;
+        div.innerHTML = `<div class="turn-card"><div class="turn-title">🌕 ПЕРЕХОД ХОДА</div><div class="turn-player ${next}">${next === 'red' ? '🔴 RED' : '🔵 BLU'}</div><div class="confirm-text">⚠️ ПРОТИВНИК НЕ ДОЛЖЕН СМОТРЕТЬ! ⚠️<br>Передайте устройство</div><button class="turn-btn" id="tmBtn">✅ Я ГОТОВ, ПОКАЗАТЬ ПОЛЕ</button></div>`;
         document.body.appendChild(div);
         document.getElementById('tmBtn').onclick = () => { 
             div.remove();
@@ -653,7 +802,7 @@
         let div = document.createElement('div'); 
         div.className = 'turn-modal';
         div.style.zIndex = '10002';
-        div.innerHTML = `<div class="turn-card"><div class="turn-title">🎮 НАЧАЛО</div><div class="turn-player red">🔴 RED</div><div class="confirm-text">Нажмите «Я ГОТОВ»<br>🔒 Поле скрыто</div><button class="turn-btn" id="stBtn">✅ Я ГОТОВ, ПОКАЗАТЬ ПОЛЕ</button></div>`;
+        div.innerHTML = `<div class="turn-card"><div class="turn-title">🎃 НАЧАЛО ИВЕНТА</div><div class="turn-player red">🔴 RED</div><div class="confirm-text">Нажмите «Я ГОТОВ»<br>🔒 Поле скрыто</div><button class="turn-btn" id="stBtn">✅ Я ГОТОВ, ПОКАЗАТЬ ПОЛЕ</button></div>`;
         document.body.appendChild(div);
         document.getElementById('stBtn').onclick = () => { 
             div.remove();
@@ -665,7 +814,7 @@
     function showConfirm(cb) {
         let div = document.createElement('div'); 
         div.className = 'confirm-modal';
-        div.innerHTML = `<div class="confirm-card"><div class="confirm-title">🍖 ПОДТВЕРЖДЕНИЕ</div><div class="confirm-text">Новая игра?</div><button class="confirm-yes" id="cYes">✅ ДА</button><button class="confirm-no" id="cNo">❌ НЕТ</button></div>`;
+        div.innerHTML = `<div class="confirm-card"><div class="confirm-title">🎃 ПОДТВЕРЖДЕНИЕ</div><div class="confirm-text">Новая игра?</div><button class="confirm-yes" id="cYes">✅ ДА</button><button class="confirm-no" id="cNo">❌ НЕТ</button></div>`;
         document.body.appendChild(div);
         document.getElementById('cYes').onclick = () => { div.remove(); cb(); };
         document.getElementById('cNo').onclick = () => div.remove();
@@ -674,13 +823,13 @@
     function showHowTo() {
         let div = document.createElement('div');
         div.className = 'howto-modal';
-        div.innerHTML = `<div class="howto-card"><div class="howto-title">📖 ПРАВИЛА</div><div class="howto-text">
+        div.innerHTML = `<div class="howto-card"><div class="howto-title">🎃 ПРАВИЛА</div><div class="howto-text">
             <p>🎯 Цель: Оставить больше свиней/кабанов.</p>
             <p>🐷 RED и 🐗 BLU ходят по очереди, выбирая по 6 клеток.</p>
             <p>⚡ На некоторых клетках проволока — туда нельзя ставить.</p>
             <p>🔥 КОНФЛИКТ: Если бомбы на одной клетке, взрывается тот, у кого номер МЕНЬШЕ (кто поставил раньше).</p>
             <p>🎲 При равных номерах — рулетка.</p>
-            <p>💾 Бомды сохраняются между раундами!</p>
+            <p>💾 Бомбы сохраняются между раундами!</p>
             <p>🔊 Звуки: bomb_boom.mp3 (взрыв) | win.mp3 (победа) | stalemate_tie_draw.mp3 (ничья)</p>
             <p>💻 Консоль: F12 → help()</p>
             <p>📧 По всем вопросам: <a href="mailto:maxikgrinevitch@yandex.ru" style="color: #f5c542;">maxikgrinevitch@yandex.ru</a></p>
@@ -693,7 +842,7 @@
         let idx = 0, ticks = 0, total = Math.floor(Math.random() * 13) + 12;
         let div = document.createElement('div'); 
         div.className = 'roulette-modal';
-        div.innerHTML = `<div class="roulette-card"><div class="roulette-title">🎲 РУЛЕТКА</div><div class="roulette-dice">🎲</div><div style="font-size:2rem;margin:15px" id="roulText">${options[0].text}</div></div>`;
+        div.innerHTML = `<div class="roulette-card"><div class="roulette-title">🎲 ГАДАНИЕ НА ЗЕЛЬЯХ</div><div class="roulette-dice">🎲</div><div style="font-size:2rem;margin:15px" id="roulText">${options[0].text}</div></div>`;
         document.body.appendChild(div);
         let txt = document.getElementById('roulText');
         let iv = setInterval(() => { 
@@ -712,16 +861,11 @@
         battleInProgress = true;
         phase = 'battle';
         readyBtn.classList.add('hidden');
-        messageDiv.textContent = `⚔️ РАУНД ${round}! БИТВА!`;
+        messageDiv.textContent = `⚔️ РАУНД ${round}! БИТВА! 🎃`;
         turnText.innerHTML = '⚔️ БИТВА';
         
-        // Обнуляем старые бомды (>6) — они становятся ловушками
-        for(let [c, num] of redMines) {
-            if(num > 6) redMines.set(c, 0);
-        }
-        for(let [c, num] of blueMines) {
-            if(num > 6) blueMines.set(c, 0);
-        }
+        for(let [c, num] of redMines) { if(num > 6) redMines.set(c, 0); }
+        for(let [c, num] of blueMines) { if(num > 6) blueMines.set(c, 0); }
         
         let allMines = getAllMines();
         allMines.sort((a,b) => {
@@ -733,21 +877,16 @@
         
         let index = 0;
         let conflictCells = new Set();
+        let processedConflicts = new Set();
         
         function process() {
             if(index >= allMines.length) {
-                // Удаляем бомды с клеток конфликтов
                 for(let cell of conflictCells) {
                     redMines.delete(cell);
                     blueMines.delete(cell);
                 }
-                // Удаляем нулевые бомды
-                for(let [c, num] of redMines) {
-                    if(num === 0) redMines.delete(c);
-                }
-                for(let [c, num] of blueMines) {
-                    if(num === 0) blueMines.delete(c);
-                }
+                for(let [c, num] of redMines) { if(num === 0) redMines.delete(c); }
+                for(let [c, num] of blueMines) { if(num === 0) blueMines.delete(c); }
                 battleInProgress = false;
                 renderBoard();
                 updateMineCounter();
@@ -757,12 +896,7 @@
             }
             
             let move = allMines[index];
-            
-            if(move.number === 0) {
-                index++;
-                setTimeout(process, 100);
-                return;
-            }
+            if(move.number === 0) { index++; setTimeout(process, 100); return; }
             
             let hasConflict = false;
             let conflictOwner = null;
@@ -770,82 +904,49 @@
             
             if(move.owner === 'red') {
                 let blueNum = blueMines.get(move.cell);
-                if(blueNum !== undefined && blueNum > 0) {
-                    hasConflict = true;
-                    conflictOwner = 'blue';
-                    conflictNum = blueNum;
-                }
+                if(blueNum !== undefined && blueNum > 0) { hasConflict = true; conflictOwner = 'blue'; conflictNum = blueNum; }
             } else {
                 let redNum = redMines.get(move.cell);
-                if(redNum !== undefined && redNum > 0) {
-                    hasConflict = true;
-                    conflictOwner = 'red';
-                    conflictNum = redNum;
-                }
+                if(redNum !== undefined && redNum > 0) { hasConflict = true; conflictOwner = 'red'; conflictNum = redNum; }
             }
             
             if(hasConflict) {
+                let conflictKey = move.cell + '-' + Math.min(move.number, conflictNum) + '-' + Math.max(move.number, conflictNum);
+                if(processedConflicts.has(conflictKey)) { index++; setTimeout(process, 100); return; }
+                processedConflicts.add(conflictKey);
                 conflictCells.add(move.cell);
                 
-                // ПРАВИЛЬНАЯ ЛОГИКА: проигрывает тот, у кого номер МЕНЬШЕ
                 if(move.number > conflictNum) {
-                    // move сильнее → conflictOwner проигрывает
                     playExplosion();
                     let cd = boardEl.children[move.cell];
                     if(cd) cd.classList.add('explosion');
                     setTimeout(() => {
-                        if(conflictOwner === 'red') { 
-                            redPigs--; 
-                            messageDiv.textContent = `💥 RED №${conflictNum} < BLU №${move.number} → RED потерял свинью!`; 
-                        } else { 
-                            bluePigs--; 
-                            messageDiv.textContent = `💥 BLU №${conflictNum} < RED №${move.number} → BLU потерял кабана!`; 
-                        }
+                        if(conflictOwner === 'red') { redPigs--; messageDiv.textContent = `💥 RED №${conflictNum} < BLU №${move.number} → RED потерял свинью!`; }
+                        else { bluePigs--; messageDiv.textContent = `💥 BLU №${conflictNum} < RED №${move.number} → BLU потерял кабана!`; }
                         renderTroops();
-                        if(cd) {
-                            cd.classList.remove('explosion');
-                            renderBoard();
-                        }
+                        if(cd) { cd.classList.remove('explosion'); renderBoard(); }
                         index++;
                         setTimeout(process, 300);
                     }, 400);
-                } 
-                else if(conflictNum > move.number) {
-                    // conflict сильнее → move.owner проигрывает
+                } else if(conflictNum > move.number) {
                     playExplosion();
                     let cd = boardEl.children[move.cell];
                     if(cd) cd.classList.add('explosion');
                     setTimeout(() => {
-                        if(move.owner === 'red') { 
-                            redPigs--; 
-                            messageDiv.textContent = `💥 RED №${move.number} < BLU №${conflictNum} → RED потерял свинью!`; 
-                        } else { 
-                            bluePigs--; 
-                            messageDiv.textContent = `💥 BLU №${move.number} < RED №${conflictNum} → BLU потерял кабана!`; 
-                        }
+                        if(move.owner === 'red') { redPigs--; messageDiv.textContent = `💥 RED №${move.number} < BLU №${conflictNum} → RED потерял свинью!`; }
+                        else { bluePigs--; messageDiv.textContent = `💥 BLU №${move.number} < RED №${conflictNum} → BLU потерял кабана!`; }
                         renderTroops();
-                        if(cd) {
-                            cd.classList.remove('explosion');
-                            renderBoard();
-                        }
+                        if(cd) { cd.classList.remove('explosion'); renderBoard(); }
                         index++;
                         setTimeout(process, 300);
                     }, 400);
-                } 
-                else if(move.number === conflictNum) {
-                    // Равные номера → рулетка
+                } else {
                     playExplosion();
                     messageDiv.textContent = `🎲 РАВНЫЕ №${move.number}! РУЛЕТКА!`;
                     roulette([{text:'🔴 RED'},{text:'🔵 BLU'}], (res) => {
-                        if(res === 0) { 
-                            bluePigs--; 
-                            messageDiv.textContent = '🎲 RED победил! BLU потерял кабана!'; 
-                        } else { 
-                            redPigs--; 
-                            messageDiv.textContent = '🎲 BLU победил! RED потерял свинью!'; 
-                        }
-                        renderTroops(); 
-                        renderBoard();
+                        if(res === 0) { bluePigs--; messageDiv.textContent = '🎲 RED победил! BLU потерял кабана!'; }
+                        else { redPigs--; messageDiv.textContent = '🎲 BLU победил! RED потерял свинью!'; }
+                        renderTroops(); renderBoard();
                         index++;
                         setTimeout(process, 300);
                     });
@@ -861,50 +962,38 @@
                 }, 200);
             }
         }
-        
         process();
     }
     
     function nextRound() {
         round++;
-        redPos = [];
-        bluePos = [];
-        currentTurn = 'red';
-        phase = 'selection';
-        messageDiv.textContent = `🎯 РАУНД ${round}! RED выбирает ${redPigs} | Сохранённых бомб: ${redMines.size + blueMines.size}`;
+        redPos = []; bluePos = [];
+        currentTurn = 'red'; phase = 'selection';
+        messageDiv.textContent = `🎃 РАУНД ${round}! RED выбирает ${redPigs} | Сохранённых бомб: ${redMines.size + blueMines.size}`;
         turnText.innerHTML = '🔴 ВЫБОР RED';
-        renderBoard();
-        renderTroops();
+        renderBoard(); renderTroops();
         if(gameMode === '2p') showTurnModalWithBlackout('red', () => {});
         if(gameMode === '0p') {
             waitingForAI = true;
-            setTimeout(() => { 
-                aiSelect('red'); 
-                waitingForAI = false; 
-                finishSelection(); 
-            }, 500);
+            setTimeout(() => { aiSelect('red'); waitingForAI = false; finishSelection(); }, 500);
         }
     }
     
     function endGame() {
-        gameActive = false;
-        battleInProgress = false;
+        gameActive = false; battleInProgress = false;
         let winner = '';
-        
         if(redPigs > 0 && bluePigs <= 0) { winner = '🔴 RED ПОБЕДИЛ! 🐷'; playVictory(); }
         else if(bluePigs > 0 && redPigs <= 0) { winner = '🔵 BLU ПОБЕДИЛ! 🐗'; playVictory(); }
-        else { winner = '⚡ НИЧЬЯ! ⚡'; playStalemate(); }
+        else { winner = '👻 НИЧЬЯ! 👻'; playStalemate(); }
         
         resultBox.classList.remove('hidden');
-        resultBox.innerHTML = `<div class="winner">🏆 ${winner} 🏆</div><div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div><div>Раунд: ${round}</div><button id="againBtn" style="margin-top:12px; background:#6a4e9e; border:none; font-family:inherit; font-size:1rem; font-weight:bold; color:white; padding:8px 25px; border-radius:40px; cursor:pointer; box-shadow:0 4px 0 #2a1a40;">🎮 СЫГРАТЬ ЕЩЁ</button>`;
+        resultBox.innerHTML = `<div class="winner">🏆 ${winner} 🏆</div><div>🐷 RED: ${redPigs} | 🐗 BLU: ${bluePigs}</div><div>Раунд: ${round}</div><button id="againBtn" style="margin-top:12px; background:#6a4e9e; border:none; font-family:inherit; font-size:1rem; font-weight:bold; color:white; padding:8px 25px; border-radius:40px; cursor:pointer; box-shadow:0 4px 0 #2a1a40;">🎃 СЫГРАТЬ ЕЩЁ</button>`;
         turnText.innerHTML = winner;
         document.getElementById('againBtn')?.addEventListener('click', () => resetGame());
     }
     
     function startGame() {
-        gameStarted = true;
-        waitingInit = true;
-        battleInProgress = false;
+        gameStarted = true; waitingInit = true; battleInProgress = false;
         generateWire();
         redPos = []; bluePos = [];
         redMines.clear(); blueMines.clear();
@@ -914,34 +1003,24 @@
         turnText.innerHTML = '🔴 ВЫБОР RED';
         updateMineCounter();
         if(gameMode === '2p') {
-            messageDiv.innerHTML = '🎯 RED выбирает 6 (бомбы скрыты от врага)';
-            renderBoard(); 
-            renderTroops();
+            messageDiv.innerHTML = '🎃 RED выбирает 6 (бомбы скрыты от врага)';
+            renderBoard(); renderTroops();
             showStart(() => { waitingInit = false; renderBoard(); });
         } else if(gameMode === 'ai') {
-            messageDiv.innerHTML = '🎯 Ты за RED, AI за BLU';
-            waitingInit = false; 
-            renderBoard(); 
-            renderTroops();
+            messageDiv.innerHTML = '🎃 Ты за RED, AI за BLU';
+            waitingInit = false; renderBoard(); renderTroops();
         } else if(gameMode === '0p') {
-            messageDiv.innerHTML = '🎯 AI vs AI';
-            waitingInit = false; 
-            renderBoard(); 
-            renderTroops();
+            messageDiv.innerHTML = '🎃 AI vs AI';
+            waitingInit = false; renderBoard(); renderTroops();
             waitingForAI = true;
-            setTimeout(() => { 
-                aiSelect('red'); 
-                waitingForAI = false; 
-                finishSelection(); 
-            }, 500);
+            setTimeout(() => { aiSelect('red'); waitingForAI = false; finishSelection(); }, 500);
         }
     }
     
     function resetGame() { startGame(); }
     
-    // Консольные команды
     window.help = function() {
-        console.log("%c🐷 СВИНЬИ-САПЁРЫ | ФИНАЛЬНАЯ ВЕРСИЯ", "color: #ffcc66; font-size:16px");
+        console.log("%c🎃 СВИНЬИ-САПЁРЫ | ХЭЛЛОУИН-ВЕРСИЯ", "color: #ffcc66; font-size:16px");
         console.log("%c🎮 debugState() — состояние игры", "color: #88ffaa");
         console.log("%c🎮 forceWin('red') — победа RED", "color: #88ffaa");
         console.log("%c🎮 forceWin('blue') — победа BLU", "color: #88ffaa");
@@ -951,7 +1030,6 @@
         console.group("%c🔍 СОСТОЯНИЕ", "color: #ffcc66");
         console.log("Раунд:", round, "Фаза:", phase, "Ход:", currentTurn);
         console.log("RED:", redPigs, "BLU:", bluePigs);
-        console.log("Бомды RED:", Array.from(redMines.entries()), "BLU:", Array.from(blueMines.entries()));
         console.groupEnd();
     };
     window.forceWin = function(team) { 
@@ -963,24 +1041,19 @@
     
     modeBtn.onclick = (e) => { e.stopPropagation(); modeDropdown.classList.toggle('show'); };
     document.querySelectorAll('.mode-option').forEach(opt => { 
-        opt.onclick = () => { 
-            gameMode = opt.dataset.mode; 
-            modeDropdown.classList.remove('show'); 
-            startGame(); 
-        }; 
+        opt.onclick = () => { gameMode = opt.dataset.mode; modeDropdown.classList.remove('show'); startGame(); }; 
     });
     document.onclick = () => modeDropdown.classList.remove('show');
     readyBtn.onclick = finishSelection;
     resetBtn.onclick = () => showConfirm(() => resetGame());
     document.getElementById('howtoTopBtn').onclick = showHowTo;
     
-    // Показываем стартовое меню
     (function showStartMenu() {
         const modal = document.createElement('div');
         modal.className = 'start-menu';
         modal.innerHTML = `
             <div class="start-card">
-                <div class="start-title">🐷 СВИНЬИ-САПЁРЫ 💣</div>
+                <div class="start-title">🎃 СВИНЬИ-САПЁРЫ 👻</div>
                 <div class="start-buttons">
                     <button class="start-btn" id="start2pBtn">👥 2 ИГРОКА</button>
                     <button class="start-btn" id="startAiBtn">🤖 ПРОТИВ AI</button>
